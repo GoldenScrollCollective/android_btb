@@ -3,6 +3,8 @@ package org.lemonadestand.btb.features.dashboard.activities
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -17,7 +19,11 @@ import org.lemonadestand.btb.R
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.transition.Visibility
 import com.google.android.material.navigation.NavigationView
+import org.lemonadestand.btb.constants.getImageUrlFromName
+import org.lemonadestand.btb.extenstions.setImageUrl
+import org.lemonadestand.btb.utils.Utils
 
 class DashboardActivity : AppCompatActivity() {
 
@@ -40,6 +46,12 @@ class DashboardActivity : AppCompatActivity() {
         handleBottomUiEvent(bottomNav.selectedItemId)
 
         mainDrawer = findViewById(R.id.main_drawer)
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        updateNavigationView()
     }
 
     // Expose a method to control DrawerLayout visibility
@@ -162,5 +174,25 @@ class DashboardActivity : AppCompatActivity() {
             ContextCompat.getDrawable(this, R.drawable.nav_interest_unselected)
         bottomNav.menu.getItem(3).icon =
             ContextCompat.getDrawable(this, R.drawable.nav_more_unselected)
+    }
+
+    private fun updateNavigationView() {
+        val currentUser = Utils.getUser(this) ?: return
+
+        val navUserShortNameView = findViewById<TextView>(R.id.navUserShortName)
+        navUserShortNameView.text = currentUser.shortName
+
+        val navUserPictureView = findViewById<ImageView>(R.id.navUserPicture)
+        if (!currentUser.picture.isNullOrEmpty()) {
+            navUserPictureView.setImageUrl(currentUser.picture)
+        } else {
+            navUserPictureView.setImageUrl(currentUser.name.getImageUrlFromName())
+        }
+
+        val navUserNameView = findViewById<TextView>(R.id.navUserName)
+        navUserNameView.text = currentUser.name
+
+        val navOrgNameView = findViewById<TextView>(R.id.navOrgName)
+        navOrgNameView.text = currentUser.organization.name
     }
 }

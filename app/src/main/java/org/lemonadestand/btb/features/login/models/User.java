@@ -2,6 +2,8 @@ package org.lemonadestand.btb.features.login.models;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class User {
@@ -169,6 +171,15 @@ public class User {
     }
     public String getName() {
         return name;
+    }
+
+    public String getShortName() {
+        String[] splitedNames = this.name.split(" ");
+        ArrayList<String> names = new ArrayList<>();
+        for (int i = 0; i < Math.min(splitedNames.length, 2); i++) {
+            names.add(splitedNames[i].substring(0, 1).toUpperCase());
+        }
+        return String.join("", names);
     }
 
     public void setPicture(String picture) {
