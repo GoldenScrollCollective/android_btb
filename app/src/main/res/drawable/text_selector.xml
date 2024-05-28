@@ -1,0 +1,7 @@
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:color="@color/btbOrange" android:state_checked="true" />
+    <item android:color="@color/btbRed" android:state_checked="true" />
+    <item android:color="@color/AccentColor" android:state_checked="true" />
+    <!-- Set default color when not selected -->
+    <item android:color="@color/backgroundcolor" />
+</selector>

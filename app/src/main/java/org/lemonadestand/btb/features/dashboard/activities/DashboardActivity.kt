@@ -1,0 +1,166 @@
+package org.lemonadestand.btb.features.dashboard.activities
+
+import android.graphics.Color
+import android.os.Bundle
+import android.util.Log
+import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.navigation.NavController
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.setupWithNavController
+
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import org.lemonadestand.btb.R
+
+import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
+import com.google.android.material.navigation.NavigationView
+
+class DashboardActivity : AppCompatActivity() {
+
+    private lateinit var bottomNav: BottomNavigationView
+    private lateinit var navController: NavController
+    private lateinit var line1: TextView
+    private lateinit var line2: TextView
+    private lateinit var line3: TextView
+    private lateinit var line4: TextView
+    private lateinit var mainDrawer: DrawerLayout
+
+
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_dashboard)
+        initLayoutViews()
+        setBottomNavigation()
+        setBottomListener()
+        handleBottomUiEvent(bottomNav.selectedItemId)
+
+        mainDrawer = findViewById(R.id.main_drawer)
+    }
+
+    // Expose a method to control DrawerLayout visibility
+    fun toggleDrawer() {
+        if (mainDrawer.isDrawerOpen(GravityCompat.START)) {
+            mainDrawer.closeDrawer(GravityCompat.START)
+        } else {
+            mainDrawer.openDrawer(GravityCompat.START)
+        }
+    }
+
+
+    private fun setBottomListener() {
+
+        bottomNav.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+
+                R.id.homeFragment -> {
+                    navController.navigate(R.id.homeFragment)
+                    handleBottomUiEvent(R.id.homeFragment)
+                }
+
+                R.id.eventFragment -> {
+                    navController.navigate(R.id.eventFragment)
+                    handleBottomUiEvent(R.id.eventFragment)
+                }
+                R.id.interestFragment -> {
+                    navController.navigate(R.id.interestFragment)
+                    handleBottomUiEvent(R.id.interestFragment)
+                }
+
+                R.id.moreFragment -> {
+                    navController.navigate(R.id.moreFragment)
+                    handleBottomUiEvent(R.id.moreFragment)
+                }
+            }
+            true
+        }
+
+
+    }
+
+    private fun handleBottomUiEvent(id: Int) {
+
+        when (id) {
+            R.id.homeFragment -> {
+                Log.e("clicked=>", "done")
+                deselectAllColor()
+                bottomNav.itemIconTintList = null
+                resetAllIcons()
+                bottomNav.menu.getItem(0).icon =
+                    ContextCompat.getDrawable(this, R.drawable.nav_heart_selected)
+
+                line1.setBackgroundColor(Color.rgb(222, 160, 55))
+            }
+
+            R.id.eventFragment -> {
+                deselectAllColor()
+                resetAllIcons()
+                bottomNav.menu.getItem(1).icon =
+                    ContextCompat.getDrawable(this, R.drawable.events_gold)
+                bottomNav.itemIconTintList = null
+
+                line2.setBackgroundColor(Color.rgb(222, 160, 55))
+            }
+
+            R.id.interestFragment -> {
+                deselectAllColor()
+                resetAllIcons()
+                bottomNav.menu.getItem(2).icon =
+                    ContextCompat.getDrawable(this, R.drawable.nav_interest_selected)
+                bottomNav.itemIconTintList = null
+                line3.setBackgroundColor(Color.rgb(10, 78, 120))
+
+            }
+
+            R.id.moreFragment -> {
+                deselectAllColor()
+                resetAllIcons()
+                bottomNav.menu.getItem(3).icon = ContextCompat.getDrawable(this, R.drawable.ic_more_selected)
+                bottomNav.itemIconTintList = null
+                line4.setBackgroundColor(Color.rgb(51, 63, 79))
+            }
+
+        }
+
+    }
+
+    private fun setBottomNavigation() {
+        bottomNav.setupWithNavController(navController)
+    }
+
+
+
+    private fun initLayoutViews() {
+        bottomNav = findViewById(R.id.bottom_navigation_dashboard)
+        line1 = findViewById(R.id.line1)
+        line2 = findViewById(R.id.line2)
+        line3 = findViewById(R.id.line3)
+        line4 = findViewById(R.id.line4)
+        navController = findNavController(R.id.host_fragment)
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.host_fragment) as NavHostFragment
+        navController = navHostFragment.navController
+    }
+
+    private fun deselectAllColor() {
+        line1.setBackgroundColor(Color.rgb(255, 255, 255))
+        line2.setBackgroundColor(Color.rgb(255, 255, 255))
+        line3.setBackgroundColor(Color.rgb(255, 255, 255))
+        line4.setBackgroundColor(Color.rgb(255, 255, 255))
+    }
+
+    private fun resetAllIcons() {
+        bottomNav.menu.getItem(0).icon =
+            ContextCompat.getDrawable(this, R.drawable.nav_heart_unselected)
+        bottomNav.menu.getItem(1).icon =
+            ContextCompat.getDrawable(this, R.drawable.events)
+        bottomNav.menu.getItem(2).icon =
+            ContextCompat.getDrawable(this, R.drawable.nav_interest_unselected)
+        bottomNav.menu.getItem(3).icon =
+            ContextCompat.getDrawable(this, R.drawable.nav_more_unselected)
+    }
+}

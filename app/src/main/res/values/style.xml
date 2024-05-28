@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="bottomNavStyle">
+<!--        <item name="android:itemtextColor"-->
+    </style>
+
+    <style name="CustomAlertDialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <!-- Customize the background color -->
+        <item name="android:background">@drawable/rounded_corner</item>
+        <!-- Customize the corner radius -->
+        <item name="android:radius">16dp</item>
+    </style>
+
+
+
+
+
+    <style name="MyAlertDialog" parent="@android:style/Theme.Dialog">
+        <item name="android:windowBackground">@drawable/rounded_corner</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+</resources>
