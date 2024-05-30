@@ -6,223 +6,238 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.gson.JsonParser
 import org.json.JSONException
 import org.json.JSONObject
 import org.lemonadestand.btb.R
-import org.lemonadestand.btb.utils.Utils
 import org.lemonadestand.btb.databinding.ActivityLoginBinding
-import org.lemonadestand.btb.features.dashboard.activities.DashboardActivity
 import org.lemonadestand.btb.extenstions.hide
 import org.lemonadestand.btb.extenstions.invisible
-import org.lemonadestand.btb.features.login.models.LoginResponse
-import org.lemonadestand.btb.network.RestClient
 import org.lemonadestand.btb.extenstions.show
+import org.lemonadestand.btb.features.dashboard.activities.DashboardActivity
+import org.lemonadestand.btb.models.LoginResponse
+import org.lemonadestand.btb.network.RestClient
 import org.lemonadestand.btb.singleton.Singleton.authToken
+import org.lemonadestand.btb.utils.Utils
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 class LoginActivity : AppCompatActivity() {
 
-    private lateinit var mBinding: ActivityLoginBinding
+	private lateinit var mBinding: ActivityLoginBinding
 
-    private var check = true
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        mBinding = ActivityLoginBinding.inflate(layoutInflater)
-        setContentView(mBinding.root)
-
-
-        setFullScreenBg()
-
-        /// for testing
-        //mBinding.edtEmail.setText(getString(R.string.test_user))
-        //mBinding.edtPassword.setText(getString(R.string.test_password))
+	private var check = true
+	override fun onCreate(savedInstanceState: Bundle?) {
+		super.onCreate(savedInstanceState)
+		mBinding = ActivityLoginBinding.inflate(layoutInflater)
+		setContentView(mBinding.root)
 
 
-        mBinding.tvForgot.setOnClickListener { forgotClick() }
+		setFullScreenBg()
 
-        mBinding.btnLogin.setOnClickListener {
+		/// for testing
+		//mBinding.edtEmail.setText(getString(R.string.test_user))
+		//mBinding.edtPassword.setText(getString(R.string.test_password))
 
-            if (check) {
-                login()
-            } else {
-                forget()
-            }
-        }
 
-        mBinding.txtRegister.setOnClickListener {
-            val browserIntent = Intent(
-                Intent.ACTION_VIEW,
-                Uri.parse("https://buildthenbless.com/registration")
-            )
-            startActivity(browserIntent)
-        }
-    }
+		mBinding.tvForgot.setOnClickListener { forgotClick() }
 
-    private fun setFullScreenBg() {
-        window?.decorView?.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN)
-        window.statusBarColor = Color.TRANSPARENT
-    }
+		mBinding.btnLogin.setOnClickListener {
 
-    private fun login() {
-        val email: String = mBinding.edtEmail.text.toString()
-        val password: String = mBinding.edtPassword.text.toString()
-        if (email.isEmpty()) {
-            Toast.makeText(this, "Please Enter Email", Toast.LENGTH_SHORT).show()
-            return
-        }
-        if (password.isEmpty()) {
-            Toast.makeText(this, "Please Enter Password", Toast.LENGTH_SHORT).show()
-            return
-        }
-        try {
+			if (check) {
+				login()
+			} else {
+				forget()
+			}
+		}
 
-            showLoading(true)
-            val json = JSONObject()
-            json.put("email", email)
-            json.put("password", password)
-            json.put("token_name", "android")
-            val jsonObject = JsonParser().parse(json.toString()).asJsonObject
+		mBinding.txtRegister.setOnClickListener {
+			val browserIntent = Intent(
+				Intent.ACTION_VIEW,
+				Uri.parse("https://buildthenbless.com/registration")
+			)
+			startActivity(browserIntent)
+		}
+	}
 
-            Log.e("Request_data=>", jsonObject.toString())
+	private fun setFullScreenBg() {
+		window?.decorView?.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+				or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN)
+		window.statusBarColor = Color.TRANSPARENT
+	}
 
-            val call = RestClient.post().login(jsonObject)
-            call!!.enqueue(object : Callback<LoginResponse?> {
-                override fun onResponse(
-                    call: Call<LoginResponse?>,
-                    response: Response<LoginResponse?>
-                ) {
-                    showLoading(false)
-                    if (response.isSuccessful) {
+	private fun login() {
+		val email: String = mBinding.edtEmail.text.toString()
+		val password: String = mBinding.edtPassword.text.toString()
+		if (email.isEmpty()) {
+			Toast.makeText(this, "Please Enter Email", Toast.LENGTH_SHORT).show()
+			return
+		}
+		if (password.isEmpty()) {
+			Toast.makeText(this, "Please Enter Password", Toast.LENGTH_SHORT).show()
+			return
+		}
+		try {
 
-                        val datas = response.body()
+			showLoading(true)
+			val json = JSONObject()
+			json.put("email", email)
+			json.put("password", password)
+			json.put("token_name", "android")
+			val jsonObject = JsonParser().parse(json.toString()).asJsonObject
 
-                        if (datas!!.status && datas!!.user != null)
-                        {
-                            Log.i("Response_Datas_token=>", datas!!.user.token.rawToken.toString())
-                            Log.i("Response_Datas_uniqId=>", datas!!.user.uniqId.toString())
-                            Log.i("Response_Datas_orgId=>", datas!!.user.orgId.toString())
-                            Log.i("Response_Datas_userName=>", datas!!.user.name.toString())
+			Log.e("Request_data=>", jsonObject.toString())
 
-                            Toast.makeText(this@LoginActivity, datas!!.message, Toast.LENGTH_SHORT).show()
-                            Utils.saveData(this@LoginActivity, Utils.TOKEN, datas.user.token.rawToken)
-                            Utils.saveData(this@LoginActivity, Utils.UID, datas.user.uniqId.toString())
-                            Utils.saveData(this@LoginActivity, Utils.ORG_ID, datas.user.orgId.toString())
-                            Utils.saveData(this@LoginActivity, Utils.USER_NAME, datas.user.name.toString())
-                            Utils.saveData(this@LoginActivity, Utils.PICTURE, datas.user.picture)
-                            Utils.saveData(this@LoginActivity, Utils.ORG_PICTURE, datas.user.organization.picture)
-                            Utils.saveUser(this@LoginActivity,datas.user)
-                            authToken = "Bearer " + datas.user.token.rawToken
-                            if (datas.status) {
-                                val i = Intent(this@LoginActivity, DashboardActivity::class.java)
-                                startActivity(i)
-                                finish()
-                            }
-                        }
-                        else{
-                            Toast.makeText(
-                                this@LoginActivity,
-                                datas.message,
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
+			val call = RestClient.post().login(jsonObject)
+			call!!.enqueue(object : Callback<LoginResponse?> {
+				override fun onResponse(
+					call: Call<LoginResponse?>,
+					response: Response<LoginResponse?>
+				) {
+					showLoading(false)
+					if (response.isSuccessful) {
 
-                    } else {
-                        Toast.makeText(
-                            this@LoginActivity,
-                            "Something Went Wrong...",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                }
+						val datas = response.body()
 
-                override fun onFailure(call: Call<LoginResponse?>, t: Throwable) {
-                    showLoading(false)
-                    Toast.makeText(this@LoginActivity, "Something Went Wrong", Toast.LENGTH_SHORT)
-                        .show()
-                }
-            })
-        } catch (e: JSONException) {
-            Log.e("Error Message=>", "Can not find user")
-            showLoading(false)
-            throw RuntimeException(e)
-        }
-    }
+						if (datas!!.status && datas!!.user != null) {
+							Log.i("Response_Datas_token=>", datas.user?.token?.rawToken.toString())
+							Log.i("Response_Datas_uniqId=>", datas.user?.uniqueId.toString())
+							Log.i("Response_Datas_orgId=>", datas.user?.orgId.toString())
+							Log.i("Response_Datas_userName=>", datas.user?.name.toString())
 
-    private fun forget() {
+							Toast.makeText(this@LoginActivity, datas.message, Toast.LENGTH_SHORT)
+								.show()
+							Utils.saveData(
+								this@LoginActivity,
+								Utils.TOKEN,
+								datas.user?.token?.rawToken
+							)
+							Utils.saveData(
+								this@LoginActivity,
+								Utils.UID,
+								datas.user?.uniqueId.toString()
+							)
+							Utils.saveData(
+								this@LoginActivity,
+								Utils.ORG_ID,
+								datas.user?.orgId.toString()
+							)
+							Utils.saveData(
+								this@LoginActivity,
+								Utils.USER_NAME,
+								datas.user?.name.toString()
+							)
+							Utils.saveData(this@LoginActivity, Utils.PICTURE, datas.user?.picture)
+							Utils.saveData(
+								this@LoginActivity,
+								Utils.ORG_PICTURE,
+								datas.user?.organization?.picture
+							)
+							Utils.saveUser(this@LoginActivity, datas.user)
+							authToken = "Bearer " + datas.user?.token?.rawToken
+							if (datas.status) {
+								val i = Intent(this@LoginActivity, DashboardActivity::class.java)
+								startActivity(i)
+								finish()
+							}
+						} else {
+							Toast.makeText(
+								this@LoginActivity,
+								datas.message,
+								Toast.LENGTH_SHORT
+							).show()
+						}
 
-        val email: String = mBinding.edtEmail.text.toString()
-        if (email.isEmpty()) {
-            Toast.makeText(this, "Please Enter Email", Toast.LENGTH_SHORT).show()
-            return
-        }
-        try {
-            showLoading(true)
-            val json = JSONObject()
-            json.put("email", email)
-            val jsonObject = JsonParser().parse(json.toString()).asJsonObject
-            val call = RestClient.post().forget(jsonObject)
-            call!!.enqueue(object : Callback<LoginResponse?> {
-                override fun onResponse(
-                    call: Call<LoginResponse?>,
-                    response: Response<LoginResponse?>
-                ) {
-                    showLoading(false)
-                    if (response.isSuccessful) {
-                        val datas = response.body()
-                        Toast.makeText(this@LoginActivity, datas!!.message, Toast.LENGTH_SHORT).show()
-                    } else {
-                        Toast.makeText(
-                            this@LoginActivity,
-                            "Something Went Wrong...",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                }
+					} else {
+						Toast.makeText(
+							this@LoginActivity,
+							"Something Went Wrong...",
+							Toast.LENGTH_SHORT
+						).show()
+					}
+				}
 
-                override fun onFailure(call: Call<LoginResponse?>, t: Throwable) {
-                    showLoading(false)
-                    Toast.makeText(this@LoginActivity, "Something Went Wrong", Toast.LENGTH_SHORT)
-                        .show()
-                }
-            })
-        } catch (e: JSONException) {
-            showLoading(false)
-            throw RuntimeException(e)
-        }
-    }
+				override fun onFailure(call: Call<LoginResponse?>, t: Throwable) {
+					showLoading(false)
+					Toast.makeText(this@LoginActivity, "Something Went Wrong", Toast.LENGTH_SHORT)
+						.show()
+				}
+			})
+		} catch (e: JSONException) {
+			Log.e("Error Message=>", "Can not find user")
+			showLoading(false)
+			throw RuntimeException(e)
+		}
+	}
 
-    private fun forgotClick() {
-        if (check) {
-            check = false
-            mBinding.edtPassword.isEnabled = false
-            mBinding.edtPassword.setBackgroundColor(Color.parseColor("#FAF3EC"))
-            mBinding.btnReset.text = getString(R.string.reset_password)
-        } else {
-            check = true
-            mBinding.edtPassword.isEnabled = true
-            mBinding.edtPassword.setBackgroundColor(Color.parseColor("#FDFCFB"))
-            mBinding.btnReset.text = getString(R.string.log_in)
-        }
-    }
+	private fun forget() {
 
-    fun showLoading(isShow :Boolean)
-    {
-        if (isShow)
-        {
-            mBinding.loadingWavy.show()
-            mBinding.btnReset.invisible()
-        }
-        else
-        {
-            mBinding.btnReset.show()
-            mBinding.loadingWavy.hide()
-        }
-    }
+		val email: String = mBinding.edtEmail.text.toString()
+		if (email.isEmpty()) {
+			Toast.makeText(this, "Please Enter Email", Toast.LENGTH_SHORT).show()
+			return
+		}
+		try {
+			showLoading(true)
+			val json = JSONObject()
+			json.put("email", email)
+			val jsonObject = JsonParser().parse(json.toString()).asJsonObject
+			val call = RestClient.post().forget(jsonObject)
+			call!!.enqueue(object : Callback<LoginResponse?> {
+				override fun onResponse(
+					call: Call<LoginResponse?>,
+					response: Response<LoginResponse?>
+				) {
+					showLoading(false)
+					if (response.isSuccessful) {
+						val datas = response.body()
+						Toast.makeText(this@LoginActivity, datas!!.message, Toast.LENGTH_SHORT)
+							.show()
+					} else {
+						Toast.makeText(
+							this@LoginActivity,
+							"Something Went Wrong...",
+							Toast.LENGTH_SHORT
+						).show()
+					}
+				}
+
+				override fun onFailure(call: Call<LoginResponse?>, t: Throwable) {
+					showLoading(false)
+					Toast.makeText(this@LoginActivity, "Something Went Wrong", Toast.LENGTH_SHORT)
+						.show()
+				}
+			})
+		} catch (e: JSONException) {
+			showLoading(false)
+			throw RuntimeException(e)
+		}
+	}
+
+	private fun forgotClick() {
+		if (check) {
+			check = false
+			mBinding.edtPassword.isEnabled = false
+			mBinding.edtPassword.setBackgroundColor(Color.parseColor("#FAF3EC"))
+			mBinding.btnReset.text = getString(R.string.reset_password)
+		} else {
+			check = true
+			mBinding.edtPassword.isEnabled = true
+			mBinding.edtPassword.setBackgroundColor(Color.parseColor("#FDFCFB"))
+			mBinding.btnReset.text = getString(R.string.log_in)
+		}
+	}
+
+	fun showLoading(isShow: Boolean) {
+		if (isShow) {
+			mBinding.loadingWavy.show()
+			mBinding.btnReset.invisible()
+		} else {
+			mBinding.btnReset.show()
+			mBinding.loadingWavy.hide()
+		}
+	}
 }
