@@ -6,108 +6,108 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.google.gson.Gson
-import org.lemonadestand.btb.R
 import org.lemonadestand.btb.constants.ProgressDialogUtil
-import org.lemonadestand.btb.constants.handleCommonResponse
+import org.lemonadestand.btb.R
+import org.lemonadestand.btb.utils.Utils
 import org.lemonadestand.btb.databinding.ActivityReplyCommentBinding
+import org.lemonadestand.btb.constants.handleCommonResponse
 import org.lemonadestand.btb.features.common.models.body.AddCommentBody
 import org.lemonadestand.btb.features.common.models.body.ShareStoryUser
+import org.lemonadestand.btb.features.login.models.User
 import org.lemonadestand.btb.features.post.models.PostModel
-import org.lemonadestand.btb.models.User
 import org.lemonadestand.btb.mvvm.factory.CommonViewModelFactory
 import org.lemonadestand.btb.mvvm.repository.HomeRepository
 import org.lemonadestand.btb.mvvm.viewmodel.HomeViewModel
 import org.lemonadestand.btb.singleton.Singleton
-import org.lemonadestand.btb.utils.Utils
 
 class ReplyCommentActivity : AppCompatActivity() {
 
-	lateinit var viewModel: HomeViewModel
-	private lateinit var mBinding: ActivityReplyCommentBinding
-	private var currentUser: User? = null
+    lateinit var viewModel: HomeViewModel
+    private lateinit var mBinding: ActivityReplyCommentBinding
+    private var currentUser: User? = null
 
-	private var postModel: PostModel? = null
-	override fun onCreate(savedInstanceState: Bundle?) {
-		super.onCreate(savedInstanceState)
-		setContentView(R.layout.activity_reply_comment)
-		mBinding = ActivityReplyCommentBinding.inflate(layoutInflater)
-		setContentView(mBinding.root)
-		getData()
-		setOnClicks()
-		setUpViewModel()
-	}
+    private var postModel: PostModel? = null
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_reply_comment)
+        mBinding = ActivityReplyCommentBinding.inflate(layoutInflater)
+        setContentView(mBinding.root)
+        getData()
+        setOnClicks()
+        setUpViewModel()
+    }
 
-	private fun getData() {
-		val bundle = intent.extras
-		if (bundle != null) {
-			val jsonData = bundle.getString("reply_data")
-			val gson = Gson()
-			postModel = gson.fromJson(jsonData, PostModel::class.java)
+    private fun getData() {
+        val bundle = intent.extras
+        if (bundle != null) {
+            val jsonData = bundle.getString("reply_data")
+            val gson = Gson()
+            postModel = gson.fromJson(jsonData, PostModel::class.java)
 
-			Log.e("replayModel", postModel.toString())
-		}
-		currentUser = Utils.getUser(this)
-	}
+            Log.e("replayModel", postModel.toString())
+        }
+        currentUser = Utils.getUser(this)
+    }
 
-	private fun setOnClicks() {
-		mBinding.icBack.setOnClickListener { onBackPressed() }
+    private fun setOnClicks() {
+        mBinding.icBack.setOnClickListener { onBackPressed() }
 
-		mBinding.btnSave.setOnClickListener {
+        mBinding.btnSave.setOnClickListener {
 
-			if (mBinding.htmlEditor.text.toString()
-					.isEmpty() || mBinding.htmlEditor.text.toString() == "<p><br></p>"
-			) {
-				Toast.makeText(this, "Please write a message.", Toast.LENGTH_SHORT).show()
-				return@setOnClickListener
-			}
+            if (mBinding.htmlEditor.text.toString()
+                    .isEmpty() || mBinding.htmlEditor.text.toString() == "<p><br></p>"
+            ) {
+                Toast.makeText(this, "Please write a message.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
 
-			val requestBody = AddCommentBody(
-				uniq_id = "",
-				resource = "user/${currentUser!!.uniqueId}",
-				html = mBinding.htmlEditor.text,
-				created = "",
-				parent_id = "${postModel?.uniq_id}",
-				modified = "",
-				by_user_id = "",
+            val requestBody = AddCommentBody(
+                uniq_id = "",
+                resource = "user/${currentUser!!.uniqId}",
+                html = mBinding.htmlEditor.text,
+                created = "",
+                parent_id = "${postModel?.uniq_id}",
+                modified = "",
+                by_user_id = "",
 
-				user = ShareStoryUser(id = "", name = "")
-			)
-			viewModel.addComment(requestBody)
-		}
-	}
+                user = ShareStoryUser(id = "", name = "")
+            )
+            viewModel.addComment(requestBody)
+        }
+    }
 
-	private fun setUpViewModel() {
+    private fun setUpViewModel() {
 
-		val repository = HomeRepository()
-		val viewModelProviderFactory =
-			CommonViewModelFactory((this).application, repository)
-		viewModel = ViewModelProvider(this, viewModelProviderFactory)[HomeViewModel::class.java]
-
-
-		viewModel.liveError.observe(this) {
-			Singleton.handleResponse(response = it, this, "ReplyCommentActivity")
-			ProgressDialogUtil.dismissProgressDialog()
-		}
-
-		viewModel.commonResponse.observe(this) {
-			handleCommonResponse(this, it)
-			ProgressDialogUtil.dismissProgressDialog()
-			finish()
-		}
+        val repository = HomeRepository()
+        val viewModelProviderFactory =
+            CommonViewModelFactory((this).application, repository)
+        viewModel = ViewModelProvider(this, viewModelProviderFactory)[HomeViewModel::class.java]
 
 
-		viewModel.isLoading.observe(this) {
-			Log.e("value==>", it.toString())
-			if (it) {
-				ProgressDialogUtil.showProgressDialog(this)
-			} else {
-				ProgressDialogUtil.dismissProgressDialog()
-			}
-		}
+        viewModel.liveError.observe(this) {
+            Singleton.handleResponse(response = it, this, "ReplyCommentActivity")
+            ProgressDialogUtil.dismissProgressDialog()
+        }
 
-		viewModel.noInternet.observe(this) {
-			Toast.makeText(this, " $it", Toast.LENGTH_SHORT).show()
-			ProgressDialogUtil.dismissProgressDialog()
-		}
-	}
+        viewModel.commonResponse.observe(this) {
+            handleCommonResponse(this, it)
+            ProgressDialogUtil.dismissProgressDialog()
+            finish()
+        }
+
+
+        viewModel.isLoading.observe(this) {
+            Log.e("value==>", it.toString())
+            if (it) {
+                ProgressDialogUtil.showProgressDialog(this)
+            } else {
+                ProgressDialogUtil.dismissProgressDialog()
+            }
+        }
+
+        viewModel.noInternet.observe(this) {
+            Toast.makeText(this, " $it", Toast.LENGTH_SHORT).show()
+            ProgressDialogUtil.dismissProgressDialog()
+        }
+    }
 }

@@ -6,7 +6,7 @@ import android.content.SharedPreferences;
 import com.google.gson.Gson;
 
 import org.lemonadestand.btb.features.common.models.UserListModel;
-import org.lemonadestand.btb.models.User;
+import org.lemonadestand.btb.features.login.models.User;
 
 public class Utils {
 
@@ -14,15 +14,15 @@ public class Utils {
     public static final String TOKEN = "token";
     public static final String USERID = "userID";
     public static final String UID = "unique_id";
-    public static final String ORG_ID = "org_id";
-    public static final String PICTURE = "picture";
-    public static final String ORG_PICTURE = "org_picture";
-    public static final String USER_NAME = "user_name";
-    public static final String USER_OBJECT = "user_object";
-    public static final String USER_INTEREST = "user_interest";
-    public static final String USER_EVENT = "user_event";
-    public static final String SELECTED_USER_ID_EVENT = "SELECTED_USER_ID";
-    public static final String SELECTED_USER_ID_INTEREST = "SELECTED_USER_ID_INTEREST";
+    public static final String ORG_ID= "org_id";
+    public static final String PICTURE= "picture";
+    public static final String ORG_PICTURE= "org_picture";
+    public static final String USER_NAME= "user_name";
+    public static final String USER_OBJECT= "user_object";
+    public static final String USER_INTEREST= "user_interest";
+    public static final String USER_EVENT= "user_event";
+    public static final String SELECTED_USER_ID_EVENT= "SELECTED_USER_ID";
+    public static final String SELECTED_USER_ID_INTEREST= "SELECTED_USER_ID_INTEREST";
 
     public static void saveData(Context context, String key, String data) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(FILENAME, Context.MODE_PRIVATE);
@@ -75,7 +75,6 @@ public class Utils {
             e.printStackTrace();
         }
     }
-
     public static void saveUserModelEvent(Context context, UserListModel value) {
         try {
             Gson gson = new Gson();
@@ -99,7 +98,6 @@ public class Utils {
             e.printStackTrace();
         }
     }
-
     public static void saveUserIDInterest(Context context, String value) {
         try {
             SharedPreferences sharedPreferences = context.getSharedPreferences(FILENAME, Context.MODE_PRIVATE);
@@ -129,7 +127,6 @@ public class Utils {
             return null;
         }
     }
-
     public static UserListModel getInterestUser(Context context) {
         try {
             SharedPreferences sharedPreferences = context.getSharedPreferences(FILENAME, Context.MODE_PRIVATE);
@@ -151,6 +148,7 @@ public class Utils {
             return null;
         }
     }
+
 
 
     public static void removeData(Context context, String key) {

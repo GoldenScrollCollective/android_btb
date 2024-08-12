@@ -1,10 +1,12 @@
 package org.lemonadestand.btb.features.post.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.ActionBarDrawerToggle
@@ -12,15 +14,17 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
+import com.bumptech.glide.Glide
 import com.google.android.material.navigation.NavigationView
 import org.lemonadestand.btb.R
+import org.lemonadestand.btb.constants.getImageUrlFromName
 import org.lemonadestand.btb.databinding.FragmentHomeBinding
 import org.lemonadestand.btb.features.dashboard.activities.DashboardActivity
 import org.lemonadestand.btb.features.post.fragments.ArchivedFragment
 import org.lemonadestand.btb.features.post.fragments.MineFragment
 import org.lemonadestand.btb.features.post.fragments.PrivateFragment
 import org.lemonadestand.btb.features.post.fragments.PublicFragment
-
+import org.lemonadestand.btb.utils.Utils
 
 
 class HomeFragment : Fragment(){
@@ -28,7 +32,7 @@ class HomeFragment : Fragment(){
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var actionBarDrawerToggle: ActionBarDrawerToggle
     private lateinit var navigationView: NavigationView
-    private lateinit var me: TextView
+    private lateinit var me: ImageView
 
     private lateinit var mBinding: FragmentHomeBinding
     override fun onCreateView(
@@ -75,7 +79,14 @@ class HomeFragment : Fragment(){
 //        }
 
 //        me = view.findViewById(R.id.userSortName);
+
         me = mBinding.userSortName;
+        var currentUser = Utils.getUser(requireActivity())
+        if (currentUser.picture != null) {
+            context?.let { Glide.with(it).load(currentUser.picture).into(me) }
+        } else {
+            context?.let { Glide.with(it).load(currentUser.name.trim().lowercase().getImageUrlFromName()).into(me) }
+        }
         me.setOnClickListener {
 
             val dashboardActivity = activity as? DashboardActivity

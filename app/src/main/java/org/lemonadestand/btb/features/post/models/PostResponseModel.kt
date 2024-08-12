@@ -2,9 +2,10 @@ package org.lemonadestand.btb.features.post.models
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
-import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.TimeZone
+import kotlin.Exception
 
 @Parcelize
 data class PostResponseModel (
@@ -34,10 +35,11 @@ data class PostModel (
     val user: User,
     val users: ArrayList<User>,
 ): Parcelable {
-    fun modifiedAt(): Date? {
+    fun createdAt(): Date? {
         val format = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
         try {
-            return format.parse(modified)
+            format.timeZone = TimeZone.getTimeZone("UTC+0")
+            return format.parse(created)
         } catch (e: Exception) {
             e.printStackTrace()
         }

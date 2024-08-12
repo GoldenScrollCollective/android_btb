@@ -88,7 +88,6 @@
                     android:layout_marginTop="5sp"
                     android:fadingEdge="horizontal"
                     android:fontFamily="@font/urbanist_medium"
-                    android:singleLine="true"
                     android:text="Comment text..."
                     android:textColor="#424242"
                     android:textSize="11sp"

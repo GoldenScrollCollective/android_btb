@@ -28,22 +28,21 @@
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/cardView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="32.5dp"
+                android:layout_height="32.5dp"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="10dp"
                 app:cardCornerRadius="7dp"
+                android:backgroundTint="@color/lightgrey"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
-                <TextView
+                <ImageView
                     android:id="@+id/userSortName"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@color/lightgrey"
-                    android:padding="7dp"
-                    android:text="LG"
-                    android:textSize="16dp" />
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="fitXY"
+                    />
 
             </androidx.cardview.widget.CardView>
 
