@@ -32,6 +32,10 @@ class FilterButton @JvmOverloads constructor(
     override fun setSelected(selected: Boolean) {
         super.setSelected(selected)
         Log.d(TAG, "isSelected: ${isSelected}")
-        setBackgroundResource(if (selected) R.drawable.filter_button_selected else R.drawable.gradient_bg)
+        if (selected) {
+            setBackgroundResource(R.drawable.filter_button_selected)
+        } else {
+            setBackgroundColor(resources.getColor(R.color.transparent))
+        }
     }
 }

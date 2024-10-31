@@ -1,10 +1,14 @@
 package org.lemonadestand.btb.features.post.fragments
 
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.ImageView
+import android.widget.PopupWindow
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.content.ContextCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -16,6 +20,8 @@ import org.lemonadestand.btb.constants.getImageUrlFromName
 import org.lemonadestand.btb.databinding.FragmentHomeBinding
 import org.lemonadestand.btb.features.dashboard.activities.DashboardActivity
 import org.lemonadestand.btb.features.dashboard.dialog.FilterDialog
+import org.lemonadestand.btb.features.dashboard.views.FilterView
+import org.lemonadestand.btb.singleton.Filter
 import org.lemonadestand.btb.utils.Utils
 
 
@@ -26,6 +32,8 @@ class HomeFragment : Fragment(){
     private lateinit var navigationView: NavigationView
     private lateinit var me: ImageView
     private lateinit var currentFragment: Fragment
+
+    private var filter = Filter.PUBLIC
 
     private lateinit var mBinding: FragmentHomeBinding
     override fun onCreateView(
@@ -142,11 +150,32 @@ class HomeFragment : Fragment(){
             mBinding.tvArchived.setTextColor(ContextCompat.getColor(requireContext(),R.color.black))
         }
         mBinding.btnFilter.setOnClickListener { view ->
-            val filterDialog = FilterDialog(view, requireContext())
-            filterDialog.onSelect = { value ->
+//            val filterDialog = FilterDialog(view, requireContext())
+//            filterDialog.onSelect = { value ->
+//                (currentFragment as? PublicFragment)?.refreshData(value)
+//            }
+//            filterDialog.show()
+
+            val filterView = FilterView(requireContext(), filter = filter)
+            val popupWindow = PopupWindow(
+                filterView,
+                WindowManager.LayoutParams.MATCH_PARENT,
+                WindowManager.LayoutParams.WRAP_CONTENT
+            )
+
+            popupWindow.setBackgroundDrawable(ColorDrawable(ContextCompat.getColor(requireContext(), android.R.color.darker_gray))) // Transparent color to remove default shadow
+            popupWindow.elevation = 20f
+
+            popupWindow.isFocusable = true
+            popupWindow.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+            popupWindow.showAsDropDown(view, 0, 0, 0)
+
+            filterView.onSelect = { value ->
+                filter = value
                 (currentFragment as? PublicFragment)?.refreshData(value)
+                popupWindow.dismiss()
             }
-            filterDialog.show()
         }
     }
 
