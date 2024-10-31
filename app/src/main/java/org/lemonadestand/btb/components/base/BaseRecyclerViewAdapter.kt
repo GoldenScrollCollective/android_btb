@@ -1,4 +1,4 @@
-package com.aisynchronized.ui.components.base
+package org.lemonadestand.btb.components.base
 
 import android.view.LayoutInflater
 import android.view.View

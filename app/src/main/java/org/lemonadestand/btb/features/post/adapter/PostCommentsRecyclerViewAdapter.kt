@@ -1,8 +1,6 @@
 package org.lemonadestand.btb.features.post.adapter
 
-import android.app.Activity
 import android.app.AlertDialog
-import android.content.Intent
 import android.content.res.Resources
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -15,15 +13,13 @@ import android.view.WindowManager
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
-import android.widget.PopupMenu
 import android.widget.PopupWindow
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.aisynchronized.ui.components.base.BaseRecyclerViewAdapter
+import org.lemonadestand.btb.components.base.BaseRecyclerViewAdapter
 import com.bumptech.glide.Glide
-import com.google.gson.Gson
 import org.lemonadestand.btb.R
 import org.lemonadestand.btb.constants.ClickType
 import org.lemonadestand.btb.constants.getImageUrlFromName
@@ -32,12 +28,9 @@ import org.lemonadestand.btb.extenstions.setOnSingleClickListener
 import org.lemonadestand.btb.features.common.models.body.AddCommentBody
 import org.lemonadestand.btb.features.common.models.body.LikeBodyModel
 import org.lemonadestand.btb.features.common.models.body.ShareStoryUser
-import org.lemonadestand.btb.features.post.activities.ReplyCommentActivity
-import org.lemonadestand.btb.features.post.activities.AddBonusActivity
 import org.lemonadestand.btb.features.post.fragments.PublicFragment
 import org.lemonadestand.btb.features.post.models.PostModel
 import org.lemonadestand.btb.interfaces.OnItemClickListener
-import org.lemonadestand.btb.singleton.Singleton.launchActivity
 import org.lemonadestand.btb.utils.Utils
 
 

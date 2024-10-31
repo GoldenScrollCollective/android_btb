@@ -24,13 +24,13 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/top_cn"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="10sp">
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/cardView"
                 android:layout_width="32.5dp"
                 android:layout_height="32.5dp"
-                android:layout_marginStart="10dp"
                 android:layout_marginTop="10dp"
                 app:cardCornerRadius="7dp"
                 android:backgroundTint="@color/lightgrey"
@@ -123,6 +123,16 @@
                 </LinearLayout>
 
             </FrameLayout>
+
+            <ImageView
+                android:id="@+id/btnFilter"
+                android:layout_width="32.5dp"
+                android:layout_height="32.5dp"
+                android:layout_marginTop="10dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:src="@drawable/chevron_right_24"
+                android:rotation="90"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

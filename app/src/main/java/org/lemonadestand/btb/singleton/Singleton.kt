@@ -78,3 +78,10 @@ object Singleton {
        var fileUpload =  "File Upload"
     }
 }
+
+object Filter {
+    const val PUBLIC = "public"
+    const val RESOURCE = "resource"
+    const val MINE = "mine"
+    const val ORGANIZATION = "organization"
+}

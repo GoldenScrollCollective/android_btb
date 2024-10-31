@@ -1,17 +1,12 @@
 package org.lemonadestand.btb.features.post.fragments
 
 import android.os.Bundle
-import android.util.Log
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.content.ContextCompat
-import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
@@ -20,10 +15,7 @@ import org.lemonadestand.btb.R
 import org.lemonadestand.btb.constants.getImageUrlFromName
 import org.lemonadestand.btb.databinding.FragmentHomeBinding
 import org.lemonadestand.btb.features.dashboard.activities.DashboardActivity
-import org.lemonadestand.btb.features.post.fragments.ArchivedFragment
-import org.lemonadestand.btb.features.post.fragments.MineFragment
-import org.lemonadestand.btb.features.post.fragments.PrivateFragment
-import org.lemonadestand.btb.features.post.fragments.PublicFragment
+import org.lemonadestand.btb.features.dashboard.dialog.FilterDialog
 import org.lemonadestand.btb.utils.Utils
 
 
@@ -33,6 +25,7 @@ class HomeFragment : Fragment(){
     private lateinit var actionBarDrawerToggle: ActionBarDrawerToggle
     private lateinit var navigationView: NavigationView
     private lateinit var me: ImageView
+    private lateinit var currentFragment: Fragment
 
     private lateinit var mBinding: FragmentHomeBinding
     override fun onCreateView(
@@ -121,6 +114,7 @@ class HomeFragment : Fragment(){
             view.elevation = 5f
             view.setBackgroundResource(R.drawable.back_for_all)
             mBinding.tvPublic.setTextColor(ContextCompat.getColor(requireContext(),R.color.black))
+            mBinding.btnFilter.visibility = View.VISIBLE
         }
         mBinding.tvPrivate.setOnClickListener { view ->
             setFragment(PrivateFragment())
@@ -129,6 +123,7 @@ class HomeFragment : Fragment(){
             view.elevation = 5f
             view.setBackgroundResource(R.drawable.back_for_all)
             mBinding.tvPrivate.setTextColor(ContextCompat.getColor(requireContext(),R.color.black))
+            mBinding.btnFilter.visibility = View.GONE
         }
         mBinding.tvMine.setOnClickListener { view ->
             setFragment(MineFragment())
@@ -146,10 +141,20 @@ class HomeFragment : Fragment(){
             view.setBackgroundResource(R.drawable.back_for_all)
             mBinding.tvArchived.setTextColor(ContextCompat.getColor(requireContext(),R.color.black))
         }
+        mBinding.btnFilter.setOnClickListener { view ->
+            val filterDialog = FilterDialog(view, requireContext())
+            filterDialog.onSelect = { value ->
+                (currentFragment as? PublicFragment)?.refreshData(value)
+            }
+            filterDialog.show()
+        }
     }
 
     private fun setFragment(fragment: Fragment?) {
-        childFragmentManager.beginTransaction().replace(R.id.home_fragment, fragment!!).commit()
+        fragment?.let { it ->
+            currentFragment = it
+            childFragmentManager.beginTransaction().replace(R.id.home_fragment, it).commit()
+        }
     }
 
     private fun setDefaultView() {

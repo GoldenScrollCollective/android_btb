@@ -41,6 +41,7 @@ import org.lemonadestand.btb.interfaces.OnItemClickListener
 import org.lemonadestand.btb.features.common.models.body.LikeBodyModel
 import org.lemonadestand.btb.features.post.models.Bonus
 import org.lemonadestand.btb.features.post.models.User
+import org.lemonadestand.btb.singleton.Filter
 import org.lemonadestand.btb.utils.Utils
 
 
@@ -285,13 +286,10 @@ class PublicFragment : Fragment(), OnItemClickListener {
             }
         })
     }
-    private fun refreshData()
+
+    fun refreshData(visibility: String = Filter.PUBLIC)
     {
         startLoading()
-        viewModel.getPostList(visibility = Singleton.PUBLIC, page = 0)
+        viewModel.getPostList(visibility, page = 0)
     }
-
-
-
-
 }
