@@ -11,11 +11,11 @@ import kotlin.Exception
 data class PostResponseModel (
     val status: Boolean,
     val message: String,
-    val data: List<PostModel>
+    val data: List<Post>
 ) : Parcelable
 
 @Parcelize
-data class PostModel (
+data class Post (
     val id: String,
     val uniq_id: String,
     val type: String? = null,
@@ -25,11 +25,12 @@ data class PostModel (
     val title: String? = null,
     val body: DatumBody,
     val visibility: String,
+    val media: String?,
     val created: String,
     val modified: String,
     val depth: String,
     val meta: DatumMeta,
-    val replies: List<PostModel>,
+    val replies: List<Post>,
     val html: String,
     val by_user: User,
     val user: User,

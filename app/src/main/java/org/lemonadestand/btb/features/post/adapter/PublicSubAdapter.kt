@@ -26,47 +26,39 @@ import com.google.gson.Gson
 import org.lemonadestand.btb.constants.ClickType
 import org.lemonadestand.btb.R
 import org.lemonadestand.btb.utils.Utils
-import org.lemonadestand.btb.features.post.activities.ReplyCommentActivity
 import org.lemonadestand.btb.constants.getImageUrlFromName
 import org.lemonadestand.btb.extenstions.ago
 import org.lemonadestand.btb.interfaces.OnItemClickListener
 import org.lemonadestand.btb.features.common.models.body.LikeBodyModel
 import org.lemonadestand.btb.features.post.activities.AddBonusActivity
-import org.lemonadestand.btb.features.post.models.PostModel
+import org.lemonadestand.btb.features.post.models.Post
 import org.lemonadestand.btb.singleton.Singleton.launchActivity
 
 import android.app.AlertDialog
 import android.graphics.drawable.GradientDrawable
-import android.text.Html
 import android.util.TypedValue
 import android.view.Gravity
 import android.widget.EditText
-import androidx.core.net.toUri
-import androidx.lifecycle.ViewModelProvider
-import org.lemonadestand.btb.constants.ProgressDialogUtil
-import org.lemonadestand.btb.constants.handleCommonResponse
+import org.lemonadestand.btb.components.MediaView
 import org.lemonadestand.btb.features.common.models.body.AddCommentBody
 import org.lemonadestand.btb.features.common.models.body.ShareStoryUser
 import org.lemonadestand.btb.features.post.fragments.PublicFragment
-import org.lemonadestand.btb.mvvm.factory.CommonViewModelFactory
-import org.lemonadestand.btb.mvvm.repository.HomeRepository
-import org.lemonadestand.btb.mvvm.viewmodel.HomeViewModel
-import org.lemonadestand.btb.singleton.Singleton
 
 
-class PublicSubAdapter(private val list: ArrayList<PostModel>, var context: Context, private var superPosition: Int) :
+class PublicSubAdapter(private val list: ArrayList<Post>, var context: Context, private var superPosition: Int) :
     RecyclerView.Adapter<PublicSubAdapter.ViewHolder>() {
     private var onItemClick: OnItemClickListener? = null
 
     private lateinit var usernameEvent: LinearLayout
+
+    var onPreview: ((value: Post) -> Unit)? = null
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
     ): ViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
-        val listItem =
-            layoutInflater.inflate(R.layout.row_public_sub, parent, false)
+        val listItem = layoutInflater.inflate(R.layout.row_public_sub, parent, false)
 
         return ViewHolder(listItem)
     }
@@ -77,59 +69,55 @@ class PublicSubAdapter(private val list: ArrayList<PostModel>, var context: Cont
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val post = list[position]
+        Log.d("Post.media", post.media ?: "")
+        Log.e("TAG", "** H " + post.toString())
 
-        val data = list[position]
-        Log.e("TAG", "** H " + data.toString())
-
-
-
-        if (data.user.picture != null) {
+        if (post.user.picture != null) {
             // show image
-            Glide.with(context).load(data.user.picture).into(holder.userImage)
+            Glide.with(context).load(post.user.picture).into(holder.userImage)
         } else {
 
-            Log.e("url=>", data.user.name!!.trim().lowercase().getImageUrlFromName())
-            Glide.with(context).load(data.user.name.trim().lowercase().getImageUrlFromName())
+            Log.e("url=>", post.user.name!!.trim().lowercase().getImageUrlFromName())
+            Glide.with(context).load(post.user.name.trim().lowercase().getImageUrlFromName())
                 .into(holder.userImage)
         }
 
-        if (data.by_user.picture != null) {
+        if (post.by_user.picture != null) {
             // show image
-            Glide.with(context).load(data.by_user.picture).into(holder.byUserImage)
+            Glide.with(context).load(post.by_user.picture).into(holder.byUserImage)
         } else {
             holder.cdSubName.visibility = View.INVISIBLE
-            Log.e("url=>", data.by_user.name!!.trim().lowercase().getImageUrlFromName())
+            Log.e("url=>", post.by_user.name!!.trim().lowercase().getImageUrlFromName())
 //            Glide.with(context).load(data.by_user.name.trim().lowercase().getImageUrlFromName())
 //                .into(holder.byUserImage)
         }
 
-
-
-        if (data.type != null) {
+        if (post.type != null) {
             //comment
 
-            if (data.users.size > 1) {
-                holder.tvTitle.text = data.user.name + " +" + (data.users.size - 1)            //Add Uses
+            if (post.users.size > 1) {
+                holder.tvTitle.text = post.user.name + " +" + (post.users.size - 1)            //Add Uses
             } else {
-                holder.tvTitle.text = data.user.name
+                holder.tvTitle.text = post.user.name
             }
-            holder.txtEventName.text = data.title
+            holder.txtEventName.text = post.title
             holder.txtShared.text = buildString {
                 append("for")
             }
             holder.tvDesc.text = buildString {
                 append("by ")
-                append(data.by_user.name)
+                append(post.by_user.name)
                 append(" · ")
-                append(data.createdAt()?.let { it.ago() })
+                append(post.createdAt()?.let { it.ago() })
             }
         } else {
             //Post
-            holder.tvTitle.text = data.user.name
+            holder.tvTitle.text = post.user.name
             holder.txtEventName.text = ""
             holder.txtShared.text = buildString {
                 append("shared this story · ")
-                append(data.createdAt()?.let { it.ago() })
+                append(post.createdAt()?.let { it.ago() })
             }
             holder.tvDesc.text = buildString {
                 append("")
@@ -138,9 +126,13 @@ class PublicSubAdapter(private val list: ArrayList<PostModel>, var context: Cont
             holder.lnBonus.visibility = View.GONE
         }
 
-        holder.tvComment.text = HtmlCompat.fromHtml(data.html, HtmlCompat.FROM_HTML_MODE_LEGACY).trim()
+        holder.tvComment.text = HtmlCompat.fromHtml(post.html, HtmlCompat.FROM_HTML_MODE_LEGACY).trim()
+        holder.mediaView.post = post
+        holder.mediaView.setOnClickListener {
+            onPreview?.invoke(post)
+        }
 
-        if (data.replies.isNotEmpty()) {
+        if (post.replies.isNotEmpty()) {
             holder.txtCommentCount.text = buildString {
                 append("Comment")
 //                append("(")
@@ -149,15 +141,15 @@ class PublicSubAdapter(private val list: ArrayList<PostModel>, var context: Cont
             }
 
             var commentStr = ""
-            if (data.replies.size == 1) commentStr = "1 Comment"
-            if (data.replies.size > 1) commentStr = "${data.replies.size} Comments"
+            if (post.replies.size == 1) commentStr = "1 Comment"
+            if (post.replies.size > 1) commentStr = "${post.replies.size} Comments"
 
             holder.txtCommentCount1.text = buildString {
                 append(commentStr)
             }
         }
 
-        if (!data.meta.like.isNullOrEmpty()) {
+        if (!post.meta.like.isNullOrEmpty()) {
             holder.txtLikeCount.text = buildString {
                 append("Like")
 //                append("(")
@@ -166,10 +158,10 @@ class PublicSubAdapter(private val list: ArrayList<PostModel>, var context: Cont
             }
 
             holder.txtLikeCount1.text = buildString {
-                append(data.meta.like.size)
+                append(post.meta.like.size)
             }
 
-            if (data.meta.like.size != 0) {
+            if (post.meta.like.size != 0) {
                 holder.imageLikeMain.setImageResource(R.drawable.ic_like_up)
             }
         }
@@ -183,7 +175,7 @@ class PublicSubAdapter(private val list: ArrayList<PostModel>, var context: Cont
 
         holder.lnBonus.setOnClickListener {
 
-            val json = Gson().toJson(data)
+            val json = Gson().toJson(post)
             (context as Activity).launchActivity<AddBonusActivity> {
                 putExtra("reply_data", json)
             }
@@ -240,7 +232,7 @@ class PublicSubAdapter(private val list: ArrayList<PostModel>, var context: Cont
                         resource = "user/${PublicFragment.currentUser!!.uniqId}",
                         html = message,
                         created = "",
-                        parent_id = "${data?.uniq_id}",
+                        parent_id = "${post?.uniq_id}",
                         modified = "",
                         by_user_id = "",
 
@@ -314,7 +306,7 @@ class PublicSubAdapter(private val list: ArrayList<PostModel>, var context: Cont
             val layout2 = LinearLayout(context)
             layout2.orientation = LinearLayout.VERTICAL
 
-            for( i in 0 until data.users.size) {
+            for( i in 0 until post.users.size) {
 
                 val layout = LinearLayout(context)
                 layout.orientation = LinearLayout.HORIZONTAL
@@ -330,12 +322,12 @@ class PublicSubAdapter(private val list: ArrayList<PostModel>, var context: Cont
                 image.scaleType = ImageView.ScaleType.FIT_XY
 
                 Log.i("Miner=>",
-                    data.toString()
+                    post.toString()
                 )
-                Glide.with(context).load(data.users[i].picture).into(image)
+                Glide.with(context).load(post.users[i].picture).into(image)
 
                 val messagearea = TextView(context)
-                messagearea.setText(data.users[i].name)
+                messagearea.setText(post.users[i].name)
                 messagearea.setTextSize(TypedValue.COMPLEX_UNIT_SP, 10f)
                 messagearea.setPadding(20, 0, 10, 0)
 
@@ -382,32 +374,32 @@ class PublicSubAdapter(private val list: ArrayList<PostModel>, var context: Cont
             like.setOnClickListener {
                 popupWindow.dismiss()
                 onItemClick!!.onItemClicked(LikeBodyModel(metaName = "like", metaValue = "like", byUserId = Utils.getData(context,
-                    Utils.UID), uniqueId = data.uniq_id),position,
+                    Utils.UID), uniqueId = post.uniq_id),position,
                     ClickType.LIKE_POST,superIndex = superPosition)
             }
             love.setOnClickListener {
                 popupWindow.dismiss()
                 onItemClick!!.onItemClicked(LikeBodyModel(metaName = "like", metaValue = "love", byUserId = Utils.getData(context,
-                    Utils.UID), uniqueId = data.uniq_id),position,
+                    Utils.UID), uniqueId = post.uniq_id),position,
                     ClickType.LIKE_POST,superIndex = superPosition)
             }
             awesome.setOnClickListener {
                 popupWindow.dismiss()
                 onItemClick!!.onItemClicked(LikeBodyModel(metaName = "like", metaValue = "awesome", byUserId = Utils.getData(context,
-                    Utils.UID), uniqueId = data.uniq_id),position,
+                    Utils.UID), uniqueId = post.uniq_id),position,
                     ClickType.LIKE_POST,superIndex = superPosition)
             }
 
             thanks.setOnClickListener {
                 popupWindow.dismiss()
                 onItemClick!!.onItemClicked(LikeBodyModel(metaName = "like", metaValue = "thanks", byUserId = Utils.getData(context,
-                    Utils.UID), uniqueId = data.uniq_id),position,
+                    Utils.UID), uniqueId = post.uniq_id),position,
                     ClickType.LIKE_POST,superIndex = superPosition)
             }
             haha.setOnClickListener {
                 popupWindow.dismiss()
                 onItemClick!!.onItemClicked(LikeBodyModel(metaName = "like", metaValue = "haha", byUserId = Utils.getData(context,
-                    Utils.UID), uniqueId = data.uniq_id),position,
+                    Utils.UID), uniqueId = post.uniq_id),position,
                     ClickType.LIKE_POST,superIndex = superPosition)
             }
 
@@ -431,7 +423,7 @@ class PublicSubAdapter(private val list: ArrayList<PostModel>, var context: Cont
 
             when (swipeItem.position) {
                 0 -> {
-                    onItemClick!!.onItemClicked(data,position, ClickType.DELETE_POST, superIndex = superPosition)
+                    onItemClick!!.onItemClicked(post,position, ClickType.DELETE_POST, superIndex = superPosition)
 
                 }
 
@@ -454,7 +446,7 @@ class PublicSubAdapter(private val list: ArrayList<PostModel>, var context: Cont
         val commentsRecyclerViewAdapter = PostCommentsRecyclerViewAdapter(position,onItemClick)   // fixed
         onItemClick?.let { commentsRecyclerViewAdapter.setPostItemClick(it) }
         holder.commentsRecyclerView.adapter = commentsRecyclerViewAdapter
-        commentsRecyclerViewAdapter.values = data.replies
+        commentsRecyclerViewAdapter.values = post.replies
     }
 
     override fun getItemCount(): Int {
@@ -470,6 +462,7 @@ class PublicSubAdapter(private val list: ArrayList<PostModel>, var context: Cont
         var lnComment: LinearLayout
         var swipeLayout: SimpleSwipeLayout
         var tvComment: TextView
+        var mediaView: MediaView
         var txtShared: TextView
         var userImage: ImageView
         var byUserImage: ImageView
@@ -492,6 +485,7 @@ class PublicSubAdapter(private val list: ArrayList<PostModel>, var context: Cont
             lnComment = itemView.findViewById(R.id.ln_comment)
             swipeLayout = itemView.findViewById(R.id.swipe_layout)
             tvComment = itemView.findViewById(R.id.tv_comment)
+            mediaView = itemView.findViewById(R.id.mediaView)
             userImage = itemView.findViewById(R.id.user_image)
             txtShared = itemView.findViewById(R.id.txt_shared)
             byUserImage = itemView.findViewById(R.id.by_user_image)

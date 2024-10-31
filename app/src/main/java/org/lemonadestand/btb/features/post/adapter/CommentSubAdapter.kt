@@ -27,11 +27,11 @@ import org.lemonadestand.btb.R
 import org.lemonadestand.btb.features.post.activities.ReplyCommentActivity
 import org.lemonadestand.btb.features.post.activities.AddBonusActivity
 import org.lemonadestand.btb.constants.getImageUrlFromName
-import org.lemonadestand.btb.features.post.models.PostModel
+import org.lemonadestand.btb.features.post.models.Post
 import org.lemonadestand.btb.singleton.Singleton.launchActivity
 
 
-class CommentSubAdapter(private val list: ArrayList<PostModel>, var context: Context) :
+class CommentSubAdapter(private val list: ArrayList<Post>, var context: Context) :
     RecyclerView.Adapter<CommentSubAdapter.ViewHolder>() {
     override fun onCreateViewHolder(
         parent: ViewGroup,

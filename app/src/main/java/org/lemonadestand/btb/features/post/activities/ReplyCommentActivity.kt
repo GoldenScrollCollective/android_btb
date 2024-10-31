@@ -14,7 +14,7 @@ import org.lemonadestand.btb.constants.handleCommonResponse
 import org.lemonadestand.btb.features.common.models.body.AddCommentBody
 import org.lemonadestand.btb.features.common.models.body.ShareStoryUser
 import org.lemonadestand.btb.features.login.models.User
-import org.lemonadestand.btb.features.post.models.PostModel
+import org.lemonadestand.btb.features.post.models.Post
 import org.lemonadestand.btb.mvvm.factory.CommonViewModelFactory
 import org.lemonadestand.btb.mvvm.repository.HomeRepository
 import org.lemonadestand.btb.mvvm.viewmodel.HomeViewModel
@@ -26,7 +26,7 @@ class ReplyCommentActivity : AppCompatActivity() {
     private lateinit var mBinding: ActivityReplyCommentBinding
     private var currentUser: User? = null
 
-    private var postModel: PostModel? = null
+    private var post: Post? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_reply_comment)
@@ -42,9 +42,9 @@ class ReplyCommentActivity : AppCompatActivity() {
         if (bundle != null) {
             val jsonData = bundle.getString("reply_data")
             val gson = Gson()
-            postModel = gson.fromJson(jsonData, PostModel::class.java)
+            post = gson.fromJson(jsonData, Post::class.java)
 
-            Log.e("replayModel", postModel.toString())
+            Log.e("replayModel", post.toString())
         }
         currentUser = Utils.getUser(this)
     }
@@ -66,7 +66,7 @@ class ReplyCommentActivity : AppCompatActivity() {
                 resource = "user/${currentUser!!.uniqId}",
                 html = mBinding.htmlEditor.text,
                 created = "",
-                parent_id = "${postModel?.uniq_id}",
+                parent_id = "${post?.uniq_id}",
                 modified = "",
                 by_user_id = "",
 

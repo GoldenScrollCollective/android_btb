@@ -29,7 +29,7 @@ import org.lemonadestand.btb.databinding.FragmentPrivateBinding
 import org.lemonadestand.btb.constants.getDate
 import org.lemonadestand.btb.constants.handleCommonResponse
 import org.lemonadestand.btb.features.post.models.PostModelDate
-import org.lemonadestand.btb.features.post.models.PostModel
+import org.lemonadestand.btb.features.post.models.Post
 import org.lemonadestand.btb.mvvm.factory.CommonViewModelFactory
 import org.lemonadestand.btb.mvvm.repository.HomeRepository
 import org.lemonadestand.btb.mvvm.viewmodel.HomeViewModel
@@ -139,7 +139,7 @@ class PrivateFragment : Fragment(), OnItemClickListener {
                         postDateList.add(
                             PostModelDate(
                                 date = it.data[i].created,
-                                postList = it.data as ArrayList<PostModel>
+                                postList = it.data as ArrayList<Post>
                             )
                         )
                     }
@@ -248,8 +248,8 @@ class PrivateFragment : Fragment(), OnItemClickListener {
         clickedSuperPosition = superIndex
         clickType = type
         if (type == ClickType.DELETE_POST) {
-            val postModel = `object` as PostModel
-            viewModel.deletePost(postModel.uniq_id)
+            val post = `object` as Post
+            viewModel.deletePost(post.uniq_id)
         } else
             if (type == ClickType.LIKE_POST) {
                 val likeResponseModel = `object` as LikeBodyModel

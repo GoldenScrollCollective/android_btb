@@ -12,10 +12,14 @@ import org.lemonadestand.btb.R
 import org.lemonadestand.btb.constants.getDate
 import org.lemonadestand.btb.interfaces.OnItemClickListener
 import org.lemonadestand.btb.features.post.models.PostModelDate
-import org.lemonadestand.btb.features.post.models.PostModel
+import org.lemonadestand.btb.features.post.models.Post
 
-class PublicAdapter(private var list: ArrayList<PostModelDate>, var context: Context) :
-    RecyclerView.Adapter<PublicAdapter.ViewHolder>() {
+class PublicAdapter(
+    private var list: ArrayList<PostModelDate>,
+    var context: Context
+) : RecyclerView.Adapter<PublicAdapter.ViewHolder>() {
+
+    var onPreview: ((value: Post) -> Unit)? = null
 
     private var onItemClick: OnItemClickListener? = null
     override fun onCreateViewHolder(
@@ -28,8 +32,7 @@ class PublicAdapter(private var list: ArrayList<PostModelDate>, var context: Con
         return ViewHolder(listItem)
     }
 
-    fun setOnItemClick(onItemClickListener: OnItemClickListener)
-    {
+    fun setOnItemClick(onItemClickListener: OnItemClickListener) {
         this.onItemClick = onItemClickListener
     }
 
@@ -38,7 +41,7 @@ class PublicAdapter(private var list: ArrayList<PostModelDate>, var context: Con
         val data = list[position]
         holder.tvDate.text = getDate(data.date!!)
 
-        val tempPostList: ArrayList<PostModel> = ArrayList()
+        val tempPostList: ArrayList<Post> = ArrayList()
 
         for (i in 0 until data.postList.size) {
             if (getDate(data.postList[i].created) == getDate(data.date!!)) {
@@ -48,6 +51,7 @@ class PublicAdapter(private var list: ArrayList<PostModelDate>, var context: Con
         Log.i("context=>>", tempPostList.toString())
         val adapter = PublicSubAdapter(tempPostList, context, position)
         onItemClick?.let { adapter.setItemClick(it) }
+        adapter.onPreview = { post -> onPreview?.invoke(post) }
         holder.recyclerView.setHasFixedSize(true)
         holder.recyclerView.layoutManager = LinearLayoutManager(context)
         holder.recyclerView.adapter = adapter

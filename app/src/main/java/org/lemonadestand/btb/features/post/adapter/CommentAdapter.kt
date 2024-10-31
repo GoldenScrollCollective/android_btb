@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import org.lemonadestand.btb.R
 import org.lemonadestand.btb.constants.getDate
 import org.lemonadestand.btb.features.post.models.CommentModelDate
-import org.lemonadestand.btb.features.post.models.PostModel
+import org.lemonadestand.btb.features.post.models.Post
 
 class CommentAdapter(private val list: ArrayList<CommentModelDate>, var context: Context) :
     RecyclerView.Adapter<CommentAdapter.ViewHolder>() {
@@ -29,7 +29,7 @@ class CommentAdapter(private val list: ArrayList<CommentModelDate>, var context:
         val data = list[position]
         holder.tvDate.text = getDate(data.date!!)
 
-        val tempPostList: ArrayList<PostModel> = ArrayList()
+        val tempPostList: ArrayList<Post> = ArrayList()
 
         for (i in 0 until data.commentList.size) {
             if (getDate(data.commentList[i].created) == getDate(data.date!!)) {

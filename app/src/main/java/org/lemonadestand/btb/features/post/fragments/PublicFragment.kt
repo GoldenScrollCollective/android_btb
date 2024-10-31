@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView
 import org.lemonadestand.btb.constants.ClickType
 import org.lemonadestand.btb.constants.ProgressDialogUtil
 import org.lemonadestand.btb.R
+import org.lemonadestand.btb.components.base.BaseFragment
 import org.lemonadestand.btb.features.dashboard.activities.DashboardActivity
 import org.lemonadestand.btb.features.post.activities.ShareStoryActivity
 import org.lemonadestand.btb.features.post.activities.ShowAppreciationActivity
@@ -30,7 +31,7 @@ import org.lemonadestand.btb.databinding.FragmentPublicBinding
 import org.lemonadestand.btb.constants.getDate
 import org.lemonadestand.btb.constants.handleCommonResponse
 import org.lemonadestand.btb.features.post.models.PostModelDate
-import org.lemonadestand.btb.features.post.models.PostModel
+import org.lemonadestand.btb.features.post.models.Post
 import org.lemonadestand.btb.mvvm.factory.CommonViewModelFactory
 import org.lemonadestand.btb.mvvm.repository.HomeRepository
 import org.lemonadestand.btb.mvvm.viewmodel.HomeViewModel
@@ -39,13 +40,14 @@ import org.lemonadestand.btb.singleton.Singleton.launchActivity
 import org.lemonadestand.btb.extenstions.hide
 import org.lemonadestand.btb.interfaces.OnItemClickListener
 import org.lemonadestand.btb.features.common.models.body.LikeBodyModel
+import org.lemonadestand.btb.features.dashboard.fragments.MediaPreviewBottomSheetDialog
 import org.lemonadestand.btb.features.post.models.Bonus
 import org.lemonadestand.btb.features.post.models.User
 import org.lemonadestand.btb.singleton.Filter
 import org.lemonadestand.btb.utils.Utils
 
 
-class PublicFragment : Fragment(), OnItemClickListener {
+class PublicFragment : BaseFragment(R.layout.fragment_public), OnItemClickListener {
     private lateinit var mBinding: FragmentPublicBinding
     private lateinit var publicAdapter: PublicAdapter
 //    private lateinit var viewModel: HomeViewModel
@@ -65,6 +67,7 @@ class PublicFragment : Fragment(), OnItemClickListener {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        super.onCreateView(inflater, container, savedInstanceState)
 
         mBinding = FragmentPublicBinding.inflate(
             LayoutInflater.from(inflater.context),
@@ -123,11 +126,13 @@ class PublicFragment : Fragment(), OnItemClickListener {
     }
 
     private fun setUpPublicAdapter() {
-
         publicAdapter = PublicAdapter(postDateList, requireContext())
         publicAdapter.setOnItemClick(this)
         mBinding.rvPublic.adapter = publicAdapter
-
+        publicAdapter.onPreview = { post ->
+            val previewBottomSheetDialog = MediaPreviewBottomSheetDialog(this, post)
+            previewBottomSheetDialog.show()
+        }
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -150,7 +155,7 @@ class PublicFragment : Fragment(), OnItemClickListener {
                         postDateList.add(
                             PostModelDate(
                                 date = it.data[i].created,
-                                postList = it.data as ArrayList<PostModel>
+                                postList = it.data as ArrayList<Post>
                             )
                         )
                     }
@@ -258,8 +263,8 @@ class PublicFragment : Fragment(), OnItemClickListener {
         clickedSuperPosition = superIndex
         clickType = type
         if (type == ClickType.DELETE_POST) {
-            val postModel = `object` as PostModel
-            viewModel.deletePost(postModel.uniq_id)
+            val post = `object` as Post
+            viewModel.deletePost(post.uniq_id)
         } else
             if (type == ClickType.LIKE_POST) {
                 val likeResponseModel = `object` as LikeBodyModel

@@ -29,16 +29,16 @@ import org.lemonadestand.btb.features.common.models.body.AddCommentBody
 import org.lemonadestand.btb.features.common.models.body.LikeBodyModel
 import org.lemonadestand.btb.features.common.models.body.ShareStoryUser
 import org.lemonadestand.btb.features.post.fragments.PublicFragment
-import org.lemonadestand.btb.features.post.models.PostModel
+import org.lemonadestand.btb.features.post.models.Post
 import org.lemonadestand.btb.interfaces.OnItemClickListener
 import org.lemonadestand.btb.utils.Utils
 
 
-class PostCommentsRecyclerViewAdapter(private var superPosition: Int, private var onPostItemClick: OnItemClickListener?): BaseRecyclerViewAdapter<PostModel>(R.layout.layout_post_comment_list_item, true) {
+class PostCommentsRecyclerViewAdapter(private var superPosition: Int, private var onPostItemClick: OnItemClickListener?): BaseRecyclerViewAdapter<Post>(R.layout.layout_post_comment_list_item, true) {
 //    private var onPostItemClick: OnItemClickListener? = null
     fun setPostItemClick(listener: OnItemClickListener) { onPostItemClick = listener }
 
-    override fun bindView(holder: ViewHolder, item: PostModel, position: Int) {
+    override fun bindView(holder: ViewHolder, item: Post, position: Int) {
         super.bindView(holder, item, position)
 
         with(holder.itemView) {

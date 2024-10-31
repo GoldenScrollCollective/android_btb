@@ -1,8 +1,6 @@
 package org.lemonadestand.btb.features.post.models
 
-import org.lemonadestand.btb.features.post.models.PostModel
-
 data class PostModelDate (
-    var postList  :ArrayList<PostModel> = ArrayList(),
+    var postList  :ArrayList<Post> = ArrayList(),
     var date : String ? = null
 )

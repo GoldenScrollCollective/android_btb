@@ -21,11 +21,12 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.transition.Visibility
 import com.google.android.material.navigation.NavigationView
+import org.lemonadestand.btb.components.base.BaseActivity
 import org.lemonadestand.btb.constants.getImageUrlFromName
 import org.lemonadestand.btb.extenstions.setImageUrl
 import org.lemonadestand.btb.utils.Utils
 
-class DashboardActivity : AppCompatActivity() {
+class DashboardActivity : BaseActivity(R.layout.activity_dashboard) {
 
     private lateinit var bottomNav: BottomNavigationView
     private lateinit var navController: NavController
@@ -35,23 +36,21 @@ class DashboardActivity : AppCompatActivity() {
     private lateinit var line4: TextView
     private lateinit var mainDrawer: DrawerLayout
 
+    override fun onResume() {
+        super.onResume()
 
+        updateNavigationView()
+    }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_dashboard)
+    override fun init() {
+        super.init()
+
         initLayoutViews()
         setBottomNavigation()
         setBottomListener()
         handleBottomUiEvent(bottomNav.selectedItemId)
 
         mainDrawer = findViewById(R.id.main_drawer)
-    }
-
-    override fun onResume() {
-        super.onResume()
-
-        updateNavigationView()
     }
 
     // Expose a method to control DrawerLayout visibility
