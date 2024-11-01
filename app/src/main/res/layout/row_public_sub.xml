@@ -158,8 +158,7 @@
                     android:id="@+id/mediaView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10sp"
-                    android:visibility="gone"/>
+                    android:layout_marginTop="10sp" />
 
                 <org.lemonadestand.btb.components.ReactionsView
                     android:id="@+id/reactionsView"

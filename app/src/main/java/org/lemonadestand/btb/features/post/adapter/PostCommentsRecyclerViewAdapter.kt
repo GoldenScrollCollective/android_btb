@@ -21,6 +21,8 @@ import androidx.recyclerview.widget.RecyclerView
 import org.lemonadestand.btb.components.base.BaseRecyclerViewAdapter
 import com.bumptech.glide.Glide
 import org.lemonadestand.btb.R
+import org.lemonadestand.btb.components.CommentReactionsView
+import org.lemonadestand.btb.components.ReactionsView
 import org.lemonadestand.btb.constants.ClickType
 import org.lemonadestand.btb.constants.getImageUrlFromName
 import org.lemonadestand.btb.extenstions.ago
@@ -34,7 +36,10 @@ import org.lemonadestand.btb.interfaces.OnItemClickListener
 import org.lemonadestand.btb.utils.Utils
 
 
-class PostCommentsRecyclerViewAdapter(private var superPosition: Int, private var onPostItemClick: OnItemClickListener?): BaseRecyclerViewAdapter<Post>(R.layout.layout_post_comment_list_item, true) {
+class PostCommentsRecyclerViewAdapter(
+    private var superPosition: Int,
+    private var onPostItemClick: OnItemClickListener?
+): BaseRecyclerViewAdapter<Post>(R.layout.layout_post_comment_list_item, true) {
 //    private var onPostItemClick: OnItemClickListener? = null
     fun setPostItemClick(listener: OnItemClickListener) { onPostItemClick = listener }
 
@@ -83,8 +88,6 @@ class PostCommentsRecyclerViewAdapter(private var superPosition: Int, private va
                         LikeBodyModel(metaName = "like", metaValue = "like", byUserId = Utils.getData(context,
                         Utils.UID), uniqueId = item.uniq_id), position,
                         ClickType.LIKE_POST, superIndex = superPosition)
-
-
                 }
                 love.setOnClickListener {
                     popupWindow.dismiss()
@@ -120,7 +123,7 @@ class PostCommentsRecyclerViewAdapter(private var superPosition: Int, private va
                 val resourceId: Int = resources.getIdentifier("navigation_bar_height", "dimen", "android")
                 popupWindow.isFocusable = true
                 popupWindow.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-                popupWindow.showAsDropDown(it, 100, 0, 0)
+                popupWindow.showAsDropDown(it, 0, 0, 0)
             }
 
             val btnReply = findViewById<TextView>(R.id.btnReply)
@@ -236,15 +239,8 @@ class PostCommentsRecyclerViewAdapter(private var superPosition: Int, private va
 //                }
             }
 
-            val likeCountView = findViewById<TextView>(R.id.likeCountView)
-            likeCountView.text = "${item.meta.like?.size}"
-
-            val likeIconView = findViewById<ImageView>(R.id.likeIconView)
-            if ((item.meta.like?.size ?: 0) > 0) {
-                likeIconView.setImageResource(R.drawable.ic_like_up)
-            } else {
-                likeIconView.setImageResource(R.drawable.ic_like)
-            }
+            val reactionsView = findViewById<CommentReactionsView>(R.id.reactionsView)
+            reactionsView.post = item
 
             val repliesRecyclerView = findViewById<RecyclerView>(R.id.repliesRecyclerView)
             val repliesRecyclerViewAdapter = PostCommentsRecyclerViewAdapter(position, onPostItemClick)
