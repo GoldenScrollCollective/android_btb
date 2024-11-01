@@ -40,6 +40,7 @@ import android.util.TypedValue
 import android.view.Gravity
 import android.widget.EditText
 import org.lemonadestand.btb.components.MediaView
+import org.lemonadestand.btb.components.ReactionsView
 import org.lemonadestand.btb.features.common.models.body.AddCommentBody
 import org.lemonadestand.btb.features.common.models.body.ShareStoryUser
 import org.lemonadestand.btb.features.post.fragments.PublicFragment
@@ -70,32 +71,23 @@ class PublicSubAdapter(private val list: ArrayList<Post>, var context: Context, 
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val post = list[position]
-        Log.d("Post.media", post.media ?: "")
-        Log.e("TAG", "** H " + post.toString())
 
         if (post.user.picture != null) {
-            // show image
             Glide.with(context).load(post.user.picture).into(holder.userImage)
         } else {
-
             Log.e("url=>", post.user.name!!.trim().lowercase().getImageUrlFromName())
             Glide.with(context).load(post.user.name.trim().lowercase().getImageUrlFromName())
                 .into(holder.userImage)
         }
 
         if (post.by_user.picture != null) {
-            // show image
             Glide.with(context).load(post.by_user.picture).into(holder.byUserImage)
         } else {
             holder.cdSubName.visibility = View.INVISIBLE
             Log.e("url=>", post.by_user.name!!.trim().lowercase().getImageUrlFromName())
-//            Glide.with(context).load(data.by_user.name.trim().lowercase().getImageUrlFromName())
-//                .into(holder.byUserImage)
         }
 
         if (post.type != null) {
-            //comment
-
             if (post.users.size > 1) {
                 holder.tvTitle.text = post.user.name + " +" + (post.users.size - 1)            //Add Uses
             } else {
@@ -132,6 +124,8 @@ class PublicSubAdapter(private val list: ArrayList<Post>, var context: Context, 
             onPreview?.invoke(post)
         }
 
+        holder.reactionsView.post = post
+
         if (post.replies.isNotEmpty()) {
             holder.txtCommentCount.text = buildString {
                 append("Comment")
@@ -143,10 +137,6 @@ class PublicSubAdapter(private val list: ArrayList<Post>, var context: Context, 
             var commentStr = ""
             if (post.replies.size == 1) commentStr = "1 Comment"
             if (post.replies.size > 1) commentStr = "${post.replies.size} Comments"
-
-            holder.txtCommentCount1.text = buildString {
-                append(commentStr)
-            }
         }
 
         if (!post.meta.like.isNullOrEmpty()) {
@@ -155,10 +145,6 @@ class PublicSubAdapter(private val list: ArrayList<Post>, var context: Context, 
 //                append("(")
 //                append(data.meta.like.size)
 //                append(")")
-            }
-
-            holder.txtLikeCount1.text = buildString {
-                append(post.meta.like.size)
             }
 
             if (post.meta.like.size != 0) {
@@ -463,15 +449,13 @@ class PublicSubAdapter(private val list: ArrayList<Post>, var context: Context, 
         var swipeLayout: SimpleSwipeLayout
         var tvComment: TextView
         var mediaView: MediaView
+        val reactionsView: ReactionsView
         var txtShared: TextView
         var userImage: ImageView
         var byUserImage: ImageView
         var txtLikeCount: TextView
         var txtCommentCount: TextView
         var commentsRecyclerView: RecyclerView
-
-        var txtCommentCount1: TextView
-        var txtLikeCount1: TextView
 
         var lnBonus: LinearLayout
         var imageLikeMain: ImageView
@@ -486,15 +470,13 @@ class PublicSubAdapter(private val list: ArrayList<Post>, var context: Context, 
             swipeLayout = itemView.findViewById(R.id.swipe_layout)
             tvComment = itemView.findViewById(R.id.tv_comment)
             mediaView = itemView.findViewById(R.id.mediaView)
+            reactionsView = itemView.findViewById(R.id.reactionsView)
             userImage = itemView.findViewById(R.id.user_image)
             txtShared = itemView.findViewById(R.id.txt_shared)
             byUserImage = itemView.findViewById(R.id.by_user_image)
             txtLikeCount = itemView.findViewById(R.id.txt_like)
             txtCommentCount = itemView.findViewById(R.id.txt_comment)
             commentsRecyclerView = itemView.findViewById(R.id.commentsRecyclerView)
-
-            txtCommentCount1 = itemView.findViewById(R.id.txt_comment1)
-            txtLikeCount1 = itemView.findViewById(R.id.txt_like1)
 
             lnBonus = itemView.findViewById(R.id.ln_bonus)
             imageLikeMain = itemView.findViewById(R.id.image_like_main)

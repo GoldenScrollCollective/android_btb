@@ -45,10 +45,7 @@ class HomeViewModel(
 
      fun getPostList(visibility: String, page: Int) = viewModelScope.launch {
         if (hasInternetConnection()) {
-            homeRepository.getPostList(
-                page = page,
-                visibility = visibility
-            )
+            homeRepository.getPostList(page = page, visibility = visibility)
         } else {
             noInternet.postValue("No Internet Connection")
         }

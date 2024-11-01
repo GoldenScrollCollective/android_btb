@@ -48,7 +48,7 @@
                 android:layout_width="@dimen/_18sdp"
                 android:layout_height="@dimen/_18sdp"
                 android:layout_marginStart="@dimen/_8sdp"
-                android:src="@drawable/ic_awsome"
+                android:src="@drawable/ic_awesome"
                 app:tint="#EA3323" />
 
             <ImageView

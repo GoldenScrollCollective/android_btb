@@ -14,6 +14,7 @@
     <color name="light_grey_100">#D5D5D5</color>
     <color name="text_grey">#B0B0B0</color>
     <color name="light_grey">#8E8E93</color>
+    <color name="light_grey_ios">#9A9A9A</color>
     <color name="tabcolor">#EBEBEB</color>
     <color name="bottom_navigation_color">#F3F3F3</color>
     <color name="green">#17A117</color>

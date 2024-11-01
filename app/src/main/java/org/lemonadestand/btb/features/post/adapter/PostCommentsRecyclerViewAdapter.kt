@@ -238,10 +238,10 @@ class PostCommentsRecyclerViewAdapter(private var superPosition: Int, private va
             }
 
             val likeCountView = findViewById<TextView>(R.id.likeCountView)
-            likeCountView.text = "${item.meta.like.size}"
+            likeCountView.text = "${item.meta.like?.size}"
 
             val likeIconView = findViewById<ImageView>(R.id.likeIconView)
-            if (item.meta.like.size > 0) {
+            if ((item.meta.like?.size ?: 0) > 0) {
                 likeIconView.setImageResource(R.drawable.ic_like_up)
             } else {
                 likeIconView.setImageResource(R.drawable.ic_like)

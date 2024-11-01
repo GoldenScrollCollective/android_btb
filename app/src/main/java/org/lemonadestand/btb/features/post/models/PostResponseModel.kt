@@ -89,7 +89,7 @@ data class User (
 data class DatumMeta (
     val bonus: List<Bonus>? = null,
     val debit: List<Bonus>? = null,
-    val like: ArrayList<Bonus>  = ArrayList()
+    val like: ArrayList<Bonus>? = null,
 ): Parcelable
 
 @Parcelize

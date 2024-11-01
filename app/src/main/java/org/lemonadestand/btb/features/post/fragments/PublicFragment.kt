@@ -185,9 +185,9 @@ class PublicFragment : BaseFragment(R.layout.fragment_public), OnItemClickListen
 
                 }
                 if (clickType == ClickType.LIKE_POST) {
-                    if(postDateList[clickedSuperPosition].postList[clickedPosition].meta.like.size == 0)
+                    if(postDateList[clickedSuperPosition].postList[clickedPosition].meta.like?.size == 0)
                     {
-                        postDateList[clickedSuperPosition].postList[clickedPosition].meta.like.add(
+                        postDateList[clickedSuperPosition].postList[clickedPosition].meta.like?.add(
                             Bonus(byUser = User(), value = "")
                         )
                         Log.e("sizeLikes=>",postDateList[clickedSuperPosition].postList[clickedPosition].meta.like?.size.toString())
