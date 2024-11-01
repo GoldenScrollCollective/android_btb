@@ -167,7 +167,7 @@ class MineFragment : Fragment(),OnItemClickListener {
                     if(postDateList[clickedSuperPosition].postList[clickedPosition].meta.like?.size == 0)
                     {
                         postDateList[clickedSuperPosition].postList[clickedPosition].meta.like?.add(
-                            Bonus(byUser = User(), value = "")
+                            Bonus(by_user = User(), value = "")
                         )
                         Log.e("sizeLikes=>",postDateList[clickedSuperPosition].postList[clickedPosition].meta.like?.size.toString())
                         publicAdapter.updateData(postDateList)

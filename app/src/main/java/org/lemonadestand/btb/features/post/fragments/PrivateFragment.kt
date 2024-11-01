@@ -171,7 +171,7 @@ class PrivateFragment : Fragment(), OnItemClickListener {
                 if (clickType == ClickType.LIKE_POST) {
                     if (postDateList[clickedSuperPosition].postList[clickedPosition].meta.like?.size == 0) {
                         postDateList[clickedSuperPosition].postList[clickedPosition].meta.like?.add(
-                            Bonus(byUser = User(), value = "")
+                            Bonus(by_user = User(), value = "")
                         )
                         Log.e(
                             "sizeLikes=>",

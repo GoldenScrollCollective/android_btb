@@ -52,7 +52,6 @@ class PostCommentsRecyclerViewAdapter(private var superPosition: Int, private va
                 }
             }
 
-
             val userNameView = findViewById<TextView>(R.id.userNameView)
             userNameView.text = item.user.name
 

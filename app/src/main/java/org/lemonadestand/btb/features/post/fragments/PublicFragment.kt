@@ -16,7 +16,6 @@ import android.view.WindowManager
 import android.widget.PopupWindow
 import android.widget.TextView
 import android.widget.Toast
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import org.lemonadestand.btb.constants.ClickType
@@ -188,7 +187,7 @@ class PublicFragment : BaseFragment(R.layout.fragment_public), OnItemClickListen
                     if(postDateList[clickedSuperPosition].postList[clickedPosition].meta.like?.size == 0)
                     {
                         postDateList[clickedSuperPosition].postList[clickedPosition].meta.like?.add(
-                            Bonus(byUser = User(), value = "")
+                            Bonus(by_user = User(), value = "")
                         )
                         Log.e("sizeLikes=>",postDateList[clickedSuperPosition].postList[clickedPosition].meta.like?.size.toString())
                         publicAdapter.updateData(postDateList)

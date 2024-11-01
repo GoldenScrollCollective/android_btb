@@ -94,7 +94,7 @@ data class DatumMeta (
 
 @Parcelize
 data class Bonus (
-    val byUser: User,
+    val by_user: User,
     val value: String
 ): Parcelable
 /*
