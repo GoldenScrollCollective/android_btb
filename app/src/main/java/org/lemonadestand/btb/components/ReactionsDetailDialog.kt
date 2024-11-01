@@ -3,11 +3,8 @@ package org.lemonadestand.btb.components
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
-import android.util.AttributeSet
-import android.view.LayoutInflater
 import android.view.Window
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -25,8 +22,7 @@ class ReactionsDetailDialog @JvmOverloads constructor(
         val TAG: String = ReactionsDetailDialog::class.java.simpleName
     }
 
-    private lateinit var titleView: TextView
-    private lateinit var usersRecyclerView: RecyclerView
+    private lateinit var recyclerView: RecyclerView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,43 +34,47 @@ class ReactionsDetailDialog @JvmOverloads constructor(
     }
 
     private fun init() {
-        titleView = findViewById(R.id.titleView)
-
-        usersRecyclerView = findViewById(R.id.recyclerView)
-        usersRecyclerView.adapter = UsersRecyclerViewAdapter()
+        recyclerView = findViewById(R.id.recyclerView)
+        recyclerView.adapter = ReactionsRecyclerViewAdapter()
 
         handlePost()
     }
 
     private fun handlePost() {
-
-        val users = ArrayList<User>()
+        val reactions = ArrayList<Reaction>()
         post.meta.like?.let { metaLike ->
-            if (metaLike.find { x -> x.value == "like" } != null) {
-                titleView.text = "like"
-            }
-
-            if (metaLike.find { x -> x.value == "love" } != null) {
-                titleView.text = "love"
-            }
-
-            if (metaLike.find { x -> x.value == "awesome" } != null) {
-                titleView.text = "awesome"
-            }
-
-            if (metaLike.find { x -> x.value == "haha" } != null) {
-                titleView.text = "haha"
-            }
-
-            for (bonus in metaLike) {
-                users.add(bonus.by_user)
+            val values = arrayListOf("like", "love", "awesome", "haha", "thanks")
+            for (value in values) {
+                val likes = metaLike.filter { x -> x.value == value }
+                if (likes.isNotEmpty()) {
+                    reactions.add(Reaction(title = value, users = ArrayList(likes.map { x -> x.by_user })))
+                }
             }
         }
-
-        (usersRecyclerView.adapter as UsersRecyclerViewAdapter).values = users
+        (recyclerView.adapter as ReactionsRecyclerViewAdapter).values = reactions
     }
 
-    private class UsersRecyclerViewAdapter(): BaseRecyclerViewAdapter<User>(R.layout.layout_reactions_detail_item) {
+    private class Reaction(
+        val title: String,
+        val users: ArrayList<User>
+    )
+
+    private class ReactionsRecyclerViewAdapter(): BaseRecyclerViewAdapter<Reaction>(R.layout.layout_reactions_detail_item) {
+        override fun bindView(holder: ViewHolder, item: Reaction, position: Int) {
+            super.bindView(holder, item, position)
+
+            with(holder.itemView) {
+                val titleView = findViewById<TextView>(R.id.titleView)
+                titleView.text = item.title
+
+                val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
+                recyclerView.adapter = UsersRecyclerViewAdapter()
+                (recyclerView.adapter as UsersRecyclerViewAdapter).values = item.users
+            }
+        }
+    }
+
+    private class UsersRecyclerViewAdapter(): BaseRecyclerViewAdapter<User>(R.layout.layout_reactions_detail_user_item) {
         override fun bindView(holder: ViewHolder, item: User, position: Int) {
             super.bindView(holder, item, position)
 
