@@ -39,8 +39,7 @@ public class Utils {
 
     public static User getUser(Context context) {
         try {
-            SharedPreferences sharedPreferences = context.getSharedPreferences(FILENAME, Context.MODE_PRIVATE);
-            String data = sharedPreferences.getString(USER_OBJECT, null);
+            String data = getData(context, USER_OBJECT);
             Gson gson = new Gson();
             return gson.fromJson(data, User.class);
         } catch (Exception e) {
@@ -54,10 +53,7 @@ public class Utils {
         try {
             Gson gson = new Gson();
             String json = gson.toJson(value);
-            SharedPreferences sharedPreferences = context.getSharedPreferences(FILENAME, Context.MODE_PRIVATE);
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putString(USER_OBJECT, json);
-            editor.apply();
+            saveData(context, USER_OBJECT, json);
         } catch (Exception e) {
             e.printStackTrace();
         }

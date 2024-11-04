@@ -83,7 +83,7 @@ class HomeFragment : Fragment(){
 
         me = mBinding.userSortName;
         var currentUser = Utils.getUser(requireActivity())
-        if (currentUser.picture != null) {
+        if (currentUser?.picture != null) {
             context?.let { Glide.with(it).load(currentUser.picture).into(me) }
         } else {
             context?.let { Glide.with(it).load(currentUser.name.trim().lowercase().getImageUrlFromName()).into(me) }

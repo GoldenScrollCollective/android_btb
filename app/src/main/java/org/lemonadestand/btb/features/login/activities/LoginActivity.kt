@@ -103,21 +103,18 @@ class LoginActivity : AppCompatActivity() {
 
                         val datas = response.body()
 
-                        if (datas!!.status && datas!!.user != null)
+                        if (datas!!.status && datas.user != null)
                         {
-                            Log.i("Response_Datas_token=>", datas!!.user.token.rawToken.toString())
-                            Log.i("Response_Datas_uniqId=>", datas!!.user.uniqId.toString())
-                            Log.i("Response_Datas_orgId=>", datas!!.user.orgId.toString())
-                            Log.i("Response_Datas_userName=>", datas!!.user.name.toString())
+                            Toast.makeText(this@LoginActivity, datas.message, Toast.LENGTH_SHORT).show()
 
-                            Toast.makeText(this@LoginActivity, datas!!.message, Toast.LENGTH_SHORT).show()
                             Utils.saveData(this@LoginActivity, Utils.TOKEN, datas.user.token.rawToken)
                             Utils.saveData(this@LoginActivity, Utils.UID, datas.user.uniqId.toString())
                             Utils.saveData(this@LoginActivity, Utils.ORG_ID, datas.user.orgId.toString())
                             Utils.saveData(this@LoginActivity, Utils.USER_NAME, datas.user.name.toString())
                             Utils.saveData(this@LoginActivity, Utils.PICTURE, datas.user.picture)
                             Utils.saveData(this@LoginActivity, Utils.ORG_PICTURE, datas.user.organization.picture)
-                            Utils.saveUser(this@LoginActivity,datas.user)
+                            Utils.saveUser(this@LoginActivity, datas.user)
+
                             authToken = "Bearer " + datas.user.token.rawToken
                             if (datas.status) {
                                 val i = Intent(this@LoginActivity, DashboardActivity::class.java)

@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -20,10 +21,12 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.transition.Visibility
+import com.bumptech.glide.Glide
 import com.google.android.material.navigation.NavigationView
 import org.lemonadestand.btb.components.base.BaseActivity
 import org.lemonadestand.btb.constants.getImageUrlFromName
 import org.lemonadestand.btb.extenstions.setImageUrl
+import org.lemonadestand.btb.features.login.activities.LoginActivity
 import org.lemonadestand.btb.utils.Utils
 
 class DashboardActivity : BaseActivity(R.layout.activity_dashboard) {
@@ -46,6 +49,7 @@ class DashboardActivity : BaseActivity(R.layout.activity_dashboard) {
         super.init()
 
         initLayoutViews()
+        setDrawerNavigation()
         setBottomNavigation()
         setBottomListener()
         handleBottomUiEvent(bottomNav.selectedItemId)
@@ -134,16 +138,24 @@ class DashboardActivity : BaseActivity(R.layout.activity_dashboard) {
                 bottomNav.itemIconTintList = null
                 line4.setBackgroundColor(Color.rgb(51, 63, 79))
             }
-
         }
 
+    }
+
+    private fun setDrawerNavigation() {
+        val navBtnTeam = findViewById<LinearLayout>(R.id.navBtnTeam)
+
+        val navBtnCompanies = findViewById<LinearLayout>(R.id.navBtnCompanies)
+
+        val navBtnContacts = findViewById<LinearLayout>(R.id.navBtnContacts)
+
+        val navBtnLogout = findViewById<LinearLayout>(R.id.navBtnLogout)
+        navBtnLogout.setOnClickListener { handleLogout() }
     }
 
     private fun setBottomNavigation() {
         bottomNav.setupWithNavController(navController)
     }
-
-
 
     private fun initLayoutViews() {
         bottomNav = findViewById(R.id.bottom_navigation_dashboard)
@@ -152,8 +164,7 @@ class DashboardActivity : BaseActivity(R.layout.activity_dashboard) {
         line3 = findViewById(R.id.line3)
         line4 = findViewById(R.id.line4)
         navController = findNavController(R.id.host_fragment)
-        val navHostFragment =
-            supportFragmentManager.findFragmentById(R.id.host_fragment) as NavHostFragment
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.host_fragment) as NavHostFragment
         navController = navHostFragment.navController
     }
 
@@ -178,14 +189,14 @@ class DashboardActivity : BaseActivity(R.layout.activity_dashboard) {
     private fun updateNavigationView() {
         val currentUser = Utils.getUser(this) ?: return
 
-        val navUserShortNameView = findViewById<TextView>(R.id.navUserShortName)
-        navUserShortNameView.text = currentUser.shortName
-
         val navUserPictureView = findViewById<ImageView>(R.id.navUserPicture)
-        if (!currentUser.picture.isNullOrEmpty()) {
-            navUserPictureView.setImageUrl(currentUser.picture)
+        if (currentUser.picture != null) {
+            Glide.with(this).load(currentUser.picture).into(navUserPictureView)
         } else {
-            navUserPictureView.setImageUrl(currentUser.name.getImageUrlFromName())
+            currentUser.name?.let {
+                Glide.with(this).load(it.trim().lowercase().getImageUrlFromName())
+                    .into(navUserPictureView)
+            }
         }
 
         val navUserNameView = findViewById<TextView>(R.id.navUserName)
@@ -193,5 +204,13 @@ class DashboardActivity : BaseActivity(R.layout.activity_dashboard) {
 
         val navOrgNameView = findViewById<TextView>(R.id.navOrgName)
         navOrgNameView.text = currentUser.organization.name
+    }
+
+    private fun handleLogout() {
+        Utils.saveData(this@DashboardActivity, Utils.TOKEN, null)
+        Utils.saveUser(this@DashboardActivity, null)
+
+        startActivity(LoginActivity::class.java)
+        finish()
     }
 }
