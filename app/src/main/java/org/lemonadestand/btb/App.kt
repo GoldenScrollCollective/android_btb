@@ -2,12 +2,10 @@ package org.lemonadestand.btb
 
 import android.app.Application
 
-import android.util.Log
-//import com.google.firebase.iid.FirebaseInstanceId
-//import com.google.firebase.iid.InstanceIdResult
-import com.google.firebase.messaging.FirebaseMessaging
-
-class MyApplication : Application() {
+class App : Application() {
+    companion object {
+        lateinit var instance: App
+    }
 
 //    override fun onCreate() {
 //        super.onCreate()
@@ -31,4 +29,9 @@ class MyApplication : Application() {
 //                Log.e("FCM Token", "Error getting FCM token", exception)
 //            }
 //    }
+
+    override fun onCreate() {
+        super.onCreate()
+        instance = this
+    }
 }

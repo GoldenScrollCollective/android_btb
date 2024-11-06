@@ -16,8 +16,8 @@ import org.lemonadestand.btb.constants.ProgressDialogUtil
 import org.lemonadestand.btb.utils.Utils
 import org.lemonadestand.btb.features.dashboard.activities.DashboardActivity
 import org.lemonadestand.btb.features.common.adapter.TeamAdapter
-import org.lemonadestand.btb.databinding.FragmentTeamBinding
 import org.lemonadestand.btb.constants.handleCommonResponse
+import org.lemonadestand.btb.databinding.FragmentSelectTeamBinding
 import org.lemonadestand.btb.extenstions.hide
 import org.lemonadestand.btb.interfaces.OnItemClickListener
 import org.lemonadestand.btb.features.common.models.UserListModel
@@ -26,9 +26,9 @@ import org.lemonadestand.btb.mvvm.repository.UserRepository
 import org.lemonadestand.btb.mvvm.viewmodel.UserViewModel
 import org.lemonadestand.btb.singleton.Singleton
 
-class TeamFragment : Fragment() {
+class SelectTeamFragment : Fragment() {
 
-    lateinit var mBinding: FragmentTeamBinding
+    lateinit var mBinding: FragmentSelectTeamBinding
     private lateinit var teamAdapter: TeamAdapter
     private var shortAnimationDuration: Int = 0
     private var tag: String = "TeamFragment"
@@ -44,7 +44,7 @@ class TeamFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        mBinding = FragmentTeamBinding.inflate(
+        mBinding = FragmentSelectTeamBinding.inflate(
             LayoutInflater.from(inflater.context),
             container,
             false
@@ -61,7 +61,7 @@ class TeamFragment : Fragment() {
     private fun startLoading() {
         mBinding.simmerLayout.startShimmer()
         mBinding.rvUserList.hide()
-        mBinding.noData.hide()
+        mBinding.noDataView.hide()
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -196,7 +196,7 @@ class TeamFragment : Fragment() {
 
 
     private fun stopLoading(isDataAvailable: Boolean) {
-        val view = if (isDataAvailable) mBinding.rvUserList else mBinding.noData
+        val view = if (isDataAvailable) mBinding.rvUserList else mBinding.noDataView
         view.apply {
             alpha = 0f
             visibility = View.VISIBLE

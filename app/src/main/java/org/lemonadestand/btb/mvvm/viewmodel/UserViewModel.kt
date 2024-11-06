@@ -9,7 +9,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import org.lemonadestand.btb.MyApplication
+import org.lemonadestand.btb.App
 import org.lemonadestand.btb.features.common.models.CommonResponseModel
 import org.lemonadestand.btb.features.common.models.USerListResponseModel
 import org.lemonadestand.btb.mvvm.repository.UserRepository
@@ -67,7 +67,7 @@ class UserViewModel(
 
 
     private fun hasInternetConnection(): Boolean {
-        val connectivityManager = getApplication<MyApplication>().getSystemService(
+        val connectivityManager = getApplication<App>().getSystemService(
             Context.CONNECTIVITY_SERVICE
         ) as ConnectivityManager
 

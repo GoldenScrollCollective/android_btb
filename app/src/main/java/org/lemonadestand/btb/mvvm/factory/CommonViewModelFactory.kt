@@ -3,6 +3,8 @@ package org.lemonadestand.btb.mvvm.factory
 import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import org.lemonadestand.btb.core.repositories.MemberRepository
+import org.lemonadestand.btb.core.viewModels.MemberViewModel
 import org.lemonadestand.btb.mvvm.repository.EventRepository
 import org.lemonadestand.btb.mvvm.repository.HomeRepository
 import org.lemonadestand.btb.mvvm.repository.InterestRepository
@@ -25,6 +27,8 @@ class CommonViewModelFactory(val app: Application, private val repository: Any) 
             return EventViewModel(app, repository as EventRepository) as T
         } else if (modelClass.isAssignableFrom(InterestViewModel::class.java)) {
             return InterestViewModel(app, repository as InterestRepository) as T
+        } else if (modelClass.isAssignableFrom(MemberViewModel::class.java)) {
+            return MemberViewModel(app, repository as MemberRepository) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

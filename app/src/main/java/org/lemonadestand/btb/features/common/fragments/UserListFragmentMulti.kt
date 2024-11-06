@@ -101,7 +101,7 @@ class UserListFragmentMulti : BottomSheetDialogFragment() {
     private fun startLoading() {
         mBinding.simmerLayout.startShimmer()
         mBinding.rvUserList.hide()
-        mBinding.noData.hide()
+        mBinding.noDataView.hide()
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -213,7 +213,7 @@ class UserListFragmentMulti : BottomSheetDialogFragment() {
     }
 
     private fun stopLoading(isDataAvailable: Boolean) {
-        val view = if (isDataAvailable) mBinding.rvUserList else mBinding.noData
+        val view = if (isDataAvailable) mBinding.rvUserList else mBinding.noDataView
         view.apply {
             alpha = 0f
             visibility = View.VISIBLE

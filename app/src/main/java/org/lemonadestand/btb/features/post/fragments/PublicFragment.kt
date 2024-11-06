@@ -222,7 +222,7 @@ class PublicFragment : BaseFragment(R.layout.fragment_public), OnItemClickListen
     private fun startLoading() {
         mBinding.simmerLayout.startShimmer()
         mBinding.rvPublic.hide()
-        mBinding.noData.root.hide()
+        mBinding.noDataView.root.hide()
         mBinding.simmerLayout.apply {
             alpha = 0f
             visibility = View.VISIBLE
@@ -235,7 +235,7 @@ class PublicFragment : BaseFragment(R.layout.fragment_public), OnItemClickListen
     }
 
     private fun stopLoading(isDataAvailable: Boolean) {
-        val view = if (isDataAvailable) mBinding.rvPublic else mBinding.noData.root
+        val view = if (isDataAvailable) mBinding.rvPublic else mBinding.noDataView.root
         view.apply {
             alpha = 0f
             visibility = View.VISIBLE

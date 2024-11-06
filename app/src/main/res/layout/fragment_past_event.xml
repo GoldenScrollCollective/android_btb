@@ -58,7 +58,7 @@
             </com.facebook.shimmer.ShimmerFrameLayout>
 
             <include
-                android:id="@+id/no_data"
+                android:id="@+id/noDataView"
                 layout="@layout/item_no_event" />
         </RelativeLayout>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

@@ -26,6 +26,7 @@ import com.google.android.material.navigation.NavigationView
 import org.lemonadestand.btb.components.base.BaseActivity
 import org.lemonadestand.btb.constants.getImageUrlFromName
 import org.lemonadestand.btb.extenstions.setImageUrl
+import org.lemonadestand.btb.extenstions.setOnSingleClickListener
 import org.lemonadestand.btb.features.login.activities.LoginActivity
 import org.lemonadestand.btb.utils.Utils
 
@@ -144,13 +145,20 @@ class DashboardActivity : BaseActivity(R.layout.activity_dashboard) {
 
     private fun setDrawerNavigation() {
         val navBtnTeam = findViewById<LinearLayout>(R.id.navBtnTeam)
+        navBtnTeam.setOnSingleClickListener {
+            toggleDrawer()
+            navController.navigate(R.id.teamsFragment)
+        }
 
         val navBtnCompanies = findViewById<LinearLayout>(R.id.navBtnCompanies)
 
         val navBtnContacts = findViewById<LinearLayout>(R.id.navBtnContacts)
 
         val navBtnLogout = findViewById<LinearLayout>(R.id.navBtnLogout)
-        navBtnLogout.setOnClickListener { handleLogout() }
+        navBtnLogout.setOnClickListener {
+            toggleDrawer()
+            handleLogout()
+        }
     }
 
     private fun setBottomNavigation() {

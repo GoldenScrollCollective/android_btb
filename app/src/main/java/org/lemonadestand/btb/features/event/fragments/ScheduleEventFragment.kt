@@ -201,7 +201,7 @@ class ScheduleEventFragment : Fragment(), OnItemClickListener {
 
     private fun startLoading() {
         mBinding.rvPastEvent.hide()
-        mBinding.noData.root.hide()
+        mBinding.noDataView.root.hide()
         mBinding.simmerLayout.apply {
             alpha = 0f
             visibility = View.VISIBLE
@@ -218,7 +218,7 @@ class ScheduleEventFragment : Fragment(), OnItemClickListener {
         mBinding.rvPastEvent.hide()
 
 
-        val view = if (isDataAvailable) mBinding.rvPastEvent else mBinding.noData.root
+        val view = if (isDataAvailable) mBinding.rvPastEvent else mBinding.noDataView.root
         view.apply {
             alpha = 0f
             visibility = View.VISIBLE

@@ -41,7 +41,7 @@
                 app:tint="@color/green" />
 
             <include
-                android:id="@+id/no_data"
+                android:id="@+id/noDataView"
                 layout="@layout/item_no_post"/>
 
             <com.facebook.shimmer.ShimmerFrameLayout

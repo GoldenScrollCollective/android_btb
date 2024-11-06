@@ -12,7 +12,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import org.lemonadestand.btb.R
 import org.lemonadestand.btb.databinding.FragmentTeamAndContactsBinding
 import org.lemonadestand.btb.features.interest.fragments.ContactFragment
-import org.lemonadestand.btb.features.interest.fragments.TeamFragment
+import org.lemonadestand.btb.features.interest.fragments.SelectTeamFragment
 import org.lemonadestand.btb.interfaces.OnItemClickListener
 
 
@@ -75,7 +75,7 @@ class TeamAndContactsFragment : BottomSheetDialogFragment() {
     }
 
     private fun handleTeamClick() {
-        val fragment =  TeamFragment()
+        val fragment =  SelectTeamFragment()
         val bundle = Bundle()
         bundle.putBoolean("is_event",isEvent)
         fragment.arguments = bundle
