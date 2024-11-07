@@ -51,6 +51,7 @@ object Singleton {
 
     const val USER_LIST = "rest/user"
     const val USER_CONTACTS = "rest/contact"
+    const val COMPANY_LIST = "rest/company"
     const val ADD_LIKE = "rest/post/meta/"
 
     private const val UNAUTHORIZED = 401

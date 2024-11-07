@@ -2,6 +2,7 @@ package org.lemonadestand.btb.network
 
 import com.google.gson.JsonObject
 import okhttp3.RequestBody
+import org.lemonadestand.btb.core.models.CompanyListResponseModel
 import org.lemonadestand.btb.core.models.MemberListResponseModel
 import org.lemonadestand.btb.features.common.models.CommonResponseModel
 
@@ -56,6 +57,15 @@ interface ApiService {
         @Query("order_by") orderVy : String = "name",
         @Header("Authorization") authorization: String = authToken
     ): Response<MemberListResponseModel>
+
+    @GET(Singleton.COMPANY_LIST)
+    suspend fun getCompanies(
+        @Query("page") page: Int = 0,
+        @Query("limit") limit: Int = 25,
+        @Query("sort") sort: String= "asc",
+        @Query("order_by") orderBy: String = "name",
+        @Header("Authorization") authorization: String = authToken
+    ): Response<CompanyListResponseModel>
 
     @GET(Singleton.USER_CONTACTS)
     suspend fun getContactList(

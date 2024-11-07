@@ -34,6 +34,7 @@
     <string name="nav_close">Close</string>
 
     <string name="teams">Teams</string>
+    <string name="companies">Companies</string>
 
     <string name="lorem_ipsum">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in scelerisque sem. Mauris

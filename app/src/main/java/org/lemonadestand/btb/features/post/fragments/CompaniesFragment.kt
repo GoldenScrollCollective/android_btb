@@ -1,6 +1,7 @@
 package org.lemonadestand.btb.features.post.fragments
 
 import android.app.Activity
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.RelativeLayout
@@ -9,6 +10,7 @@ import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.bumptech.glide.Glide
 import com.facebook.shimmer.ShimmerFrameLayout
 import org.lemonadestand.btb.App
 import org.lemonadestand.btb.R
@@ -16,26 +18,29 @@ import org.lemonadestand.btb.components.NavHeaderView
 import org.lemonadestand.btb.components.base.BaseFragment
 import org.lemonadestand.btb.components.base.BaseRecyclerViewAdapter
 import org.lemonadestand.btb.constants.ProgressDialogUtil
+import org.lemonadestand.btb.constants.getImageUrlFromName
+import org.lemonadestand.btb.core.models.Company
 import org.lemonadestand.btb.core.models.Member
+import org.lemonadestand.btb.core.repositories.CompaniesRepository
 import org.lemonadestand.btb.core.repositories.MemberRepository
+import org.lemonadestand.btb.core.viewModels.CompaniesViewModel
 import org.lemonadestand.btb.core.viewModels.MemberViewModel
 import org.lemonadestand.btb.extenstions.hide
-import org.lemonadestand.btb.extenstions.setOnSingleClickListener
 import org.lemonadestand.btb.extenstions.show
 import org.lemonadestand.btb.features.dashboard.activities.DashboardActivity
 import org.lemonadestand.btb.mvvm.factory.CommonViewModelFactory
 import org.lemonadestand.btb.singleton.Singleton
 
-class TeamsFragment: BaseFragment(R.layout.fragment_teams) {
-    private var TAG: String = "TeamsFragment"
+class CompaniesFragment: BaseFragment(R.layout.fragment_companies) {
+    private val TAG: String = "CompaniesFragment"
 
     private lateinit var swipeRefresh: SwipeRefreshLayout
     private lateinit var shimmerLayout: ShimmerFrameLayout
     private lateinit var recyclerView: RecyclerView
     private lateinit var noDataView: RelativeLayout
 
-    private lateinit var repository: MemberRepository
-    private lateinit var viewModel: MemberViewModel
+    private lateinit var repository: CompaniesRepository
+    private lateinit var viewModel: CompaniesViewModel
 
     override fun init() {
         super.init()
@@ -49,15 +54,15 @@ class TeamsFragment: BaseFragment(R.layout.fragment_teams) {
         }
         shimmerLayout = rootView.findViewById(R.id.shimmerLayout)
         recyclerView = rootView.findViewById(R.id.recyclerView)
-        recyclerView.adapter = TeamRecyclerViewAdapter()
+        recyclerView.adapter = CompaniesRecyclerViewAdapter()
         noDataView = rootView.findViewById(R.id.noDataView)
 
-        repository = MemberRepository()
+        repository = CompaniesRepository()
         val viewModelProviderFactory = CommonViewModelFactory(App.instance, repository)
-        viewModel = ViewModelProvider(this, viewModelProviderFactory)[MemberViewModel::class.java]
+        viewModel = ViewModelProvider(this, viewModelProviderFactory)[CompaniesViewModel::class.java]
         viewModel.response.observe(viewLifecycleOwner) { response ->
             val data = response.data ?: ArrayList()
-            (recyclerView.adapter as TeamRecyclerViewAdapter).values = data
+            (recyclerView.adapter as CompaniesRecyclerViewAdapter).values = data
             stopLoading(data.isNotEmpty())
         }
         viewModel.error.observe(viewLifecycleOwner) {
@@ -119,22 +124,26 @@ class TeamsFragment: BaseFragment(R.layout.fragment_teams) {
 
     private fun load() {
         startLoading()
-        viewModel.getTeams(page = 0)
+        viewModel.getCompanies(page = 0)
     }
 
-    private class TeamRecyclerViewAdapter: BaseRecyclerViewAdapter<Member>(R.layout.layout_teams_item) {
-        override fun bindView(holder: ViewHolder, item: Member, position: Int) {
+    private class CompaniesRecyclerViewAdapter: BaseRecyclerViewAdapter<Company>(R.layout.layout_companies_item) {
+        override fun bindView(holder: ViewHolder, item: Company, position: Int) {
             super.bindView(holder, item, position)
 
             with(holder.itemView) {
+                val avatarView = findViewById<ImageView>(R.id.avatarView)
+                if (item.picture != null) {
+                    Glide.with(context).load(item.picture).into(avatarView)
+                } else {
+                    Glide.with(context).load(item.name.trim().lowercase().getImageUrlFromName()).into(avatarView)
+                }
+
                 val nameView = findViewById<TextView>(R.id.nameView)
                 nameView.text = item.name
 
                 val lastBlessedView = findViewById<TextView>(R.id.lastBlessedView)
                 lastBlessedView.text = item.lastBlessedAt
-
-                val lastAppreciatedView = findViewById<TextView>(R.id.lastAppreciatedView)
-                lastAppreciatedView.text = item.lastAppreciatedAt
             }
         }
     }

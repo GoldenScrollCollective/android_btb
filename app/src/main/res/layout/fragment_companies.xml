@@ -10,7 +10,7 @@
         android:id="@+id/navHeaderView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:title="@string/teams"/>
+        app:title="@string/companies"/>
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefresh"
@@ -27,11 +27,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                tools:listitem="@layout/layout_teams_item"/>
+                tools:listitem="@layout/layout_companies_item"/>
 
             <include
                 android:id="@+id/noDataView"
-                layout="@layout/layout_no_teams"/>
+                layout="@layout/layout_no_companies"/>
 
             <com.facebook.shimmer.ShimmerFrameLayout
                 android:id="@+id/shimmerLayout"
@@ -44,7 +44,7 @@
 
                 <include
                     android:visibility="visible"
-                    layout="@layout/layout_teams_shimmer"/>
+                    layout="@layout/layout_companies_shimmer"/>
 
             </com.facebook.shimmer.ShimmerFrameLayout>
 

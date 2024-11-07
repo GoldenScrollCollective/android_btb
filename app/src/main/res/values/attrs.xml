@@ -3,4 +3,8 @@
     <declare-styleable name="FilterButton">
         <attr name="selected" format="boolean"/>
     </declare-styleable>
+
+    <declare-styleable name="NavHeaderView">
+        <attr name="title" format="string"/>
+    </declare-styleable>
 </resources>

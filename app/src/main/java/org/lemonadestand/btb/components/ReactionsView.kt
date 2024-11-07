@@ -19,7 +19,7 @@ class ReactionsView @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     defStyle: Int = 0,
     defStyleRes: Int = 0
-):LinearLayout(context, attrs, defStyle, defStyleRes) {
+): LinearLayout(context, attrs, defStyle, defStyleRes) {
     companion object {
         val TAG: String = ReactionsView::class.java.simpleName
     }

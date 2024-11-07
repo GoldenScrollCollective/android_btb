@@ -19,6 +19,12 @@
         tools:layout="@layout/fragment_teams" />
 
     <fragment
+        android:id="@+id/companiesFragment"
+        android:name="org.lemonadestand.btb.features.post.fragments.CompaniesFragment"
+        android:label="fragment_companies"
+        tools:layout="@layout/fragment_companies" />
+
+    <fragment
         android:id="@+id/eventFragment"
         android:name="org.lemonadestand.btb.features.event.fragments.EventFragment"
         android:label="fragment_event"

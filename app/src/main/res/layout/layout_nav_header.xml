@@ -6,7 +6,7 @@
     android:paddingHorizontal="@dimen/_8sdp">
 
     <ImageView
-        android:id="@+id/navBtnBack"
+        android:id="@+id/btnBack"
         android:layout_width="32.5dp"
         android:layout_height="32.5dp"
         android:layout_marginTop="10dp"
@@ -16,7 +16,7 @@
         app:tint="@color/AccentColor"/>
 
     <TextView
-        android:id="@+id/navTitleView"
+        android:id="@+id/titleView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
