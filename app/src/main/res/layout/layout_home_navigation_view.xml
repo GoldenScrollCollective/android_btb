@@ -347,6 +347,7 @@
             app:tint="@color/black" />
 
         <TextView
+            android:id="@+id/navGiveView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="40dp"
@@ -393,6 +394,7 @@
             android:textColor="@color/black" />
 
         <TextView
+            android:id="@+id/navSpendView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="40dp"

@@ -220,6 +220,12 @@ class DashboardActivity : BaseActivity(R.layout.activity_dashboard) {
 
         val navOrgNameView = findViewById<TextView>(R.id.navOrgName)
         navOrgNameView.text = currentUser.organization.name
+
+        val navGiveView = findViewById<TextView>(R.id.navGiveView)
+        navGiveView.text = "$${currentUser.give}"
+
+        val navSpendView = findViewById<TextView>(R.id.navSpendView)
+        navSpendView.text = "$${currentUser.spend}"
     }
 
     private fun handleLogout() {
