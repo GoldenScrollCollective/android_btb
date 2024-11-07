@@ -26,7 +26,7 @@ import org.lemonadestand.btb.features.event.models.EventModel
 import org.lemonadestand.btb.mvvm.factory.CommonViewModelFactory
 import org.lemonadestand.btb.mvvm.repository.EventRepository
 import org.lemonadestand.btb.mvvm.viewmodel.EventViewModel
-import org.lemonadestand.btb.features.common.fragments.ContactListFragment
+import org.lemonadestand.btb.features.common.fragments.SelectContactListFragment
 import org.lemonadestand.btb.features.common.fragments.UserListFragment
 import org.lemonadestand.btb.features.common.fragments.UserListFragmentMulti
 import org.lemonadestand.btb.features.event.fragments.WriteTextFragment
@@ -49,7 +49,7 @@ class EditReminderActivity : AppCompatActivity(), OnItemClickListener {
     private var localTitle: String? = null
     private var bottomSheetFragmentText: WriteTextFragment? = null
     private var selectedContactListModel: UserListModel? = null
-    private var bottomSheetFragmentContact: ContactListFragment? = null
+    private var bottomSheetFragmentContact: SelectContactListFragment? = null
     private var reminderUerList: ArrayList<UserListModel> = ArrayList()
 
     private lateinit var viewModel: EventViewModel
@@ -452,7 +452,7 @@ class EditReminderActivity : AppCompatActivity(), OnItemClickListener {
     private fun showBottomSheetContact() {
         if (bottomSheetFragmentContact == null) {
             val fragmentManager: FragmentManager = supportFragmentManager
-            bottomSheetFragmentContact = ContactListFragment()
+            bottomSheetFragmentContact = SelectContactListFragment()
             bottomSheetFragmentContact?.setCallback(this)
             bottomSheetFragmentContact?.show(fragmentManager, bottomSheetFragmentContact!!.tag)
 

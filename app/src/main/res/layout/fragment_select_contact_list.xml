@@ -6,7 +6,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:background="@drawable/rounded_corner"
-    tools:context=".features.common.fragments.ContactListFragment">
+    tools:context=".features.common.fragments.SelectContactListFragment">
 
     <RelativeLayout
         android:layout_width="match_parent"

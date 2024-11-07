@@ -25,6 +25,12 @@
         tools:layout="@layout/fragment_companies" />
 
     <fragment
+        android:id="@+id/contactsFragment"
+        android:name="org.lemonadestand.btb.features.post.fragments.ContactsFragment"
+        android:label="fragment_contacts"
+        tools:layout="@layout/fragment_contacts" />
+
+    <fragment
         android:id="@+id/eventFragment"
         android:name="org.lemonadestand.btb.features.event.fragments.EventFragment"
         android:label="fragment_event"

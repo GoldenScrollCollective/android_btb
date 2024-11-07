@@ -157,6 +157,10 @@ class DashboardActivity : BaseActivity(R.layout.activity_dashboard) {
         }
 
         val navBtnContacts = findViewById<LinearLayout>(R.id.navBtnContacts)
+        navBtnContacts.setOnSingleClickListener {
+            toggleDrawer()
+            navController.navigate(R.id.contactsFragment)
+        }
 
         val navBtnLogout = findViewById<LinearLayout>(R.id.navBtnLogout)
         navBtnLogout.setOnClickListener {

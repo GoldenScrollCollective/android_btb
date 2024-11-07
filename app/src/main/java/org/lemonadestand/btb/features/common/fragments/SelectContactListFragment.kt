@@ -20,8 +20,8 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import org.lemonadestand.btb.constants.ProgressDialogUtil
 import org.lemonadestand.btb.features.dashboard.activities.DashboardActivity
 import org.lemonadestand.btb.features.common.adapter.UserListAdapter
-import org.lemonadestand.btb.databinding.FragmentContactListBinding
 import org.lemonadestand.btb.constants.handleCommonResponse
+import org.lemonadestand.btb.databinding.FragmentSelectContactListBinding
 import org.lemonadestand.btb.extenstions.hide
 import org.lemonadestand.btb.interfaces.OnItemClickListener
 import org.lemonadestand.btb.features.common.models.UserListModel
@@ -32,9 +32,9 @@ import org.lemonadestand.btb.singleton.Singleton
 import java.util.Locale
 
 
-class ContactListFragment : BottomSheetDialogFragment() {
+class SelectContactListFragment : BottomSheetDialogFragment() {
 
-    lateinit var mBinding: FragmentContactListBinding
+    lateinit var mBinding: FragmentSelectContactListBinding
     private lateinit var userListAdapter: UserListAdapter
     private var shortAnimationDuration: Int = 0
     private var tag: String = "UserListFragment"
@@ -47,7 +47,7 @@ class ContactListFragment : BottomSheetDialogFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        mBinding = FragmentContactListBinding.inflate(
+        mBinding = FragmentSelectContactListBinding.inflate(
             LayoutInflater.from(inflater.context),
             container,
             false

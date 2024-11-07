@@ -11,7 +11,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import org.lemonadestand.btb.App
 import org.lemonadestand.btb.features.common.models.CommonResponseModel
-import org.lemonadestand.btb.features.common.models.USerListResponseModel
+import org.lemonadestand.btb.features.common.models.UserListResponseModel
 import org.lemonadestand.btb.mvvm.repository.UserRepository
 import retrofit2.Response
 
@@ -29,10 +29,10 @@ class UserViewModel(
         get() = userRepository.error
     val commonResponse: LiveData<CommonResponseModel>
         get() = userRepository.commonResponseModel
-    val userResponseModel: LiveData<USerListResponseModel>
+    val userResponseModel: LiveData<UserListResponseModel>
         get() = userRepository.userModelResponse
 
-    val contactResponseModel : LiveData<USerListResponseModel>
+    val contactResponseModel : LiveData<UserListResponseModel>
         get() = userRepository.contactModelResponse
 
     val noInternet: MutableLiveData<String> = MutableLiveData()

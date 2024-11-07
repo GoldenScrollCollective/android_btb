@@ -1,6 +1,7 @@
 package org.lemonadestand.btb.models
 
 import com.google.gson.annotations.SerializedName
+import org.lemonadestand.btb.core.models.Address
 import java.util.Locale
 import kotlin.math.min
 

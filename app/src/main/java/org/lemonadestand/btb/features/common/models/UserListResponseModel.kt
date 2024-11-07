@@ -2,10 +2,11 @@ package org.lemonadestand.btb.features.common.models
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
+import org.lemonadestand.btb.core.models.Address
 
 
 @Parcelize
-data class USerListResponseModel (
+data class UserListResponseModel (
     val status: Boolean,
     val message: String,
     val data: List<UserListModel>
@@ -41,20 +42,6 @@ data class UserListModel (
     val qrCode: String? = null,
     var isSelected : Boolean = false
 )  :Parcelable
-
-
-@Parcelize
-data class Address (
-    val street: String,
-    val street2: String,
-    val city: String,
-    val state: String,
-    val country: String,
-    val postal: String
-) : Parcelable
-
-
-
 
 @Parcelize
 data class Handles (

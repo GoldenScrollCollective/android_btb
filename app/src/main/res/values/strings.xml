@@ -35,6 +35,7 @@
 
     <string name="teams">Teams</string>
     <string name="companies">Companies</string>
+    <string name="contacts">Contacts</string>
 
     <string name="lorem_ipsum">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in scelerisque sem. Mauris

@@ -76,30 +76,6 @@
 
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="@dimen/_1sdp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/urbanist_semi_bold"
-                    android:textSize="@dimen/_10sdp"
-                    android:text="wrap "/>
-
-                <TextView
-                    android:id="@+id/lastAppreciatedView"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:fontFamily="@font/urbanist_bold"
-                    android:textSize="@dimen/_10sdp"
-                    android:textColor="@color/light_grey_ios"
-                    android:text="Aug 5, 2024"/>
-
-            </LinearLayout>
         </LinearLayout>
 
     </LinearLayout>

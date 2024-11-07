@@ -3,10 +3,11 @@ package org.lemonadestand.btb.network
 import com.google.gson.JsonObject
 import okhttp3.RequestBody
 import org.lemonadestand.btb.core.models.CompanyListResponseModel
+import org.lemonadestand.btb.core.models.ContactsResponseModel
 import org.lemonadestand.btb.core.models.MemberListResponseModel
 import org.lemonadestand.btb.features.common.models.CommonResponseModel
 
-import org.lemonadestand.btb.features.common.models.USerListResponseModel
+import org.lemonadestand.btb.features.common.models.UserListResponseModel
 import org.lemonadestand.btb.features.event.models.EventResponseModel
 import org.lemonadestand.btb.features.interest.models.InterestResponseModel
 import org.lemonadestand.btb.features.login.models.LoginResponse
@@ -47,7 +48,7 @@ interface ApiService {
         @Query("order_by") orderVy : String = "name",
         @Header("Authorization")
         authorization: String = authToken
-    ): Response<USerListResponseModel>
+    ): Response<UserListResponseModel>
 
     @GET(Singleton.USER_LIST)
     suspend fun getTeams(
@@ -68,12 +69,20 @@ interface ApiService {
     ): Response<CompanyListResponseModel>
 
     @GET(Singleton.USER_CONTACTS)
+    suspend fun getContacts(
+        @Query("limit") limit : String = "100" ,
+        @Query("page") page : Int = 0,
+        @Header("Authorization")
+        authorization: String = authToken
+    ): Response<ContactsResponseModel>
+
+    @GET(Singleton.USER_CONTACTS)
     suspend fun getContactList(
         @Query("limit") limit : String = "100" ,
         @Query("page") page : Int = 0,
         @Header("Authorization")
         authorization: String = authToken
-    ): Response<USerListResponseModel>
+    ): Response<UserListResponseModel>
 
 
     @POST(Singleton.ADD_LIKE+"{unique_id}")

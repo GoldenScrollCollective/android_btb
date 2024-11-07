@@ -6,19 +6,19 @@ import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class Event(
-    val id: String,
-    @SerializedName("blessing_complete") val blessingComplete: String
-): Parcelable
-
-@Parcelize
-data class Member(
+data class Contact(
     val id: String,
     @SerializedName("uniq_id") val uniqueId: String,
-    override val name: String,
-    override val picture: String,
+    @SerializedName("org_id") val orgId: String,
+    @SerializedName("company_id") val companyId: String,
+    override val name: String?,
+    override val picture: String?,
+    val email: String?,
+    val phone: String?,
+    val ext: String?,
+    val address: Address?,
+    @SerializedName("address_shipping") val shippingAddress: Address?,
     @SerializedName("last_blessed") val lastBlessed: Event?,
-    @SerializedName("last_appreciated") val lastAppreciated: String?,
     override val created: String?
 ): BaseModel(name, picture, created) {
     val lastBlessedAt: String
@@ -26,16 +26,11 @@ data class Member(
             val date = DateHelper.parse(lastBlessed?.blessingComplete, "yyyy-MM-dd HH:mm:ss") ?: return "Never"
             return DateHelper.format(date, "MMM d, yyyy") ?: "Never"
         }
-    val lastAppreciatedAt: String
-        get() {
-            val date = DateHelper.parse(lastAppreciated, "yyyy-MM-dd HH:mm:ss") ?: return "Never"
-            return DateHelper.format(date, "MMM d, yyyy") ?: "Never"
-        }
 }
 
 @Parcelize
-data class MemberListResponseModel(
+data class ContactsResponseModel(
     val status: Boolean,
     val message: String,
-    val data: List<Member>
+    val data: List<Contact>
 ): Parcelable
