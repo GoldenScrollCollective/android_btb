@@ -19,7 +19,6 @@ import org.lemonadestand.btb.R
 import org.lemonadestand.btb.constants.getImageUrlFromName
 import org.lemonadestand.btb.databinding.FragmentHomeBinding
 import org.lemonadestand.btb.features.dashboard.activities.DashboardActivity
-import org.lemonadestand.btb.features.dashboard.dialog.FilterDialog
 import org.lemonadestand.btb.features.dashboard.views.FilterView
 import org.lemonadestand.btb.singleton.Filter
 import org.lemonadestand.btb.utils.Utils
@@ -106,7 +105,7 @@ class HomeFragment : Fragment(){
     }
 
     private fun setDefaultFragment() {
-        setFragment(PublicFragment())
+        setFragment(CompanyTabFragment())
         setDefaultView()
         mBinding.tvPublic.alpha = 1f
         mBinding.tvPublic.elevation = 5f
@@ -116,7 +115,7 @@ class HomeFragment : Fragment(){
 
     private fun handleClicks() {
         mBinding.tvPublic.setOnClickListener { view ->
-            setFragment(PublicFragment())
+            setFragment(CompanyTabFragment())
             setDefaultView()
             view.alpha = 1f
             view.elevation = 5f
@@ -125,7 +124,7 @@ class HomeFragment : Fragment(){
             mBinding.btnFilter.visibility = View.VISIBLE
         }
         mBinding.tvPrivate.setOnClickListener { view ->
-            setFragment(PrivateFragment())
+            setFragment(CommunityTabFragment())
             setDefaultView()
             view.alpha = 1f
             view.elevation = 5f
@@ -173,7 +172,7 @@ class HomeFragment : Fragment(){
 
             filterView.onSelect = { value ->
                 filter = value
-                (currentFragment as? PublicFragment)?.refreshData(value)
+                (currentFragment as? CompanyTabFragment)?.refreshData(value)
                 popupWindow.dismiss()
             }
         }

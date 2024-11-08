@@ -66,7 +66,7 @@ class ReplyCommentActivity : AppCompatActivity() {
                 resource = "user/${currentUser!!.uniqId}",
                 html = mBinding.htmlEditor.text,
                 created = "",
-                parent_id = "${post?.uniq_id}",
+                parent_id = "${post?.uniqueId}",
                 modified = "",
                 by_user_id = "",
 

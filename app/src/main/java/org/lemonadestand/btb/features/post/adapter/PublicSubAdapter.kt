@@ -43,7 +43,7 @@ import org.lemonadestand.btb.components.MediaView
 import org.lemonadestand.btb.components.ReactionsView
 import org.lemonadestand.btb.features.common.models.body.AddCommentBody
 import org.lemonadestand.btb.features.common.models.body.ShareStoryUser
-import org.lemonadestand.btb.features.post.fragments.PublicFragment
+import org.lemonadestand.btb.features.post.fragments.CompanyTabFragment
 
 
 class PublicSubAdapter(private val list: ArrayList<Post>, var context: Context, private var superPosition: Int) :
@@ -80,11 +80,11 @@ class PublicSubAdapter(private val list: ArrayList<Post>, var context: Context, 
                 .into(holder.userImage)
         }
 
-        if (post.by_user.picture != null) {
-            Glide.with(context).load(post.by_user.picture).into(holder.byUserImage)
+        if (post.byUser.picture != null) {
+            Glide.with(context).load(post.byUser.picture).into(holder.byUserImage)
         } else {
             holder.cdSubName.visibility = View.INVISIBLE
-            Log.e("url=>", post.by_user.name!!.trim().lowercase().getImageUrlFromName())
+            Log.e("url=>", post.byUser.name!!.trim().lowercase().getImageUrlFromName())
         }
 
         if (post.type != null) {
@@ -99,7 +99,7 @@ class PublicSubAdapter(private val list: ArrayList<Post>, var context: Context, 
             }
             holder.tvDesc.text = buildString {
                 append("by ")
-                append(post.by_user.name)
+                append(post.byUser.name)
                 append(" · ")
                 append(post.createdAt()?.let { it.ago() })
             }
@@ -215,17 +215,17 @@ class PublicSubAdapter(private val list: ArrayList<Post>, var context: Context, 
 
                     val requestBody = AddCommentBody(
                         uniq_id = "",
-                        resource = "user/${PublicFragment.currentUser!!.uniqId}",
+                        resource = "user/${CompanyTabFragment.currentUser!!.uniqId}",
                         html = message,
                         created = "",
-                        parent_id = "${post?.uniq_id}",
+                        parent_id = "${post?.uniqueId}",
                         modified = "",
                         by_user_id = "",
 
                         user = ShareStoryUser(id = "", name = "")
                     )
 //                    viewModel.addComment(requestBody)
-                    PublicFragment.viewModel.addComment(requestBody)
+                    CompanyTabFragment.viewModel.addComment(requestBody)
                 }
                 .setNegativeButton("Cancel") { dialog, _ ->
                     dialog.dismiss() // Dismiss the dialog if canceled
@@ -360,32 +360,32 @@ class PublicSubAdapter(private val list: ArrayList<Post>, var context: Context, 
             like.setOnClickListener {
                 popupWindow.dismiss()
                 onItemClick!!.onItemClicked(LikeBodyModel(metaName = "like", metaValue = "like", byUserId = Utils.getData(context,
-                    Utils.UID), uniqueId = post.uniq_id),position,
+                    Utils.UID), uniqueId = post.uniqueId),position,
                     ClickType.LIKE_POST,superIndex = superPosition)
             }
             love.setOnClickListener {
                 popupWindow.dismiss()
                 onItemClick!!.onItemClicked(LikeBodyModel(metaName = "like", metaValue = "love", byUserId = Utils.getData(context,
-                    Utils.UID), uniqueId = post.uniq_id),position,
+                    Utils.UID), uniqueId = post.uniqueId),position,
                     ClickType.LIKE_POST,superIndex = superPosition)
             }
             awesome.setOnClickListener {
                 popupWindow.dismiss()
                 onItemClick!!.onItemClicked(LikeBodyModel(metaName = "like", metaValue = "awesome", byUserId = Utils.getData(context,
-                    Utils.UID), uniqueId = post.uniq_id),position,
+                    Utils.UID), uniqueId = post.uniqueId),position,
                     ClickType.LIKE_POST,superIndex = superPosition)
             }
 
             thanks.setOnClickListener {
                 popupWindow.dismiss()
                 onItemClick!!.onItemClicked(LikeBodyModel(metaName = "like", metaValue = "thanks", byUserId = Utils.getData(context,
-                    Utils.UID), uniqueId = post.uniq_id),position,
+                    Utils.UID), uniqueId = post.uniqueId),position,
                     ClickType.LIKE_POST,superIndex = superPosition)
             }
             haha.setOnClickListener {
                 popupWindow.dismiss()
                 onItemClick!!.onItemClicked(LikeBodyModel(metaName = "like", metaValue = "haha", byUserId = Utils.getData(context,
-                    Utils.UID), uniqueId = post.uniq_id),position,
+                    Utils.UID), uniqueId = post.uniqueId),position,
                     ClickType.LIKE_POST,superIndex = superPosition)
             }
 
@@ -429,8 +429,8 @@ class PublicSubAdapter(private val list: ArrayList<Post>, var context: Context, 
 
         }
 
-        val commentsRecyclerViewAdapter = PostCommentsRecyclerViewAdapter(position,onItemClick)   // fixed
-        onItemClick?.let { commentsRecyclerViewAdapter.setPostItemClick(it) }
+        val commentsRecyclerViewAdapter = PostCommentsRecyclerViewAdapter(position)   // fixed
+//        onItemClick?.let { commentsRecyclerViewAdapter.setPostItemClick(it) }
         holder.commentsRecyclerView.adapter = commentsRecyclerViewAdapter
         commentsRecyclerViewAdapter.values = post.replies
     }

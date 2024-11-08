@@ -48,18 +48,18 @@ class CommentSubAdapter(private val list: ArrayList<Post>, var context: Context)
 
 
 
-        if (data.by_user.picture != null) {
+        if (data.byUser.picture != null) {
             // show image
-            Glide.with(context).load(data.by_user.picture).into(holder.userImage)
+            Glide.with(context).load(data.byUser.picture).into(holder.userImage)
         } else {
 
-            Log.e("url=>", data.by_user.name!!.trim().lowercase().getImageUrlFromName())
-            Glide.with(context).load(data.by_user.name.trim().lowercase().getImageUrlFromName())
+            Log.e("url=>", data.byUser.name!!.trim().lowercase().getImageUrlFromName())
+            Glide.with(context).load(data.byUser.name.trim().lowercase().getImageUrlFromName())
                 .into(holder.userImage)
         }
 
 
-        holder.tvTitle.text = data.by_user.name
+        holder.tvTitle.text = data.byUser.name
 
 
 

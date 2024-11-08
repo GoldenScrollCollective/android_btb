@@ -22,7 +22,7 @@ import org.lemonadestand.btb.components.base.BaseRecyclerViewAdapter
 import com.bumptech.glide.Glide
 import org.lemonadestand.btb.R
 import org.lemonadestand.btb.components.CommentReactionsView
-import org.lemonadestand.btb.components.ReactionsView
+import org.lemonadestand.btb.components.LikeMenuView
 import org.lemonadestand.btb.constants.ClickType
 import org.lemonadestand.btb.constants.getImageUrlFromName
 import org.lemonadestand.btb.extenstions.ago
@@ -30,28 +30,27 @@ import org.lemonadestand.btb.extenstions.setOnSingleClickListener
 import org.lemonadestand.btb.features.common.models.body.AddCommentBody
 import org.lemonadestand.btb.features.common.models.body.LikeBodyModel
 import org.lemonadestand.btb.features.common.models.body.ShareStoryUser
-import org.lemonadestand.btb.features.post.fragments.PublicFragment
+import org.lemonadestand.btb.features.post.fragments.CompanyTabFragment
 import org.lemonadestand.btb.features.post.models.Post
 import org.lemonadestand.btb.interfaces.OnItemClickListener
 import org.lemonadestand.btb.utils.Utils
 
 
 class PostCommentsRecyclerViewAdapter(
-    private var superPosition: Int,
-    private var onPostItemClick: OnItemClickListener?
+    private var superPosition: Int
 ): BaseRecyclerViewAdapter<Post>(R.layout.layout_post_comment_list_item, true) {
-//    private var onPostItemClick: OnItemClickListener? = null
-    fun setPostItemClick(listener: OnItemClickListener) { onPostItemClick = listener }
+    var onLike: ((post: Post, value: String) -> Unit)? = null
+    var onDelete: ((value: Post) -> Unit)? = null
 
     override fun bindView(holder: ViewHolder, item: Post, position: Int) {
         super.bindView(holder, item, position)
 
         with(holder.itemView) {
             val avatarView = findViewById<ImageView>(R.id.avatarView)
-            if (item.by_user.picture != null) {
+            if (item.byUser.picture != null) {
                 Glide.with(context).load(item.user.picture).into(avatarView)
             } else {
-                item.by_user.name?.let {
+                item.byUser.name?.let {
                     Glide.with(context).load(it.trim().lowercase().getImageUrlFromName())
                         .into(avatarView)
                 }
@@ -68,59 +67,18 @@ class PostCommentsRecyclerViewAdapter(
 
             val btnLike = findViewById<TextView>(R.id.btnLike)
             btnLike.setOnSingleClickListener {
-                val view: View = LayoutInflater.from(context).inflate(R.layout.custom_like_menu, null)
+                val likeMenuView = LikeMenuView(context)
+
                 val popupWindow = PopupWindow(
-                    view,
+                    likeMenuView,
                     WindowManager.LayoutParams.WRAP_CONTENT,
                     WindowManager.LayoutParams.WRAP_CONTENT
                 )
-                val resources: Resources = context.resources
-                val like = view.findViewById<ImageView>(R.id.ic_like)
-                val love = view.findViewById<ImageView>(R.id.ic_love)
-                val awesome = view.findViewById<ImageView>(R.id.ic_awesome)
-                val thanks = view.findViewById<ImageView>(R.id.ic_thanks)
-                val haha = view.findViewById<ImageView>(R.id.ic_haha)
-
-                like.setOnClickListener {
+                likeMenuView.onLike = { value ->
                     popupWindow.dismiss()
-
-                    onPostItemClick?.onItemClicked(
-                        LikeBodyModel(metaName = "like", metaValue = "like", byUserId = Utils.getData(context,
-                        Utils.UID), uniqueId = item.uniq_id), position,
-                        ClickType.LIKE_POST, superIndex = superPosition)
-                }
-                love.setOnClickListener {
-                    popupWindow.dismiss()
-                    onPostItemClick?.onItemClicked(
-                        LikeBodyModel(metaName = "like", metaValue = "love", byUserId = Utils.getData(context,
-                        Utils.UID), uniqueId = item.uniq_id),position,
-                        ClickType.LIKE_POST,superIndex = superPosition)
-                }
-                awesome.setOnClickListener {
-                    popupWindow.dismiss()
-                    onPostItemClick?.onItemClicked(
-                        LikeBodyModel(metaName = "like", metaValue = "awesome", byUserId = Utils.getData(context,
-                        Utils.UID), uniqueId = item.uniq_id),position,
-                        ClickType.LIKE_POST,superIndex = superPosition)
+                    onLike?.invoke(item, value)
                 }
 
-                thanks.setOnClickListener {
-                    popupWindow.dismiss()
-                    onPostItemClick?.onItemClicked(
-                        LikeBodyModel(metaName = "like", metaValue = "thanks", byUserId = Utils.getData(context,
-                        Utils.UID), uniqueId = item.uniq_id),position,
-                        ClickType.LIKE_POST,superIndex = superPosition)
-                }
-                haha.setOnClickListener {
-                    popupWindow.dismiss()
-                    onPostItemClick?.onItemClicked(
-                        LikeBodyModel(metaName = "like", metaValue = "haha", byUserId = Utils.getData(context,
-                        Utils.UID), uniqueId = item.uniq_id),position,
-                        ClickType.LIKE_POST,superIndex = superPosition)
-                }
-
-
-                val resourceId: Int = resources.getIdentifier("navigation_bar_height", "dimen", "android")
                 popupWindow.isFocusable = true
                 popupWindow.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
                 popupWindow.showAsDropDown(it, 0, 0, 0)
@@ -175,10 +133,10 @@ class PostCommentsRecyclerViewAdapter(
 
                         val requestBody = AddCommentBody(
                             uniq_id = "",
-                            resource = "user/${PublicFragment.currentUser!!.uniqId}",
+                            resource = "user/${CompanyTabFragment.currentUser!!.uniqId}",
                             html = message,
                             created = "",
-                            parent_id = "${item?.uniq_id}",
+                            parent_id = "${item?.uniqueId}",
                             modified = "",
                             by_user_id = "",
 
@@ -186,7 +144,7 @@ class PostCommentsRecyclerViewAdapter(
                         )
 
 //                    viewModel.addComment(requestBody)
-                        PublicFragment.viewModel.addComment(requestBody)
+                        CompanyTabFragment.viewModel.addComment(requestBody)
                     }
                     .setNegativeButton("Cancel") { dialog, _ ->
                         dialog.dismiss() // Dismiss the dialog if canceled
@@ -243,8 +201,8 @@ class PostCommentsRecyclerViewAdapter(
             reactionsView.post = item
 
             val repliesRecyclerView = findViewById<RecyclerView>(R.id.repliesRecyclerView)
-            val repliesRecyclerViewAdapter = PostCommentsRecyclerViewAdapter(position, onPostItemClick)
-            onPostItemClick?.let { setPostItemClick(it) }
+            val repliesRecyclerViewAdapter = PostCommentsRecyclerViewAdapter(position)
+            repliesRecyclerViewAdapter.onLike = { post, value -> onLike?.invoke(post, value) }
             repliesRecyclerView.adapter = repliesRecyclerViewAdapter
             repliesRecyclerViewAdapter.values = item.replies
         }

@@ -59,8 +59,8 @@
                                 android:id="@+id/by_user_image"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
-                                android:scaleType="fitXY"
-                                />
+                                android:scaleType="fitXY" />
+
                         </androidx.cardview.widget.CardView>
 
                         <androidx.cardview.widget.CardView

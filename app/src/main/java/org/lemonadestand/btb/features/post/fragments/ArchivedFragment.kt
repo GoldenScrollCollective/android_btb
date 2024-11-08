@@ -201,7 +201,7 @@ class ArchivedFragment : Fragment(), OnItemClickListener {
         clickType = type
         if (type == ClickType.DELETE_POST) {
             val post = `object` as Post
-            viewModel.deletePost(post.uniq_id)
+            viewModel.deletePost(post.uniqueId)
         } else
             if (type == ClickType.LIKE_POST) {
                 val likeResponseModel = `object` as LikeBodyModel

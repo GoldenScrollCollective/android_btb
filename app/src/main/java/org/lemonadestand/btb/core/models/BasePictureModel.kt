@@ -9,7 +9,7 @@ open class BasePictureModel(
     @Transient override val id: String,
     @Transient open val name: String?,
     @Transient open val picture: String?,
-    @Transient override val created: Date?
+    @Transient override val created: Date? = null
 ): BaseModel(id, created) {
     val pictureUrl: String?
         get() {

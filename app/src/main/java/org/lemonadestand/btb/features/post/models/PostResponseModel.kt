@@ -1,7 +1,9 @@
 package org.lemonadestand.btb.features.post.models
 
 import android.os.Parcelable
+import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
+import org.lemonadestand.btb.core.models.BasePictureModel
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.TimeZone
@@ -17,7 +19,7 @@ data class PostResponseModel (
 @Parcelize
 data class Post (
     val id: String,
-    val uniq_id: String,
+    @SerializedName("uniq_id") val uniqueId: String,
     val type: String? = null,
     val parentID: String? = null,
     val byUserID: String,
@@ -32,7 +34,7 @@ data class Post (
     val meta: DatumMeta,
     val replies: List<Post>,
     val html: String,
-    val by_user: User,
+    @SerializedName("by_user") val byUser: User,
     val user: User,
     val users: ArrayList<User>,
 ): Parcelable {
@@ -78,10 +80,10 @@ data class Mark (
 
 @Parcelize
 data class User (
-    val id: String ? = null,
-    val name: String ? = null,
-    val picture: String? = null
-): Parcelable
+    override val id: String = "",
+    override val name: String ? = null,
+    override val picture: String? = null
+): BasePictureModel(id, name, picture)
 
 
 
