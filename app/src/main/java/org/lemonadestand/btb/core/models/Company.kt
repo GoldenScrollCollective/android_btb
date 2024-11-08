@@ -8,20 +8,25 @@ import java.util.Date
 
 @Parcelize
 data class Company(
-    val id: String,
+    override val id: String,
     @SerializedName("uniq_id") val uniqueId: String,
     @SerializedName("org_id") val orgId: String,
-    val name: String,
-    val picture: String?,
+    override val name: String,
+    override val picture: String?,
     val email: String,
-    @SerializedName("last_blessed") val lastBlessed: Event?,
-    @SerializedName("created") val createdAt: String,
-): Parcelable {
+    @SerializedName("last_blessed") val lastBlessed: BlessingEvent?,
+    override val created: Date?,
+): BasePictureModel(id, name, picture, created) {
+    @Parcelize
+    data class BlessingEvent(
+        @SerializedName("blessing_complete") val blessingComplete: Date?,
+    ): Parcelable {
+        val blessingCompletedAt: String
+            get() = DateHelper.format(blessingComplete, "MMM d, yyyy") ?: "Never"
+    }
+
     val lastBlessedAt: String
-        get() {
-            val date = DateHelper.parse(lastBlessed?.blessingComplete, "yyyy-MM-dd HH:mm:ss") ?: return "Never"
-            return DateHelper.format(date, "MMM d, yyyy") ?: "Never"
-        }
+        get() = lastBlessed?.blessingCompletedAt ?: "Never"
 }
 
 @Parcelize

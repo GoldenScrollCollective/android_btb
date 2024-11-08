@@ -4,32 +4,32 @@ import android.os.Parcelable
 import com.aisynchronized.helper.DateHelper
 import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
-
-@Parcelize
-data class Event(
-    val id: String,
-    @SerializedName("blessing_complete") val blessingComplete: String
-): Parcelable
+import java.util.Date
 
 @Parcelize
 data class Member(
-    val id: String,
+    override val id: String,
     @SerializedName("uniq_id") val uniqueId: String,
     override val name: String,
     override val picture: String,
-    @SerializedName("last_blessed") val lastBlessed: Event?,
-    @SerializedName("last_appreciated") val lastAppreciated: String?,
-    override val created: String?
-): BaseModel(name, picture, created) {
+    @SerializedName("last_blessed") val lastBlessed: BlessingEvent? = null,
+    @SerializedName("last_appreciated") val lastAppreciated: Date?,
+    override val created: Date?
+): BasePictureModel(id, name, picture, created) {
+    @Parcelize
+    data class BlessingEvent(
+        @SerializedName("blessing_complete") val blessingComplete: Date?,
+    ): Parcelable {
+        val blessingCompletedAt: String
+            get() = DateHelper.format(blessingComplete, "MMM d, yyyy") ?: "Never"
+    }
+
     val lastBlessedAt: String
-        get() {
-            val date = DateHelper.parse(lastBlessed?.blessingComplete, "yyyy-MM-dd HH:mm:ss") ?: return "Never"
-            return DateHelper.format(date, "MMM d, yyyy") ?: "Never"
-        }
+        get() = lastBlessed?.blessingCompletedAt ?: "Never"
+
     val lastAppreciatedAt: String
         get() {
-            val date = DateHelper.parse(lastAppreciated, "yyyy-MM-dd HH:mm:ss") ?: return "Never"
-            return DateHelper.format(date, "MMM d, yyyy") ?: "Never"
+            return DateHelper.format(lastAppreciated, "MMM d, yyyy") ?: "Never"
         }
 }
 

@@ -1,17 +1,8 @@
-package org.lemonadestand.btb.features.event.models
+package org.lemonadestand.btb.core.models
 
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
-
-@Parcelize
-data class BlessingByUserID(
-    val id: String,
-    val name: String,
-    val picture: String? = null,
-    val interests: ArrayList<Interest>? = null
-) : Parcelable
-
 
 @Parcelize
 data class Interest (

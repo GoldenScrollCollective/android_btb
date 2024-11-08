@@ -4,10 +4,11 @@ import android.os.Parcelable
 import com.aisynchronized.helper.DateHelper
 import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
+import java.util.Date
 
 @Parcelize
 data class Contact(
-    val id: String,
+    override val id: String,
     @SerializedName("uniq_id") val uniqueId: String,
     @SerializedName("org_id") val orgId: String,
     @SerializedName("company_id") val companyId: String,
@@ -18,14 +19,19 @@ data class Contact(
     val ext: String?,
     val address: Address?,
     @SerializedName("address_shipping") val shippingAddress: Address?,
-    @SerializedName("last_blessed") val lastBlessed: Event?,
-    override val created: String?
-): BaseModel(name, picture, created) {
+    @SerializedName("last_blessed") val lastBlessed: BlessingEvent?,
+    override val created: Date?
+): BasePictureModel(id, name, picture, created) {
+    @Parcelize
+    data class BlessingEvent(
+        @SerializedName("blessing_complete") val blessingComplete: Date?,
+    ): Parcelable {
+        val blessingCompletedAt: String
+            get() = DateHelper.format(blessingComplete, "MMM d, yyyy") ?: "Never"
+    }
+
     val lastBlessedAt: String
-        get() {
-            val date = DateHelper.parse(lastBlessed?.blessingComplete, "yyyy-MM-dd HH:mm:ss") ?: return "Never"
-            return DateHelper.format(date, "MMM d, yyyy") ?: "Never"
-        }
+        get() = lastBlessed?.blessingCompletedAt ?: "Never"
 }
 
 @Parcelize
