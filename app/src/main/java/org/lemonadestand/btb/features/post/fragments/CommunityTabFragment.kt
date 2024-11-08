@@ -41,7 +41,7 @@ import org.lemonadestand.btb.constants.ClickType
 import org.lemonadestand.btb.constants.ProgressDialogUtil
 import org.lemonadestand.btb.constants.getDate
 import org.lemonadestand.btb.constants.handleCommonResponse
-import org.lemonadestand.btb.databinding.FragmentPrivateBinding
+import org.lemonadestand.btb.databinding.FragmentCommunityTabBinding
 import org.lemonadestand.btb.extenstions.ago
 import org.lemonadestand.btb.extenstions.hide
 import org.lemonadestand.btb.features.common.models.body.AddCommentBody
@@ -65,9 +65,9 @@ import org.lemonadestand.btb.singleton.Singleton.launchActivity
 import org.lemonadestand.btb.utils.Utils
 
 
-class CommunityTabFragment: BaseFragment(R.layout.fragment_private) {
+class CommunityTabFragment: BaseFragment(R.layout.fragment_community_tab) {
 
-    private lateinit var mBinding: FragmentPrivateBinding
+    private lateinit var mBinding: FragmentCommunityTabBinding
     private lateinit var postsByDateRecyclerViewAdapter: PostsByDateRecyclerViewAdapter
     private lateinit var viewModel: HomeViewModel
     private var shortAnimationDuration: Int = 0
@@ -80,11 +80,10 @@ class CommunityTabFragment: BaseFragment(R.layout.fragment_private) {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        mBinding = FragmentPrivateBinding.inflate(
+        mBinding = FragmentCommunityTabBinding.inflate(
             LayoutInflater.from(inflater.context),
             container,
             false
-
         )
 
         shortAnimationDuration = resources.getInteger(android.R.integer.config_shortAnimTime)
@@ -153,10 +152,9 @@ class CommunityTabFragment: BaseFragment(R.layout.fragment_private) {
     private fun setUpViewModel() {
         startLoading()
         val repository = HomeRepository()
-        val viewModelProviderFactory =
-            CommonViewModelFactory((context as DashboardActivity).application, repository)
+        val viewModelProviderFactory = CommonViewModelFactory((context as DashboardActivity).application, repository)
         viewModel = ViewModelProvider(this, viewModelProviderFactory)[HomeViewModel::class.java]
-        viewModel.getPostList(visibility = Singleton.PRIVATE, page = 0)
+        viewModel.getPosts(visibility = Singleton.PUBLIC, page = 0, community = 1)
         viewModel.postModel.observe(viewLifecycleOwner) {
             stopLoading(true)
 
@@ -274,7 +272,7 @@ class CommunityTabFragment: BaseFragment(R.layout.fragment_private) {
 
     private fun refreshData() {
         startLoading()
-        viewModel.getPostList(visibility = Singleton.PRIVATE, page = 0)
+        viewModel.getPosts(visibility = Singleton.PUBLIC, page = 0, community = 1)
     }
 
     private fun handleLike(post: Post, like: String) {

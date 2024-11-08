@@ -36,9 +36,9 @@ class HomeRepository {
     suspend fun getPostList(visibility: String, page: Int) {
         CoroutineScope(Dispatchers.IO).launch {
             val response = RetrofitInstance.api.getPostList(
-                limit = Singleton.API_LIST_LIMIT,
                 page = page,
-                visibility = visibility
+                visibility = visibility,
+                limit = Singleton.API_LIST_LIMIT,
             )
             if (response.isSuccessful) {
                 postModelLive.postValue(response.body())
@@ -49,6 +49,25 @@ class HomeRepository {
             }
         }
     }
+
+    suspend fun getPosts(visibility: String, page: Int, community: Int) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val response = RetrofitInstance.api.getPosts(
+                page = page,
+                visibility = visibility,
+                limit = Singleton.API_LIST_LIMIT,
+                community = community
+            )
+            if (response.isSuccessful) {
+                postModelLive.postValue(response.body())
+                ProgressDialogUtil.dismissProgressDialog()
+            } else {
+                errorLive.postValue(response)
+                ProgressDialogUtil.dismissProgressDialog()
+            }
+        }
+    }
+
     suspend fun addLike(likeModel : LikeBodyModel) {
 
         CoroutineScope(Dispatchers.IO).launch {

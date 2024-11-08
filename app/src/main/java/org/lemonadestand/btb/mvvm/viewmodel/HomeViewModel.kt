@@ -24,11 +24,6 @@ class HomeViewModel(
     private val homeRepository: HomeRepository
 ) : AndroidViewModel(app) {
 
-
-    init {
-
-    }
-
     val liveError: LiveData<Response<*>>
         get() = homeRepository.error
     val commonResponse: LiveData<CommonResponseModel>
@@ -46,6 +41,14 @@ class HomeViewModel(
      fun getPostList(visibility: String, page: Int) = viewModelScope.launch {
         if (hasInternetConnection()) {
             homeRepository.getPostList(page = page, visibility = visibility)
+        } else {
+            noInternet.postValue("No Internet Connection")
+        }
+    }
+
+    fun getPosts(visibility: String, page: Int, community: Int) = viewModelScope.launch {
+        if (hasInternetConnection()) {
+            homeRepository.getPosts(page = page, visibility = visibility, community = community)
         } else {
             noInternet.postValue("No Internet Connection")
         }

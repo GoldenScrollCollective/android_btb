@@ -27,8 +27,6 @@ import retrofit2.http.Query
 
 interface ApiService {
 
-
-
     @GET(Singleton.REST_POST)
     suspend fun getPostList(
         @Query("limit") limit : String,
@@ -38,7 +36,14 @@ interface ApiService {
         authorization: String = authToken
     ): Response<PostResponseModel>
 
-
+    @GET(Singleton.REST_POST)
+    suspend fun getPosts(
+        @Query("page") page : Int,
+        @Query("limit") limit : String,
+        @Query("visibility") visibility : String,
+        @Query("community") community : Int,
+        @Header("Authorization") authorization: String = authToken
+    ): Response<PostResponseModel>
 
     @GET(Singleton.USER_LIST)
     suspend fun getUSerList(
