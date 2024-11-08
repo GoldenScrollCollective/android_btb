@@ -15,8 +15,8 @@ import com.github.chantsune.swipetoaction.views.SimpleSwipeLayout
 import org.lemonadestand.btb.constants.ClickType
 import org.lemonadestand.btb.R
 import org.lemonadestand.btb.constants.getImageUrlFromName
-import org.lemonadestand.btb.extenstions.hide
-import org.lemonadestand.btb.extenstions.show
+import org.lemonadestand.btb.extensions.hide
+import org.lemonadestand.btb.extensions.show
 import org.lemonadestand.btb.interfaces.OnItemClickListener
 import org.lemonadestand.btb.features.event.models.EventModel
 

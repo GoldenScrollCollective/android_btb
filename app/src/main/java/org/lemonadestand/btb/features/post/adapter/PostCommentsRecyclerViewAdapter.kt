@@ -1,14 +1,11 @@
 package org.lemonadestand.btb.features.post.adapter
 
 import android.app.AlertDialog
-import android.content.res.Resources
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.GradientDrawable
 import android.util.TypedValue
 import android.view.Gravity
-import android.view.LayoutInflater
-import android.view.View
 import android.view.WindowManager
 import android.widget.EditText
 import android.widget.ImageView
@@ -23,17 +20,13 @@ import com.bumptech.glide.Glide
 import org.lemonadestand.btb.R
 import org.lemonadestand.btb.components.CommentReactionsView
 import org.lemonadestand.btb.components.LikeMenuView
-import org.lemonadestand.btb.constants.ClickType
 import org.lemonadestand.btb.constants.getImageUrlFromName
-import org.lemonadestand.btb.extenstions.ago
-import org.lemonadestand.btb.extenstions.setOnSingleClickListener
+import org.lemonadestand.btb.extensions.ago
+import org.lemonadestand.btb.extensions.setOnSingleClickListener
 import org.lemonadestand.btb.features.common.models.body.AddCommentBody
-import org.lemonadestand.btb.features.common.models.body.LikeBodyModel
 import org.lemonadestand.btb.features.common.models.body.ShareStoryUser
 import org.lemonadestand.btb.features.post.fragments.CompanyTabFragment
 import org.lemonadestand.btb.features.post.models.Post
-import org.lemonadestand.btb.interfaces.OnItemClickListener
-import org.lemonadestand.btb.utils.Utils
 
 
 class PostCommentsRecyclerViewAdapter(
@@ -63,7 +56,7 @@ class PostCommentsRecyclerViewAdapter(
             commentView.text = HtmlCompat.fromHtml(item.html, HtmlCompat.FROM_HTML_MODE_COMPACT)
 
             val agoView = findViewById<TextView>(R.id.agoView)
-            item.createdAt()?.let { agoView.text = it.ago() }
+            agoView.text = item.createdAgo
 
             val btnLike = findViewById<TextView>(R.id.btnLike)
             btnLike.setOnSingleClickListener {

@@ -25,7 +25,7 @@ import org.lemonadestand.btb.features.dashboard.activities.DashboardActivity
 import org.lemonadestand.btb.features.interest.adapter.InterestUiAdapter
 import org.lemonadestand.btb.constants.getImageUrlFromName
 import org.lemonadestand.btb.constants.handleCommonResponse
-import org.lemonadestand.btb.extenstions.hide
+import org.lemonadestand.btb.extensions.hide
 import org.lemonadestand.btb.interfaces.OnItemClickListener
 
 import org.lemonadestand.btb.features.common.models.UserListModel

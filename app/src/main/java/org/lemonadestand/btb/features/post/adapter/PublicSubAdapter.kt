@@ -27,7 +27,7 @@ import org.lemonadestand.btb.constants.ClickType
 import org.lemonadestand.btb.R
 import org.lemonadestand.btb.utils.Utils
 import org.lemonadestand.btb.constants.getImageUrlFromName
-import org.lemonadestand.btb.extenstions.ago
+import org.lemonadestand.btb.extensions.ago
 import org.lemonadestand.btb.interfaces.OnItemClickListener
 import org.lemonadestand.btb.features.common.models.body.LikeBodyModel
 import org.lemonadestand.btb.features.post.activities.AddBonusActivity
@@ -101,7 +101,7 @@ class PublicSubAdapter(private val list: ArrayList<Post>, var context: Context, 
                 append("by ")
                 append(post.byUser.name)
                 append(" · ")
-                append(post.createdAt()?.let { it.ago() })
+                append(post.createdAgo)
             }
         } else {
             //Post
@@ -109,7 +109,7 @@ class PublicSubAdapter(private val list: ArrayList<Post>, var context: Context, 
             holder.txtEventName.text = ""
             holder.txtShared.text = buildString {
                 append("shared this story · ")
-                append(post.createdAt()?.let { it.ago() })
+                append(post.createdAgo)
             }
             holder.tvDesc.text = buildString {
                 append("")

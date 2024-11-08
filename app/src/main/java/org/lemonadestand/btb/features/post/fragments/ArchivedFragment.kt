@@ -25,7 +25,7 @@ import org.lemonadestand.btb.mvvm.factory.CommonViewModelFactory
 import org.lemonadestand.btb.mvvm.repository.HomeRepository
 import org.lemonadestand.btb.mvvm.viewmodel.HomeViewModel
 import org.lemonadestand.btb.singleton.Singleton
-import org.lemonadestand.btb.extenstions.hide
+import org.lemonadestand.btb.extensions.hide
 import org.lemonadestand.btb.interfaces.OnItemClickListener
 import org.lemonadestand.btb.features.common.models.body.LikeBodyModel
 import org.lemonadestand.btb.features.post.models.Bonus
@@ -86,8 +86,8 @@ class ArchivedFragment : Fragment(), OnItemClickListener {
                 val dateList: ArrayList<String> = ArrayList()
 
                 for (i in 0 until it.data.size) {
-                    if (!dateList.contains(getDate(it.data[i].created))) {
-                        dateList.add(getDate(it.data[i].created))
+                    if (!dateList.contains(getDate(it.data[i].created!!))) {
+                        dateList.add(getDate(it.data[i].created!!))
                         postDateList.add(
                             PostModelDate(
                                 date = it.data[i].created,

@@ -20,7 +20,7 @@ import org.lemonadestand.btb.features.event.adapter.EventAdapter
 import org.lemonadestand.btb.databinding.FragmentRecordedEventBinding
 import org.lemonadestand.btb.constants.getDate
 import org.lemonadestand.btb.constants.handleCommonResponse
-import org.lemonadestand.btb.extenstions.hide
+import org.lemonadestand.btb.extensions.hide
 import org.lemonadestand.btb.interfaces.OnItemClickListener
 import org.lemonadestand.btb.features.common.models.UserListModel
 import org.lemonadestand.btb.features.common.models.body.ScheduleBody

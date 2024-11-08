@@ -6,7 +6,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.gson.JsonParser
@@ -16,11 +15,11 @@ import org.lemonadestand.btb.R
 import org.lemonadestand.btb.utils.Utils
 import org.lemonadestand.btb.databinding.ActivityLoginBinding
 import org.lemonadestand.btb.features.dashboard.activities.DashboardActivity
-import org.lemonadestand.btb.extenstions.hide
-import org.lemonadestand.btb.extenstions.invisible
+import org.lemonadestand.btb.extensions.hide
+import org.lemonadestand.btb.extensions.invisible
 import org.lemonadestand.btb.features.login.models.LoginResponse
 import org.lemonadestand.btb.network.RestClient
-import org.lemonadestand.btb.extenstions.show
+import org.lemonadestand.btb.extensions.show
 import org.lemonadestand.btb.singleton.Singleton.authToken
 import retrofit2.Call
 import retrofit2.Callback

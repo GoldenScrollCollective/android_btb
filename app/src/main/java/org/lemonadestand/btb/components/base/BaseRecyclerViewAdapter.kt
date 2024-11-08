@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.annotation.CallSuper
 import androidx.annotation.LayoutRes
 import androidx.recyclerview.widget.RecyclerView
-import org.lemonadestand.btb.extenstions.setOnSingleClickListener
+import org.lemonadestand.btb.extensions.setOnSingleClickListener
 
 open class BaseRecyclerViewAdapter<T>(@LayoutRes val layoutResId: Int, val fullHeight: Boolean = false): RecyclerView.Adapter<BaseRecyclerViewAdapter<T>.ViewHolder>() {
     var values: List<T>? = emptyList()

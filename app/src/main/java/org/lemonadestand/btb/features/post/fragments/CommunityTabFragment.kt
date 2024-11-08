@@ -6,9 +6,17 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
 import android.graphics.Color
+import android.graphics.Typeface
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
+import android.text.Html
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.SpannableStringBuilder
+import android.text.Spanned
+import android.text.style.ForegroundColorSpan
+import android.text.style.StyleSpan
 import android.util.Log
 import android.util.TypedValue
 import android.view.Gravity
@@ -25,6 +33,7 @@ import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
+import androidx.core.text.color
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -42,8 +51,10 @@ import org.lemonadestand.btb.constants.ProgressDialogUtil
 import org.lemonadestand.btb.constants.getDate
 import org.lemonadestand.btb.constants.handleCommonResponse
 import org.lemonadestand.btb.databinding.FragmentCommunityTabBinding
-import org.lemonadestand.btb.extenstions.ago
-import org.lemonadestand.btb.extenstions.hide
+import org.lemonadestand.btb.extensions.ago
+import org.lemonadestand.btb.extensions.hide
+import org.lemonadestand.btb.extensions.setImageUrl
+import org.lemonadestand.btb.extensions.setOnSingleClickListener
 import org.lemonadestand.btb.features.common.models.body.AddCommentBody
 import org.lemonadestand.btb.features.common.models.body.LikeBodyModel
 import org.lemonadestand.btb.features.common.models.body.ShareStoryUser
@@ -63,7 +74,6 @@ import org.lemonadestand.btb.mvvm.viewmodel.HomeViewModel
 import org.lemonadestand.btb.singleton.Singleton
 import org.lemonadestand.btb.singleton.Singleton.launchActivity
 import org.lemonadestand.btb.utils.Utils
-
 
 class CommunityTabFragment: BaseFragment(R.layout.fragment_community_tab) {
 
@@ -164,8 +174,8 @@ class CommunityTabFragment: BaseFragment(R.layout.fragment_community_tab) {
                 val dateList: ArrayList<String> = ArrayList()
 
                 for (i in 0 until it.data.size) {
-                    if (!dateList.contains(getDate(it.data[i].created))) {
-                        dateList.add(getDate(it.data[i].created))
+                    if (!dateList.contains(getDate(it.data[i].created!!))) {
+                        dateList.add(getDate(it.data[i].created!!))
                         postDateList.add(
                             PostModelDate(
                                 date = it.data[i].created,
@@ -298,7 +308,7 @@ class CommunityTabFragment: BaseFragment(R.layout.fragment_community_tab) {
                 val tempPostList: ArrayList<Post> = ArrayList()
 
                 for (i in 0 until item.postList.size) {
-                    if (getDate(item.postList[i].created) == getDate(item.date!!)) {
+                    if (getDate(item.postList[i].created!!) == getDate(item.date!!)) {
                         tempPostList.add(item.postList[i])
                     }
                 }
@@ -316,7 +326,7 @@ class CommunityTabFragment: BaseFragment(R.layout.fragment_community_tab) {
         }
     }
 
-    private class PostsRecyclerViewAdapter(val superPosition: Int): BaseRecyclerViewAdapter<Post>(R.layout.row_public_sub, fullHeight = true) {
+    private class PostsRecyclerViewAdapter(val superPosition: Int): BaseRecyclerViewAdapter<Post>(R.layout.layout_community_posts_item, fullHeight = true) {
         var onPreview: ((value: Post) -> Unit)? = null
         var onLike: ((post: Post, value: String) -> Unit)? = null
         var onDelete: ((value: Post) -> Unit)? = null
@@ -325,18 +335,10 @@ class CommunityTabFragment: BaseFragment(R.layout.fragment_community_tab) {
             super.bindView(holder, item, position)
             with(holder.itemView) {
                 val userImageView = findViewById<ImageView>(R.id.user_image)
-                Glide.with(context).load(item.user.pictureUrl).into(userImageView)
+                userImageView.setImageUrl(item.user.pictureUrl)
 
-                val byUserImageContainer = findViewById<CardView>(R.id.cd_sub_name)
-                val byUserImageView = findViewById<ImageView>(R.id.by_user_image)
-                if (item.byUser.picture != null) {
-                    Glide.with(context).load(item.byUser.pictureUrl).into(byUserImageView)
-                } else {
-                    byUserImageContainer.visibility = View.INVISIBLE
-                }
-
-                val tvTitle = findViewById<TextView>(R.id.tv_title)
-                tvTitle.setOnClickListener {
+                val titleView = findViewById<TextView>(R.id.titleView)
+                titleView.setOnSingleClickListener {
                     val cardView = CardView(context)
                     cardView.setPadding(5, 5, 5, 5)
 
@@ -389,8 +391,6 @@ class CommunityTabFragment: BaseFragment(R.layout.fragment_community_tab) {
                     popupWindow.showAsDropDown(it, 100, 0, 0)
                 }
 
-                val tvDesc = findViewById<TextView>(R.id.tv_desc)
-                val txtEventName = findViewById<TextView>(R.id.txt_event_name)
                 val lnLike = findViewById<LinearLayout>(R.id.ln_like)
                 lnLike.setOnClickListener {
 
@@ -529,100 +529,6 @@ class CommunityTabFragment: BaseFragment(R.layout.fragment_community_tab) {
                 }
 
                 val swipeLayout = findViewById<SimpleSwipeLayout>(R.id.swipe_layout)
-                val txtShared = findViewById<TextView>(R.id.txt_shared)
-
-                val lnBonus = findViewById<LinearLayout>(R.id.ln_bonus)
-                lnBonus.setOnClickListener {
-                    val json = Gson().toJson(item)
-                    (context as Activity).launchActivity<AddBonusActivity> {
-                        putExtra("reply_data", json)
-                    }
-                }
-
-                val tvComment = findViewById<TextView>(R.id.tv_comment)
-
-                val mediaView = findViewById<MediaView>(R.id.mediaView)
-                mediaView.post = item
-                mediaView.setOnClickListener {
-                    onPreview?.invoke(item)
-                }
-
-                val reactionsView = findViewById<ReactionsView>(R.id.reactionsView)
-                reactionsView.post = item
-
-                val txtCommentCount = findViewById<TextView>(R.id.txt_comment)
-                val txtLikeCount = findViewById<TextView>(R.id.txt_like)
-                val imageLikeMain = findViewById<ImageView>(R.id.image_like_main)
-
-                if (item.type != null) {
-                    if (item.users.size > 1) {
-                        tvTitle.text = item.user.name + " +" + (item.users.size - 1)            //Add Uses
-                    } else {
-                        tvTitle.text = item.user.name
-                    }
-                    txtEventName.text = item.title
-                    txtShared.text = buildString {
-                        append("for")
-                    }
-                    tvDesc.text = buildString {
-                        append("by ")
-                        append(item.byUser.name)
-                        append(" · ")
-                        append(item.createdAt()?.let { it.ago() })
-                    }
-                } else {
-                    //Post
-                    tvTitle.text = item.user.name
-                    txtEventName.text = ""
-                    txtShared.text = buildString {
-                        append("shared this story · ")
-                        append(item.createdAt()?.let { it.ago() })
-                    }
-                    tvDesc.text = buildString {
-                        append("")
-                    };
-
-                    lnBonus.visibility = View.GONE
-                }
-
-                tvComment.text = HtmlCompat.fromHtml(item.html, HtmlCompat.FROM_HTML_MODE_LEGACY).trim()
-
-                if (item.replies.isNotEmpty()) {
-                    txtCommentCount.text = buildString {
-                        append("Comment")
-//                append("(")
-//                append(data.replies.size)
-//                append(")")
-                    }
-
-                    var commentStr = ""
-                    if (item.replies.size == 1) commentStr = "1 Comment"
-                    if (item.replies.size > 1) commentStr = "${item.replies.size} Comments"
-                }
-
-                if (!item.meta.like.isNullOrEmpty()) {
-                    txtLikeCount.text = buildString {
-                        append("Like")
-//                append("(")
-//                append(data.meta.like.size)
-//                append(")")
-                    }
-
-                    if (item.meta.like.size != 0) {
-                        imageLikeMain.setImageResource(R.drawable.ic_like_up)
-                    }
-                }
-
-
-
-
-                /* holder.tv_title.setText(data.getName());
-				holder.tv_desc.setText(data.getDesc());
-
-				Glide.with(context)
-						.load(data.getImage())
-						.into(holder.iv_image);*/
-
                 swipeLayout.setOnSwipeItemClickListener { swipeItem ->
 
                     when (swipeItem.position) {
@@ -643,6 +549,77 @@ class CommunityTabFragment: BaseFragment(R.layout.fragment_community_tab) {
                     }
 
                 }
+
+                val lnBonus = findViewById<LinearLayout>(R.id.ln_bonus)
+                lnBonus.setOnClickListener {
+                    val json = Gson().toJson(item)
+                    (context as Activity).launchActivity<AddBonusActivity> {
+                        putExtra("reply_data", json)
+                    }
+                }
+
+                val tvComment = findViewById<TextView>(R.id.tv_comment)
+
+                val mediaView = findViewById<MediaView>(R.id.mediaView)
+                mediaView.post = item
+                mediaView.setOnClickListener {
+                    onPreview?.invoke(item)
+                }
+
+                val reactionsView = findViewById<ReactionsView>(R.id.reactionsView)
+                reactionsView.post = item
+
+                val commentCountView = findViewById<TextView>(R.id.txt_comment)
+                val likeCountView = findViewById<TextView>(R.id.txt_like)
+                val imageLikeMain = findViewById<ImageView>(R.id.image_like_main)
+
+                val bold = "${item.user.name} shared this story · "
+                val small = "${item.createdAgo ?: ""} @${item.organization?.name ?: ""}"
+                val total = bold + small
+                val spannableStringBuilder = SpannableStringBuilder(total)
+                spannableStringBuilder.setSpan(ForegroundColorSpan(ContextCompat.getColor(context, R.color.text_grey)), total.indexOf(small), total.indexOf(small) + small.length, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
+                spannableStringBuilder.setSpan(StyleSpan(Typeface.NORMAL), total.indexOf(small), total.indexOf(small) + small.length, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
+                titleView.text = spannableStringBuilder
+
+                lnBonus.visibility = View.GONE
+
+                tvComment.text = HtmlCompat.fromHtml(item.html, HtmlCompat.FROM_HTML_MODE_LEGACY).trim()
+
+                if (item.replies.isNotEmpty()) {
+                    commentCountView.text = buildString {
+                        append("Comment")
+//                append("(")
+//                append(data.replies.size)
+//                append(")")
+                    }
+
+                    var commentStr = ""
+                    if (item.replies.size == 1) commentStr = "1 Comment"
+                    if (item.replies.size > 1) commentStr = "${item.replies.size} Comments"
+                }
+
+                if (!item.meta.like.isNullOrEmpty()) {
+                    likeCountView.text = buildString {
+                        append("Like")
+//                append("(")
+//                append(data.meta.like.size)
+//                append(")")
+                    }
+
+                    if (item.meta.like.size != 0) {
+                        imageLikeMain.setImageResource(R.drawable.ic_like_up)
+                    }
+                }
+
+
+
+
+                /* holder.tv_title.setText(data.getName());
+				holder.tv_desc.setText(data.getDesc());
+
+				Glide.with(context)
+						.load(data.getImage())
+						.into(holder.iv_image);*/
 
                 val commentsRecyclerView = findViewById<RecyclerView>(R.id.commentsRecyclerView)
                 val commentsRecyclerViewAdapter = PostCommentsRecyclerViewAdapter(position)   // fixed

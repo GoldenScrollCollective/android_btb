@@ -20,9 +20,8 @@ import org.lemonadestand.btb.constants.ProgressDialogUtil
 import org.lemonadestand.btb.core.models.Member
 import org.lemonadestand.btb.core.repositories.MemberRepository
 import org.lemonadestand.btb.core.viewModels.MemberViewModel
-import org.lemonadestand.btb.extenstions.hide
-import org.lemonadestand.btb.extenstions.setOnSingleClickListener
-import org.lemonadestand.btb.extenstions.show
+import org.lemonadestand.btb.extensions.hide
+import org.lemonadestand.btb.extensions.show
 import org.lemonadestand.btb.features.dashboard.activities.DashboardActivity
 import org.lemonadestand.btb.mvvm.factory.CommonViewModelFactory
 import org.lemonadestand.btb.singleton.Singleton

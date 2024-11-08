@@ -20,6 +20,7 @@ import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 import java.util.Calendar
+import java.util.Date
 import java.util.Locale
 
 
@@ -36,6 +37,20 @@ fun getDate(date: String): String {
         date
     }
 }
+
+fun getDate(date: Date?): String {
+    val cal = Calendar.getInstance()
+    try {
+        cal.time = date ?: return ""
+
+        val dateFormat = SimpleDateFormat("EEE, MMM dd, yyyy", Locale.US);
+        val formattedDate = dateFormat.format(cal.time);
+        return formattedDate
+    } catch (e: Exception) {
+        return "Never"
+    }
+}
+
 
 fun isValidHexColor(colorString: String): Boolean {
     val hexColorPattern = Regex("^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})\$")

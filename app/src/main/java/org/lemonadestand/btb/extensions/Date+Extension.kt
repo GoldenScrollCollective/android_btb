@@ -1,4 +1,4 @@
-package org.lemonadestand.btb.extenstions
+package org.lemonadestand.btb.extensions
 
 import java.util.Calendar
 import java.util.Date

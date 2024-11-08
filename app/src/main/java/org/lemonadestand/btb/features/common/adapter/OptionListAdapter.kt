@@ -9,11 +9,11 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import org.lemonadestand.btb.R
 import org.lemonadestand.btb.features.interest.models.Option
-import org.lemonadestand.btb.extenstions.hide
+import org.lemonadestand.btb.extensions.hide
 import org.lemonadestand.btb.interfaces.OnItemClickListener
 
 import org.lemonadestand.btb.features.common.fragments.OptionListFragment.Companion.optionListFragmentIndex
-import org.lemonadestand.btb.extenstions.show
+import org.lemonadestand.btb.extensions.show
 
 class OptionListAdapter(private var list: ArrayList<Option>, var context: Context) :
     RecyclerView.Adapter<OptionListAdapter.ViewHolder>() {

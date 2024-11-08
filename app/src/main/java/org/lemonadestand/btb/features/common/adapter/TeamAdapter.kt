@@ -9,10 +9,10 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import org.lemonadestand.btb.R
 import org.lemonadestand.btb.utils.Utils
-import org.lemonadestand.btb.extenstions.hide
+import org.lemonadestand.btb.extensions.hide
 import org.lemonadestand.btb.interfaces.OnItemClickListener
 import org.lemonadestand.btb.features.common.models.UserListModel
-import org.lemonadestand.btb.extenstions.show
+import org.lemonadestand.btb.extensions.show
 
 class TeamAdapter(
     private var list: ArrayList<UserListModel>,

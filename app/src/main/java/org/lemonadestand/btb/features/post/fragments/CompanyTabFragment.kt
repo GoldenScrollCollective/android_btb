@@ -42,8 +42,8 @@ import org.lemonadestand.btb.constants.ProgressDialogUtil
 import org.lemonadestand.btb.constants.getDate
 import org.lemonadestand.btb.constants.handleCommonResponse
 import org.lemonadestand.btb.databinding.FragmentCompanyTabBinding
-import org.lemonadestand.btb.extenstions.ago
-import org.lemonadestand.btb.extenstions.hide
+import org.lemonadestand.btb.extensions.ago
+import org.lemonadestand.btb.extensions.hide
 import org.lemonadestand.btb.features.common.models.body.AddCommentBody
 import org.lemonadestand.btb.features.common.models.body.LikeBodyModel
 import org.lemonadestand.btb.features.common.models.body.ShareStoryUser
@@ -584,7 +584,7 @@ class CompanyTabFragment: BaseFragment(R.layout.fragment_company_tab) {
 						append("by ")
 						append(item.byUser.name)
 						append(" · ")
-						append(item.createdAt()?.let { it.ago() })
+						append(item.createdAgo)
 					}
 				} else {
 					//Post
@@ -592,7 +592,7 @@ class CompanyTabFragment: BaseFragment(R.layout.fragment_company_tab) {
 					txtEventName.text = ""
 					txtShared.text = buildString {
 						append("shared this story · ")
-						append(item.createdAt()?.let { it.ago() })
+						append(item.createdAgo)
 					}
 					tvDesc.text = buildString {
 						append("")

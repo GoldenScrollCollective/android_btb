@@ -44,7 +44,7 @@ class PublicAdapter(
         val tempPostList: ArrayList<Post> = ArrayList()
 
         for (i in 0 until data.postList.size) {
-            if (getDate(data.postList[i].created) == getDate(data.date!!)) {
+            if (getDate(data.postList[i].created!!) == getDate(data.date!!)) {
                 tempPostList.add(data.postList[i])
             }
         }

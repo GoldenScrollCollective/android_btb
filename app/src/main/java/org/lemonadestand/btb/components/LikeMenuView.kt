@@ -6,7 +6,7 @@ import android.view.LayoutInflater
 import android.widget.ImageView
 import android.widget.LinearLayout
 import org.lemonadestand.btb.R
-import org.lemonadestand.btb.extenstions.setOnSingleClickListener
+import org.lemonadestand.btb.extensions.setOnSingleClickListener
 
 class LikeMenuView @JvmOverloads constructor(
 	context: Context,

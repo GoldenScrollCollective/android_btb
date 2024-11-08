@@ -1,7 +1,6 @@
 package org.lemonadestand.btb.features.post.fragments
 
 import android.app.Activity
-import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.RelativeLayout
@@ -18,18 +17,11 @@ import org.lemonadestand.btb.components.NavHeaderView
 import org.lemonadestand.btb.components.base.BaseFragment
 import org.lemonadestand.btb.components.base.BaseRecyclerViewAdapter
 import org.lemonadestand.btb.constants.ProgressDialogUtil
-import org.lemonadestand.btb.constants.getImageUrlFromName
-import org.lemonadestand.btb.core.models.Company
 import org.lemonadestand.btb.core.models.Contact
-import org.lemonadestand.btb.core.models.Member
-import org.lemonadestand.btb.core.repositories.CompaniesRepository
 import org.lemonadestand.btb.core.repositories.ContactsRepository
-import org.lemonadestand.btb.core.repositories.MemberRepository
-import org.lemonadestand.btb.core.viewModels.CompaniesViewModel
 import org.lemonadestand.btb.core.viewModels.ContactsViewModel
-import org.lemonadestand.btb.core.viewModels.MemberViewModel
-import org.lemonadestand.btb.extenstions.hide
-import org.lemonadestand.btb.extenstions.show
+import org.lemonadestand.btb.extensions.hide
+import org.lemonadestand.btb.extensions.show
 import org.lemonadestand.btb.features.dashboard.activities.DashboardActivity
 import org.lemonadestand.btb.mvvm.factory.CommonViewModelFactory
 import org.lemonadestand.btb.singleton.Singleton

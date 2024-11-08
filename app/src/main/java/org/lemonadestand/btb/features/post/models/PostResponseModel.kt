@@ -3,7 +3,9 @@ package org.lemonadestand.btb.features.post.models
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
+import org.lemonadestand.btb.core.models.BaseModel
 import org.lemonadestand.btb.core.models.BasePictureModel
+import org.lemonadestand.btb.core.models.Resource
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.TimeZone
@@ -18,7 +20,7 @@ data class PostResponseModel (
 
 @Parcelize
 data class Post (
-    val id: String,
+    override val id: String,
     @SerializedName("uniq_id") val uniqueId: String,
     val type: String? = null,
     val parentID: String? = null,
@@ -28,7 +30,7 @@ data class Post (
     val body: DatumBody,
     val visibility: String,
     val media: String?,
-    val created: String,
+    override val created: Date?,
     val modified: String,
     val depth: String,
     val meta: DatumMeta,
@@ -37,18 +39,8 @@ data class Post (
     @SerializedName("by_user") val byUser: User,
     val user: User,
     val users: ArrayList<User>,
-): Parcelable {
-    fun createdAt(): Date? {
-        val format = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-        try {
-            format.timeZone = TimeZone.getTimeZone("UTC+0")
-            return format.parse(created)
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-        return null
-    }
-}
+    val organization: Resource? = null
+): BaseModel(id, created)
 
 @Parcelize
 data class DatumBody (

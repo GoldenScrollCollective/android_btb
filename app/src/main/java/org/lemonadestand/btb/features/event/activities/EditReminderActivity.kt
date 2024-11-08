@@ -18,7 +18,7 @@ import org.lemonadestand.btb.databinding.ActivityEditReminderBinding
 import org.lemonadestand.btb.constants.getDate
 import org.lemonadestand.btb.constants.getDateDifference
 import org.lemonadestand.btb.constants.handleCommonResponse
-import org.lemonadestand.btb.extenstions.hide
+import org.lemonadestand.btb.extensions.hide
 import org.lemonadestand.btb.interfaces.OnItemClickListener
 import org.lemonadestand.btb.features.common.models.UserListModel
 import org.lemonadestand.btb.features.common.models.body.ReminderRequestBody
@@ -30,7 +30,7 @@ import org.lemonadestand.btb.features.common.fragments.SelectContactListFragment
 import org.lemonadestand.btb.features.common.fragments.UserListFragment
 import org.lemonadestand.btb.features.common.fragments.UserListFragmentMulti
 import org.lemonadestand.btb.features.event.fragments.WriteTextFragment
-import org.lemonadestand.btb.extenstions.show
+import org.lemonadestand.btb.extensions.show
 import org.lemonadestand.btb.singleton.Singleton
 import java.text.SimpleDateFormat
 import java.util.Calendar

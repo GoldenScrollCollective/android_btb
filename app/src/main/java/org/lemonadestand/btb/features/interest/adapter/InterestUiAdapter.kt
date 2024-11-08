@@ -21,12 +21,12 @@ import org.lemonadestand.btb.constants.InterestFieldType
 import org.lemonadestand.btb.R
 import org.lemonadestand.btb.features.interest.models.InterestModel
 import org.lemonadestand.btb.constants.getDate
-import org.lemonadestand.btb.extenstions.hide
+import org.lemonadestand.btb.extensions.hide
 import org.lemonadestand.btb.constants.intToHexColor
 import org.lemonadestand.btb.interfaces.OnItemClickListener
 import org.lemonadestand.btb.constants.isValidHexColor
 import org.lemonadestand.btb.features.interest.fragments.InterestFragment.Companion.currentType
-import org.lemonadestand.btb.extenstions.show
+import org.lemonadestand.btb.extensions.show
 import org.lemonadestand.btb.singleton.Singleton
 import yuku.ambilwarna.AmbilWarnaDialog
 import java.text.SimpleDateFormat

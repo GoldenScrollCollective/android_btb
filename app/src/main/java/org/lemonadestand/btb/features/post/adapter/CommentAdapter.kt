@@ -32,7 +32,7 @@ class CommentAdapter(private val list: ArrayList<CommentModelDate>, var context:
         val tempPostList: ArrayList<Post> = ArrayList()
 
         for (i in 0 until data.commentList.size) {
-            if (getDate(data.commentList[i].created) == getDate(data.date!!)) {
+            if (getDate(data.commentList[i].created!!) == getDate(data.date!!)) {
                 tempPostList.add(data.commentList[i])
             }
         }

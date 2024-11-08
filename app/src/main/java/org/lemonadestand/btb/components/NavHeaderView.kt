@@ -7,7 +7,7 @@ import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
 import org.lemonadestand.btb.R
-import org.lemonadestand.btb.extenstions.setOnSingleClickListener
+import org.lemonadestand.btb.extensions.setOnSingleClickListener
 
 class NavHeaderView @JvmOverloads constructor(
     context: Context,

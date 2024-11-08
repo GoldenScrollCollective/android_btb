@@ -1,13 +1,10 @@
 package org.lemonadestand.btb.features.dashboard.activities
 
 import android.graphics.Color
-import android.os.Bundle
 import android.util.Log
-import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
@@ -17,16 +14,12 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import org.lemonadestand.btb.R
 
-import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.transition.Visibility
 import com.bumptech.glide.Glide
-import com.google.android.material.navigation.NavigationView
 import org.lemonadestand.btb.components.base.BaseActivity
 import org.lemonadestand.btb.constants.getImageUrlFromName
-import org.lemonadestand.btb.extenstions.setImageUrl
-import org.lemonadestand.btb.extenstions.setOnSingleClickListener
+import org.lemonadestand.btb.extensions.setOnSingleClickListener
 import org.lemonadestand.btb.features.login.activities.LoginActivity
 import org.lemonadestand.btb.utils.Utils
 
