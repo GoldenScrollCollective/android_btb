@@ -10,6 +10,8 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
+import org.lemonadestand.btb.R
+import org.lemonadestand.btb.components.base.BaseActivity
 import org.lemonadestand.btb.constants.ProgressDialogUtil
 import org.lemonadestand.btb.utils.Utils
 import org.lemonadestand.btb.databinding.ActivityShareStoryBinding
@@ -22,15 +24,17 @@ import org.lemonadestand.btb.mvvm.repository.HomeRepository
 import org.lemonadestand.btb.mvvm.viewmodel.HomeViewModel
 import org.lemonadestand.btb.singleton.Singleton
 
-class ShareStoryActivity : AppCompatActivity() {
+class ShareStoryActivity : BaseActivity(R.layout.activity_share_story) {
 
     private lateinit var webView: WebView
 
     private lateinit var mBinding: ActivityShareStoryBinding
     lateinit var viewModel: HomeViewModel
     private var currentUser : User? = null
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+
+    override fun init() {
+        super.init()
+
         mBinding = ActivityShareStoryBinding.inflate(layoutInflater)
         setContentView(mBinding.root)
         getData()
@@ -84,18 +88,18 @@ class ShareStoryActivity : AppCompatActivity() {
 //                return@setOnClickListener
 //            }
 
-            val requestBody = ShareStoryBody(
-                uniq_id = "",
-                resource = "user/${currentUser!!.uniqId}",
-                html = mBinding.webView.toString(),
-                created = "",
-                parent_id = "",
-                modified = "",
-                by_user_id = "",
-                visibility = if(mBinding.switchIsPrivate.isChecked)  "private" else "public",
-                user = ShareStoryUser(id = "", name = "")
-            )
-            viewModel.shareStory(requestBody)
+//            val requestBody = ShareStoryBody(
+//                uniq_id = "",
+//                resource = "user/${currentUser!!.uniqId}",
+//                html = mBinding.webView.toString(),
+//                created = "",
+//                parent_id = "",
+//                modified = "",
+//                by_user_id = "",
+//                visibility = if(mBinding.switchIsPrivate.isChecked)  "private" else "public",
+//                user = ShareStoryUser(id = "", name = "")
+//            )
+//            viewModel.shareStory(requestBody)
         }
     }
 

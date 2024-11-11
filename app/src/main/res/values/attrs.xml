@@ -7,4 +7,9 @@
     <declare-styleable name="NavHeaderView">
         <attr name="title" format="string"/>
     </declare-styleable>
+
+    <declare-styleable name="UploadButton">
+        <attr name="icon" format="reference"/>
+        <attr name="mimeType" format="string"/>
+    </declare-styleable>
 </resources>

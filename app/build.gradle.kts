@@ -92,4 +92,6 @@ dependencies {
 
 
     implementation ("com.google.firebase:firebase-messaging:24.0.3")
+
+    implementation ("com.amazonaws:aws-android-sdk-s3:2.22.1")
 }
