@@ -144,6 +144,9 @@ class EventDetailFragment: BaseFragment(R.layout.fragment_event_detail) {
 	override fun resolveArguments() {
 		super.resolveArguments()
 		event = args.event
+
+		val navTitleView = rootView.findViewById<TextView>(R.id.navTitleView)
+		navTitleView.text = if (event != null) "Edit Reminder" else "New Reminder"
 	}
 
 	override fun init() {
@@ -191,6 +194,7 @@ class EventDetailFragment: BaseFragment(R.layout.fragment_event_detail) {
 			handleSelectDate()
 		}
 		dateView = rootView.findViewById(R.id.dateView)
+		dateOfEvent = Date()
 
 		btnOnce = rootView.findViewById(R.id.btnOnce)
 		btnOnce.setOnSingleClickListener { frequency = EventModel.Frequency.once }
@@ -200,6 +204,7 @@ class EventDetailFragment: BaseFragment(R.layout.fragment_event_detail) {
 		repeatingView = rootView.findViewById(R.id.repeatingView)
 		repeatSwitch = rootView.findViewById(R.id.repeatSwitch)
 		repeatSwitch.setOnCheckedChangeListener { _, isChecked -> repeating = if (isChecked) "1" else "0" }
+		frequency = EventModel.Frequency.once
 
 		reminderView = rootView.findViewById(R.id.reminderView)
 		btnReminderMinus = rootView.findViewById(R.id.btnReminderMinus)
@@ -266,6 +271,8 @@ class EventDetailFragment: BaseFragment(R.layout.fragment_event_detail) {
 
 		btnEventCompany = rootView.findViewById(R.id.btnEventCompany)
 		eventCompanyView = rootView.findViewById(R.id.eventCompanyView)
+
+		eventFor = EventFor.team
 	}
 
 	private fun handleEvent() {
@@ -296,7 +303,7 @@ class EventDetailFragment: BaseFragment(R.layout.fragment_event_detail) {
 		val year = calendar!![Calendar.YEAR]
 		val month = calendar!![Calendar.MONTH]
 		val day = calendar!![Calendar.DAY_OF_MONTH]
-		val datePickerDialog = DatePickerDialog(
+		DatePickerDialog(
 			requireActivity(),
 			{ _: DatePicker?, year1: Int, month1: Int, dayOfMonth: Int ->
 				calendar!![Calendar.YEAR] = year1
@@ -304,8 +311,10 @@ class EventDetailFragment: BaseFragment(R.layout.fragment_event_detail) {
 				calendar!![Calendar.DAY_OF_MONTH] = dayOfMonth
 				dateOfEvent = calendar.time
 			}, year, month, day
-		)
-		datePickerDialog.show()
+		).apply {
+			datePicker.minDate = Date().time
+			show()
+		}
 	}
 
 	private fun handleSave() {

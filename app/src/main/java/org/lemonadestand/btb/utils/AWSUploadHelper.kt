@@ -17,6 +17,7 @@ import org.lemonadestand.btb.extensions.filePath
 import org.lemonadestand.btb.extensions.mediaDimension
 import java.io.File
 import java.lang.Exception
+import java.util.Date
 
 object AWSUploadHelper {
 	private const val TAG = "AWSUploadHelper"
@@ -44,7 +45,7 @@ object AWSUploadHelper {
 			.s3Client(s3Client)
 			.build()
 
-		val fileName = "${fileUri.fileName()}_w${size.width}_h${size.height}_.${fileUri.fileExtension()}"
+		val fileName = "${Date().time.toInt()}_w${size.width}_h${size.height}_.${fileUri.fileExtension()}"
 		val key = "${currentUser.uniqueId}/${fileName}"
 
 		val uploadObserver = transferUtility.upload(BUCKET_NAME, key, File(filePath))

@@ -62,6 +62,7 @@ class ShowAppreciationActivity : BaseActivity(R.layout.activity_show_appreciatio
 	private var reminderUerList: ArrayList<UserListModel> = ArrayList()
 	private var reminderUerListJson: ArrayList<String> = ArrayList()
 
+	private lateinit var uploadButton: UploadButton
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -72,13 +73,9 @@ class ShowAppreciationActivity : BaseActivity(R.layout.activity_show_appreciatio
 		setClickEvents()
 		setSpinner()
 		setUpViewModel()
-	}
 
-	override fun init() {
-		super.init()
-
-		val uploadButton = findViewById<UploadButton>(R.id.uploadButton)
 		val previewView = findViewById<ImageView>(R.id.previewView)
+		uploadButton = findViewById(R.id.uploadButton)
 		uploadButton.onUploaded = {
 			previewView.setImageUrl(it)
 		}
