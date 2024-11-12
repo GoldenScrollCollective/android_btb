@@ -11,3 +11,9 @@ data class Resource(
     val picture: String? = null,
     val interests: ArrayList<Interest>? = null
 ) : Parcelable
+
+enum class EventFor(val value: String) {
+    team("user"),
+    contact("contact"),
+    company("company"),
+}

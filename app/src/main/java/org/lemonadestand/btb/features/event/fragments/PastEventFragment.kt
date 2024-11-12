@@ -23,14 +23,12 @@ import org.lemonadestand.btb.extensions.hide
 import org.lemonadestand.btb.interfaces.OnItemClickListener
 import org.lemonadestand.btb.features.common.models.UserListModel
 import org.lemonadestand.btb.features.common.models.body.PastEventBody
-import org.lemonadestand.btb.features.event.activities.EditReminderActivity
 import org.lemonadestand.btb.features.event.models.EventModel
 import org.lemonadestand.btb.features.event.models.EventModelDate
 import org.lemonadestand.btb.mvvm.factory.CommonViewModelFactory
 import org.lemonadestand.btb.mvvm.repository.EventRepository
 import org.lemonadestand.btb.mvvm.viewmodel.EventViewModel
 import org.lemonadestand.btb.singleton.Singleton
-import org.lemonadestand.btb.singleton.Singleton.launchActivity
 
 
 class PastEventFragment : Fragment(), OnItemClickListener {
@@ -46,6 +44,9 @@ class PastEventFragment : Fragment(), OnItemClickListener {
     private var clickType = ClickType.COMMON
     private var clickedPosition = 0
     private var clickedSuperPosition = 0
+
+    var onSelect: ((value: EventModel) -> Unit)? = null
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -99,7 +100,7 @@ class PastEventFragment : Fragment(), OnItemClickListener {
                 page = "0",
                 sort = "desc", //desc //asc
                 order_by = "start",
-                resource = if (user != null) "user/${user!!.uniq_id}" else "",
+                resource = if (user != null) "user/${user!!.uniqueId}" else "",
                 completed = "0",
                 archive = "1"
             )
@@ -127,7 +128,7 @@ class PastEventFragment : Fragment(), OnItemClickListener {
                             dateList.add(getDate(it.data[i].start))
                             eventDateList.add(
                                 EventModelDate(
-                                    date = it.data[i].start,
+                                    date = it.data[i].startedAt,
                                     eventList = it.data as ArrayList<EventModel>
                                 )
                             )
@@ -208,7 +209,7 @@ class PastEventFragment : Fragment(), OnItemClickListener {
                 page = "0",
                 sort = "asc", //desc //asc
                 order_by = "start",
-                resource = if (user != null) "user/${user!!.uniq_id}" else "",
+                resource = if (user != null) "user/${user!!.uniqueId}" else "",
                 completed = "0",
                 archive = "1"
             )
@@ -245,15 +246,11 @@ class PastEventFragment : Fragment(), OnItemClickListener {
         when (type) {
             ClickType.DELETE_EVENT -> {
                 val postModel = `object` as EventModel
-                viewModel.deleteEvent(postModel.uniq_id)
+                viewModel.deleteEvent(postModel.uniqueId)
             }
             ClickType.EDIT_EVENT -> {
                 val eventModel  = `object` as EventModel
-                activity?.launchActivity<EditReminderActivity>()
-                {
-                    putExtra("event_data",eventModel)
-                }
-
+                onSelect?.invoke(eventModel)
             }
             else -> {
 

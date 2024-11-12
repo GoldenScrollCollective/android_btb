@@ -1,66 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".features.event.fragments.ScheduleEventFragment">
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	tools:context=".features.event.fragments.ScheduleEventFragment">
 
+	<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+		android:id="@+id/swipe_refresh"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent">
 
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/swipe_refresh"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        >
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            >
+		<RelativeLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_past_event"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                />
+			<androidx.recyclerview.widget.RecyclerView
+				android:id="@+id/rv_past_event"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
+			<com.facebook.shimmer.ShimmerFrameLayout
+				android:layout_width="match_parent"
+				android:id="@+id/simmer_layout"
+				android:layout_height="wrap_content"
+				android:animateLayoutChanges="true"
+				android:animationCache="true"
+				app:shimmer_repeat_mode="restart"
+				app:shimmer_shape="linear">
 
-            <ImageView
-                android:id="@+id/btn_event_tab_past"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentBottom="true"
-                android:layout_marginEnd="20dp"
-                android:layout_marginBottom="20dp"
-                android:scaleType="fitXY"
-                android:src="@drawable/circle_plus"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"/>
+				<include
+					android:visibility="visible"
+					layout="@layout/shimmer_layout_event"/>
 
-            <com.facebook.shimmer.ShimmerFrameLayout
-                android:layout_width="match_parent"
-                android:id="@+id/simmer_layout"
-                android:layout_height="wrap_content"
-                android:animateLayoutChanges="true"
-                android:animationCache="true"
-                app:shimmer_repeat_mode="restart"
-                app:shimmer_shape="linear">
+			</com.facebook.shimmer.ShimmerFrameLayout>
 
+			<include
+				android:id="@+id/noDataView"
+				layout="@layout/item_no_event" />
 
-                <include
-                    android:visibility="visible"
-                    layout="@layout/shimmer_layout_event"/>
+			<ImageView
+				android:id="@+id/btn_event_tab_past"
+				android:layout_width="40dp"
+				android:layout_height="40dp"
+				android:layout_alignParentEnd="true"
+				android:layout_alignParentBottom="true"
+				android:layout_marginEnd="20dp"
+				android:layout_marginBottom="20dp"
+				android:scaleType="fitXY"
+				android:src="@drawable/circle_plus"
+				app:layout_constraintBottom_toBottomOf="parent"
+				app:layout_constraintEnd_toEndOf="parent"/>
 
-
-
-            </com.facebook.shimmer.ShimmerFrameLayout>
-
-            <include
-                android:id="@+id/noDataView"
-                layout="@layout/item_no_event" />
-        </RelativeLayout>
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+		</RelativeLayout>
+	</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 
 </RelativeLayout>

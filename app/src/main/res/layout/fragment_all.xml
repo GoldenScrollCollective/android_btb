@@ -45,7 +45,7 @@
                 android:layout_height="40dp"
                 android:layout_marginLeft="15dp"
                 android:layout_marginTop="10dp"
-                android:backgroundTint="@color/AccentColor"
+                android:backgroundTint="@color/accentColor"
                 app:cardCornerRadius="7dp" />
 
             <LinearLayout
@@ -100,7 +100,7 @@
                 android:layout_height="40dp"
                 android:layout_marginLeft="15dp"
                 android:layout_marginTop="10dp"
-                android:backgroundTint="@color/AccentColor"
+                android:backgroundTint="@color/accentColor"
                 app:cardCornerRadius="7dp" />
 
             <LinearLayout

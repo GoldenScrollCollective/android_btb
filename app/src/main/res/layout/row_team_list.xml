@@ -26,6 +26,6 @@
         android:layout_marginEnd="@dimen/_10sdp"
         android:layout_gravity="center_vertical"
         android:src="@drawable/baseline_check_24"
-        app:tint="@color/AccentColor" />
+        app:tint="@color/accentColor" />
 
 </LinearLayout>

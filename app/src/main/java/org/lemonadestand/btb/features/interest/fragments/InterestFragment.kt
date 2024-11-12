@@ -142,7 +142,7 @@ class InterestFragment : Fragment(), OnItemClickListener, ColorPickerDialogListe
                 interestUiList.clear()
                 interestUiList.addAll(interestUiListMain)
                 interestUiAdapter.notifyDataSetChanged()
-                viewModel.getInterestDataList(resource = data.uniq_id)
+                viewModel.getInterestDataList(resource = data.uniqueId)
             }
 
             InterestFieldType.SingleLine -> {
@@ -302,7 +302,7 @@ class InterestFragment : Fragment(), OnItemClickListener, ColorPickerDialogListe
 
     private fun getInterestValues() {
         val resource =
-            if (savedUserModel == null) Utils.getUser(context).uniqId else savedUserModel!!.uniq_id
+            if (savedUserModel == null) Utils.getUser(context).uniqueId else savedUserModel!!.uniqueId
         viewModel.getInterestDataList(resource = resource)
     }
 

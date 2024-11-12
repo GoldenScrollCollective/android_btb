@@ -117,8 +117,7 @@ class EventRepository {
     suspend fun addReminder(reminderBody : ReminderRequestBody) {
 
         CoroutineScope(Dispatchers.IO).launch {
-            val gson = Gson()
-            val json = gson.toJson(reminderBody)
+            val json = Gson().toJson(reminderBody)
             val requestBody = RequestBody.create("application/json".toMediaTypeOrNull(), json)
             val response = RetrofitInstance.api.addReminder(
                 requestBody = requestBody,

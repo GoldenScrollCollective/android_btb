@@ -13,8 +13,7 @@ import org.lemonadestand.btb.interfaces.OnItemClickListener
 import org.lemonadestand.btb.features.event.models.EventModel
 import org.lemonadestand.btb.features.event.models.EventModelDate
 
-class EventAdapter(private var list: ArrayList<EventModelDate>, var context: Context) :
-    RecyclerView.Adapter<EventAdapter.ViewHolder>() {
+class EventAdapter(private var list: ArrayList<EventModelDate>, var context: Context): RecyclerView.Adapter<EventAdapter.ViewHolder>() {
 
     private var onItemClick: OnItemClickListener? = null
     override fun onCreateViewHolder(

@@ -1,7 +1,10 @@
 package org.lemonadestand.btb.features.event.models
 
 import android.os.Parcelable
+import com.aisynchronized.helper.DateHelper
+import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
+import java.util.Date
 
 
 @Parcelize
@@ -9,7 +12,7 @@ data class EventModel(
     val id: String,
 
 
-    val uniq_id: String,
+    @SerializedName("uniq_id") val uniqueId: String,
 
     val org_id: String,
 
@@ -27,9 +30,9 @@ data class EventModel(
 
     val all_day: String,
 
-    val start: String,
-    val end: String,
-    val reminder: String? = null,
+    val start: Date?,
+    val end: Date?,
+    val reminder: Date? = null,
 
     val interactive: String,
 
@@ -52,6 +55,12 @@ data class EventModel(
     val transaction_id: String? = null,
 
     val created: String
-) : Parcelable
+) : Parcelable {
+    enum class Frequency(val value: String) {
+        once("once"),
+        yearly("yearly");
+    }
 
-
+    val startedAt: String?
+        get() = DateHelper.format(start, "yyyy-MM-dd HH:mm:ss")
+}

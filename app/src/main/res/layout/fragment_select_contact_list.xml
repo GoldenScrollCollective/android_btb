@@ -10,15 +10,13 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_40sdp"
-        >
-
+        android:layout_height="@dimen/_40sdp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="@string/select_a_user"
+            android:text="@string/select_a_contact"
             android:textColor="@color/black"
             android:textSize="@dimen/_12sdp"
             android:textStyle="bold" />
@@ -31,7 +29,7 @@
             android:layout_centerInParent="true"
             android:layout_marginEnd="@dimen/_10sdp"
             android:text="@string/cancel"
-            android:textColor="@color/AccentColor"
+            android:textColor="@color/accentColor"
             android:textSize="@dimen/_12sdp" />
 
     </RelativeLayout>
@@ -78,8 +76,7 @@
         android:layout_height="match_parent"
         android:minHeight="@dimen/_400sdp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        />
-
+        tools:listitem="@layout/row_user_list"/>
 
     <LinearLayout
         android:id="@+id/noDataView"

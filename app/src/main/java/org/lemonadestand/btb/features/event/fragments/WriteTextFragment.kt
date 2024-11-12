@@ -11,10 +11,13 @@ import org.lemonadestand.btb.interfaces.OnItemClickListener
 
 class WriteTextFragment : BottomSheetDialogFragment() {
 
-    private lateinit var callback: OnItemClickListener
+    private var callback: OnItemClickListener? = null
     lateinit var mBinding: FragmentWriteTextBinding
     private var isSingleLine = false
     var index = -1
+
+    var onChange: ((value: String) -> Unit)? = null
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -33,10 +36,9 @@ class WriteTextFragment : BottomSheetDialogFragment() {
     private fun setClickEvents() {
         mBinding.tvDone.setOnClickListener {
             dismiss()
-            callback.onItemClicked(mBinding.htmlEditor.text.toString().trim(), index)
+            onChange?.invoke(mBinding.htmlEditor.text.toString().trim())
+            callback?.onItemClicked(mBinding.htmlEditor.text.toString().trim(), index)
         }
-
-
     }
 
 
@@ -45,7 +47,7 @@ class WriteTextFragment : BottomSheetDialogFragment() {
         if (args != null) {
             val message = args.getString("message")
             if(args.containsKey("title")) {
-                mBinding.tvTitle.text = args.getString("title")
+                mBinding.titleView.text = args.getString("title")
             }
             if(args.containsKey("is_single_line")) {
                 isSingleLine = args.getBoolean("is_single_line",false)

@@ -5,12 +5,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.LayoutRes
+import androidx.fragment.app.FragmentManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 
 abstract class BaseBottomSheetDialogFragment(
-    val fragment: BaseFragment,
     @LayoutRes val layoutId: Int
 ): BottomSheetDialogFragment() {
     companion object {
@@ -46,8 +46,8 @@ abstract class BaseBottomSheetDialogFragment(
 
     open fun update() {}
 
-    fun show() {
-        super.show(fragment.childFragmentManager, TAG)
+    fun show(fragmentManager: FragmentManager) {
+        super.show(fragmentManager, TAG)
     }
 
     override fun dismiss() {

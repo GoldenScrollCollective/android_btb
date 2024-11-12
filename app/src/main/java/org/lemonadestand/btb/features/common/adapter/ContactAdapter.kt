@@ -48,10 +48,10 @@ class ContactAdapter(
         holder.itemView.setOnClickListener {
 
             if (isEvent) {
-                Utils.saveUserIDEvent(context, data.uniq_id)
+                Utils.saveUserIDEvent(context, data.uniqueId)
                 Utils.saveUserModelEvent(context, data)
             } else {
-                Utils.saveUserIDInterest(context, data.uniq_id)
+                Utils.saveUserIDInterest(context, data.uniqueId)
                 Utils.saveUserModelInterest(context, data)
             }
 

@@ -27,7 +27,6 @@ import org.lemonadestand.btb.constants.ClickType
 import org.lemonadestand.btb.R
 import org.lemonadestand.btb.utils.Utils
 import org.lemonadestand.btb.constants.getImageUrlFromName
-import org.lemonadestand.btb.extensions.ago
 import org.lemonadestand.btb.interfaces.OnItemClickListener
 import org.lemonadestand.btb.features.common.models.body.LikeBodyModel
 import org.lemonadestand.btb.features.post.activities.AddBonusActivity
@@ -215,7 +214,7 @@ class PublicSubAdapter(private val list: ArrayList<Post>, var context: Context, 
 
                     val requestBody = AddCommentBody(
                         uniq_id = "",
-                        resource = "user/${CompanyTabFragment.currentUser!!.uniqId}",
+                        resource = "user/${CompanyTabFragment.currentUser!!.uniqueId}",
                         html = message,
                         created = "",
                         parent_id = "${post?.uniqueId}",

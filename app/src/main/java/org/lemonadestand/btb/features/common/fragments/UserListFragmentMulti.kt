@@ -19,6 +19,9 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import org.lemonadestand.btb.R
+import org.lemonadestand.btb.components.base.BaseBottomSheetDialogFragment
+import org.lemonadestand.btb.components.base.BaseFragment
 import org.lemonadestand.btb.constants.ProgressDialogUtil
 import org.lemonadestand.btb.features.dashboard.activities.DashboardActivity
 import org.lemonadestand.btb.features.common.adapter.UserListAdapterMulti
@@ -34,222 +37,230 @@ import org.lemonadestand.btb.singleton.Singleton
 import java.util.Locale
 
 
-class UserListFragmentMulti : BottomSheetDialogFragment() {
+class UserListFragmentMulti() : BaseBottomSheetDialogFragment(R.layout.fragment_user_list_multi) {
 
-    lateinit var mBinding: FragmentUserListMultiBinding
-    private lateinit var userListAdapter: UserListAdapterMulti
-    private var shortAnimationDuration: Int = 0
-    private var tag: String = "UserListFragment"
-    private lateinit var viewModel: UserViewModel
-    private var userList = ArrayList<UserListModel>()
-    private var userTemp = ArrayList<UserListModel>()
-    private lateinit var callback: OnItemClickListener
+	lateinit var mBinding: FragmentUserListMultiBinding
+	private lateinit var userListAdapter: UserListAdapterMulti
+	private var shortAnimationDuration: Int = 0
+	private var tag: String = "UserListFragment"
+	private lateinit var viewModel: UserViewModel
+	private var userList = ArrayList<UserListModel>()
+	private var userTemp = ArrayList<UserListModel>()
+	private lateinit var callback: OnItemClickListener
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        mBinding = FragmentUserListMultiBinding.inflate(
-            LayoutInflater.from(inflater.context),
-            container,
-            false
-        )
+	override fun onCreateView(
+		inflater: LayoutInflater, container: ViewGroup?,
+		savedInstanceState: Bundle?
+	): View {
+		mBinding = FragmentUserListMultiBinding.inflate(
+			LayoutInflater.from(inflater.context),
+			container,
+			false
+		)
 
-        setAdapter()
-        setOnClicks()
-        setUpViewModel()
-        setSearch()
-        return mBinding.root
-    }
-    private fun handleData() {
-        val bundle = arguments
-        Log.e("Multi selector bundle=>", bundle.toString())
-        if (bundle != null) {
+		return mBinding.root
+	}
 
-            //val b = bundle.getBundle("list")
-            val jsonList = bundle.getString("list")
+	override fun init() {
+		super.init()
 
-            val gson = Gson()
-            val listFromGson = gson.fromJson<ArrayList<UserListModel>>(
-                jsonList,
-                object : TypeToken<ArrayList<UserListModel>>() {}.type
-            )
+		setAdapter()
+		setOnClicks()
+		setUpViewModel()
+		setSearch()
 
+		val bundle = arguments ?: return
+		if (bundle.containsKey("title")) {
+			val title = bundle.getString("title")
+			mBinding.titleView.text = title
+		}
+	}
 
-            Log.e("Multi selector data=>", listFromGson.toString())
+	private fun handleData() {
+		val bundle = arguments ?: return
 
-            if (!listFromGson.isNullOrEmpty())
-            {
-                Log.e("userList=>",userList.size.toString())
-                Log.e("listFromGson=>",listFromGson.size.toString())
-                for (i in 0 until  userList.size)
-                {
-                    for (j in 0 until  listFromGson.size)
-                    {
-                        if (userList[i].username == listFromGson[j].username)
-                        {
-                            userList[i].isSelected = true
-                        }
-                    }
-                }
+		//val b = bundle.getBundle("list")
+		val jsonList = bundle.getString("list")
 
-            }
-
-        }
-    }
-
-    private fun startLoading() {
-        mBinding.simmerLayout.startShimmer()
-        mBinding.rvUserList.hide()
-        mBinding.noDataView.hide()
-    }
-
-    @SuppressLint("NotifyDataSetChanged")
-    private fun setUpViewModel() {
-        startLoading()
-        val repository = UserRepository()
-        val viewModelProviderFactory =
-            CommonViewModelFactory((requireActivity()).application, repository)
-        viewModel = ViewModelProvider(this, viewModelProviderFactory)[UserViewModel::class.java]
-        viewModel.getUserList(page = 0)
-        viewModel.userResponseModel.observe(viewLifecycleOwner) {
-            if (it.data.isNotEmpty()) {
-                userList.clear()
-                userTemp.clear()
-                userList.addAll(it.data)
-                userTemp.addAll(it.data)
-                handleData()
-                userListAdapter.notifyDataSetChanged()
-                stopLoading(true)
-            } else {
-                stopLoading(false)
-
-            }
-        }
+		val gson = Gson()
+		val listFromGson = gson.fromJson<ArrayList<UserListModel>>(
+			jsonList,
+			object : TypeToken<ArrayList<UserListModel>>() {}.type
+		)
 
 
-        viewModel.liveError.observe(viewLifecycleOwner) {
-            Singleton.handleResponse(response = it, context as Activity, tag)
-            ProgressDialogUtil.dismissProgressDialog()
-        }
+		Log.e("Multi selector data=>", listFromGson.toString())
 
-        viewModel.commonResponse.observe(viewLifecycleOwner) {
-            handleCommonResponse(context as DashboardActivity, it)
-            ProgressDialogUtil.dismissProgressDialog()
-        }
+		if (!listFromGson.isNullOrEmpty())
+		{
+			Log.e("userList=>",userList.size.toString())
+			Log.e("listFromGson=>",listFromGson.size.toString())
+			for (i in 0 until  userList.size)
+			{
+				for (j in 0 until  listFromGson.size)
+				{
+					if (userList[i].username == listFromGson[j].username)
+					{
+						userList[i].isSelected = true
+					}
+				}
+			}
 
-        viewModel.isLoading.observe(viewLifecycleOwner) {
-            if (it) {
-                ProgressDialogUtil.showProgressDialog(context as DashboardActivity)
-            } else {
-                ProgressDialogUtil.dismissProgressDialog()
-            }
-        }
+		}
+	}
 
-        viewModel.noInternet.observe(viewLifecycleOwner) {
-            Toast.makeText(context, " $it", Toast.LENGTH_SHORT).show()
-            ProgressDialogUtil.dismissProgressDialog()
-        }
-    }
+	private fun startLoading() {
+		mBinding.simmerLayout.startShimmer()
+		mBinding.rvUserList.hide()
+		mBinding.noDataView.hide()
+	}
 
-    private fun setOnClicks() {
-        mBinding.tvDone.setOnClickListener { dismiss()
+	@SuppressLint("NotifyDataSetChanged")
+	private fun setUpViewModel() {
+		startLoading()
+		val repository = UserRepository()
+		val viewModelProviderFactory =
+			CommonViewModelFactory((requireActivity()).application, repository)
+		viewModel = ViewModelProvider(this, viewModelProviderFactory)[UserViewModel::class.java]
+		viewModel.getUserList(page = 0)
+		viewModel.userResponseModel.observe(viewLifecycleOwner) {
+			if (it.data.isNotEmpty()) {
+				userList.clear()
+				userTemp.clear()
+				userList.addAll(it.data)
+				userTemp.addAll(it.data)
+				handleData()
+				userListAdapter.notifyDataSetChanged()
+				stopLoading(true)
+			} else {
+				stopLoading(false)
 
-            callback.onItemClicked(`object` = userListAdapter.getSelectedUserList(), index = 0)
+			}
+		}
 
-            dismiss()
-        }
-    }
 
-    private fun setAdapter() {
-        mBinding.simmerLayout.startShimmer()
-        shortAnimationDuration = resources.getInteger(android.R.integer.config_shortAnimTime)
-        userListAdapter = UserListAdapterMulti(userList, context = requireContext())
-        userListAdapter.setOnItemClick(callback)
-        mBinding.rvUserList.adapter = userListAdapter
-    }
+		viewModel.liveError.observe(viewLifecycleOwner) {
+			Singleton.handleResponse(response = it, context as Activity, tag)
+			ProgressDialogUtil.dismissProgressDialog()
+		}
 
-    private fun setSearch() {
-        mBinding.searchView.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable) {
+		viewModel.commonResponse.observe(viewLifecycleOwner) {
+			handleCommonResponse(context as DashboardActivity, it)
+			ProgressDialogUtil.dismissProgressDialog()
+		}
 
-                var tempList: ArrayList<UserListModel> = ArrayList()
-                val query = s.toString().lowercase(Locale.getDefault())
-                if (query.isNotEmpty()) {
-                    Log.e("dwdhwd", "wdwdwd")
-                    Log.e("query=>", query)
-                    tempList = userList.filter {
-                        it.name.contains(
-                            query,
-                            ignoreCase = true
-                        )
-                    } as ArrayList<UserListModel>
-                    Log.e("tempList=>", tempList.toString())
-                    userList.clear()
-                    userList.addAll(tempList)
+		viewModel.isLoading.observe(viewLifecycleOwner) {
+			if (it) {
+				ProgressDialogUtil.showProgressDialog(context as DashboardActivity)
+			} else {
+				ProgressDialogUtil.dismissProgressDialog()
+			}
+		}
 
-                    userListAdapter.notifyDataSetChanged()
-                } else {
-                    userList.clear()
-                    userList.addAll(userTemp)
-                    userListAdapter.notifyDataSetChanged()
-                }
+		viewModel.noInternet.observe(viewLifecycleOwner) {
+			Toast.makeText(context, " $it", Toast.LENGTH_SHORT).show()
+			ProgressDialogUtil.dismissProgressDialog()
+		}
+	}
 
-            }
+	private fun setOnClicks() {
+		mBinding.tvDone.setOnClickListener { dismiss()
 
-            override fun beforeTextChanged(
-                s: CharSequence, start: Int,
-                count: Int, after: Int
-            ) {
-            }
+			callback.onItemClicked(`object` = userListAdapter.getSelectedUserList(), index = 0)
 
-            override fun onTextChanged(
-                s: CharSequence, start: Int,
-                before: Int, count: Int
-            ) {
+			dismiss()
+		}
+	}
 
-            }
-        })
-    }
+	private fun setAdapter() {
+		mBinding.simmerLayout.startShimmer()
+		shortAnimationDuration = resources.getInteger(android.R.integer.config_shortAnimTime)
+		userListAdapter = UserListAdapterMulti(userList, context = requireContext())
+		userListAdapter.setOnItemClick(callback)
+		mBinding.rvUserList.adapter = userListAdapter
+	}
 
-    private fun stopLoading(isDataAvailable: Boolean) {
-        val view = if (isDataAvailable) mBinding.rvUserList else mBinding.noDataView
-        view.apply {
-            alpha = 0f
-            visibility = View.VISIBLE
+	private fun setSearch() {
+		mBinding.searchView.addTextChangedListener(object : TextWatcher {
+			override fun afterTextChanged(s: Editable) {
 
-            animate()
-                .alpha(1f)
-                .setDuration(shortAnimationDuration.toLong())
-                .setListener(null)
-        }
+				var tempList: ArrayList<UserListModel> = ArrayList()
+				val query = s.toString().lowercase(Locale.getDefault())
+				if (query.isNotEmpty()) {
+					Log.e("dwdhwd", "wdwdwd")
+					Log.e("query=>", query)
+					tempList = userList.filter {
+						it.name.contains(
+							query,
+							ignoreCase = true
+						)
+					} as ArrayList<UserListModel>
+					Log.e("tempList=>", tempList.toString())
+					userList.clear()
+					userList.addAll(tempList)
 
-        mBinding.simmerLayout.animate()
-            .alpha(0f)
-            .setDuration(650)
-            .setListener(object : AnimatorListenerAdapter() {
-                override fun onAnimationEnd(animation: Animator) {
-                    mBinding.simmerLayout.hide()
-                }
-            })
-    }
+					userListAdapter.notifyDataSetChanged()
+				} else {
+					userList.clear()
+					userList.addAll(userTemp)
+					userListAdapter.notifyDataSetChanged()
+				}
 
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val bottomSheetDialog = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
-        bottomSheetDialog.setOnShowListener { dialog: DialogInterface ->
+			}
 
-        }
-        bottomSheetDialog.apply {
-            // behavior.state = BottomSheetBehavior.STATE_EXPANDED
-            //behavior.peekHeight = //your harcoded or dimen height
-        }
+			override fun beforeTextChanged(
+				s: CharSequence, start: Int,
+				count: Int, after: Int
+			) {
+			}
 
-        return bottomSheetDialog
-    }
+			override fun onTextChanged(
+				s: CharSequence, start: Int,
+				before: Int, count: Int
+			) {
 
-    fun setCallback(callback: OnItemClickListener) {
-        this.callback = callback
-    }
+			}
+		})
+	}
+
+	private fun stopLoading(isDataAvailable: Boolean) {
+		val view = if (isDataAvailable) mBinding.rvUserList else mBinding.noDataView
+		view.apply {
+			alpha = 0f
+			visibility = View.VISIBLE
+
+			animate()
+				.alpha(1f)
+				.setDuration(shortAnimationDuration.toLong())
+				.setListener(null)
+		}
+
+		mBinding.simmerLayout.animate()
+			.alpha(0f)
+			.setDuration(650)
+			.setListener(object : AnimatorListenerAdapter() {
+				override fun onAnimationEnd(animation: Animator) {
+					mBinding.simmerLayout.hide()
+				}
+			})
+	}
+
+	override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+		val bottomSheetDialog = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
+		bottomSheetDialog.setOnShowListener { dialog: DialogInterface ->
+
+		}
+		bottomSheetDialog.apply {
+			// behavior.state = BottomSheetBehavior.STATE_EXPANDED
+			//behavior.peekHeight = //your harcoded or dimen height
+		}
+
+		return bottomSheetDialog
+	}
+
+	fun setCallback(callback: OnItemClickListener) {
+		this.callback = callback
+	}
 
 
 }

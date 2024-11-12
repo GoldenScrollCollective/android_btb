@@ -105,7 +105,7 @@ class RecordedEventFragment : Fragment(), OnItemClickListener {
                 page = "0",
                 sort = "desc", //desc //asc
                 order_by = "start",
-                resource = if(user!=null) "user/${user!!.uniq_id}" else "",
+                resource = if(user!=null) "user/${user!!.uniqueId}" else "",
                 completed = "1",
             )
         )
@@ -132,7 +132,7 @@ class RecordedEventFragment : Fragment(), OnItemClickListener {
                             dateList.add(getDate(it.data[i].start))
                             eventDateList.add(
                                 EventModelDate(
-                                    date = it.data[i].start,
+                                    date = it.data[i].startedAt,
                                     eventList = it.data as ArrayList<EventModel>
                                 )
                             )
@@ -191,7 +191,7 @@ class RecordedEventFragment : Fragment(), OnItemClickListener {
                 page = "0",
                 sort = "asc", //desc //asc
                 order_by = "start",
-                resource = if(user!=null) "user/${user!!.uniq_id}" else "",
+                resource = if(user!=null) "user/${user!!.uniqueId}" else "",
                 completed = "1",
             )
         )

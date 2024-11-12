@@ -106,7 +106,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:tint="@color/AccentColor" />
+            app:tint="@color/accentColor" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -164,7 +164,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:tint="@color/AccentColor" />
+            app:tint="@color/accentColor" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -234,7 +234,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:tint="@color/AccentColor" />
+                app:tint="@color/accentColor" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </LinearLayout>

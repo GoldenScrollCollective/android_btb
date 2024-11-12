@@ -21,7 +21,6 @@ import org.lemonadestand.btb.R
 import org.lemonadestand.btb.components.CommentReactionsView
 import org.lemonadestand.btb.components.LikeMenuView
 import org.lemonadestand.btb.constants.getImageUrlFromName
-import org.lemonadestand.btb.extensions.ago
 import org.lemonadestand.btb.extensions.setOnSingleClickListener
 import org.lemonadestand.btb.features.common.models.body.AddCommentBody
 import org.lemonadestand.btb.features.common.models.body.ShareStoryUser
@@ -126,7 +125,7 @@ class PostCommentsRecyclerViewAdapter(
 
                         val requestBody = AddCommentBody(
                             uniq_id = "",
-                            resource = "user/${CompanyTabFragment.currentUser!!.uniqId}",
+                            resource = "user/${CompanyTabFragment.currentUser!!.uniqueId}",
                             html = message,
                             created = "",
                             parent_id = "${item?.uniqueId}",

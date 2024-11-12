@@ -4,7 +4,6 @@ import android.net.Uri
 import android.os.Handler
 import android.util.Log
 import com.amazonaws.auth.BasicAWSCredentials
-import com.amazonaws.mobile.config.AWSConfiguration
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferState
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility
@@ -46,7 +45,7 @@ object AWSUploadHelper {
 			.build()
 
 		val fileName = "${fileUri.fileName()}_w${size.width}_h${size.height}_.${fileUri.fileExtension()}"
-		val key = "${currentUser.uniqId}/${fileName}"
+		val key = "${currentUser.uniqueId}/${fileName}"
 
 		val uploadObserver = transferUtility.upload(BUCKET_NAME, key, File(filePath))
 		uploadObserver.setTransferListener(object : TransferListener {

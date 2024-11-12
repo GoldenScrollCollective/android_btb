@@ -113,9 +113,9 @@ class AddRecordActivity : AppCompatActivity(), OnItemClickListener {
         //dateOfEvent = mBinding.tvDateSelect.text
 
         if (selectedUserListModel == null) {
-            resource = selectedUser!!.uniqId
+            resource = selectedUser!!.uniqueId
         } else {
-            resource = selectedUserListModel!!.uniq_id
+            resource = selectedUserListModel!!.uniqueId
         }
 
 

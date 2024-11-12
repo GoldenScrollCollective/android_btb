@@ -63,7 +63,7 @@ class ReplyCommentActivity : AppCompatActivity() {
 
             val requestBody = AddCommentBody(
                 uniq_id = "",
-                resource = "user/${currentUser!!.uniqId}",
+                resource = "user/${currentUser!!.uniqueId}",
                 html = mBinding.htmlEditor.text,
                 created = "",
                 parent_id = "${post?.uniqueId}",

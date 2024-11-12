@@ -10,11 +10,8 @@ import android.graphics.Typeface
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
-import android.text.Html
 import android.text.Spannable
-import android.text.SpannableString
 import android.text.SpannableStringBuilder
-import android.text.Spanned
 import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
 import android.util.Log
@@ -33,7 +30,6 @@ import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
-import androidx.core.text.color
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -51,7 +47,6 @@ import org.lemonadestand.btb.constants.ProgressDialogUtil
 import org.lemonadestand.btb.constants.getDate
 import org.lemonadestand.btb.constants.handleCommonResponse
 import org.lemonadestand.btb.databinding.FragmentCommunityTabBinding
-import org.lemonadestand.btb.extensions.ago
 import org.lemonadestand.btb.extensions.hide
 import org.lemonadestand.btb.extensions.setImageUrl
 import org.lemonadestand.btb.extensions.setOnSingleClickListener
@@ -145,8 +140,8 @@ class CommunityTabFragment: BaseFragment(R.layout.fragment_community_tab) {
     private fun setUpPublicAdapter() {
         postsByDateRecyclerViewAdapter = PostsByDateRecyclerViewAdapter()
         postsByDateRecyclerViewAdapter.onPreview = { post ->
-            val previewBottomSheetDialog = MediaPreviewBottomSheetDialog(this, post)
-            previewBottomSheetDialog.show()
+            val previewBottomSheetDialog = MediaPreviewBottomSheetDialog(post)
+            previewBottomSheetDialog.show(childFragmentManager)
         }
         postsByDateRecyclerViewAdapter.onLike = { post, value ->
             handleLike(post, value)
@@ -459,7 +454,7 @@ class CommunityTabFragment: BaseFragment(R.layout.fragment_community_tab) {
 
                             val requestBody = AddCommentBody(
                                 uniq_id = "",
-                                resource = "user/${CompanyTabFragment.currentUser!!.uniqId}",
+                                resource = "user/${CompanyTabFragment.currentUser!!.uniqueId}",
                                 html = message,
                                 created = "",
                                 parent_id = item.uniqueId,

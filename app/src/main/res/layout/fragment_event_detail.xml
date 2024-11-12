@@ -1,0 +1,658 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:orientation="vertical"
+	android:background="@color/white">
+
+	<RelativeLayout
+		android:layout_width="match_parent"
+		android:layout_height="@dimen/_40sdp">
+
+		<ImageView
+			android:id="@+id/btnBack"
+			android:layout_width="@dimen/_36sdp"
+			android:layout_height="match_parent"
+			android:paddingHorizontal="@dimen/_10sdp"
+			android:src="@drawable/chevron_back_24"
+			app:tint="@color/accentColor"
+			android:layout_centerVertical="true"/>
+
+		<TextView
+			android:id="@+id/navTitleView"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_centerInParent="true"
+			android:fontFamily="@font/averiaseriflibre_bold"
+			android:text="Edit Reminder"
+			android:textAlignment="center"
+			android:textColor="@color/accentColor"
+			android:textSize="25dp"
+			android:textStyle="bold"/>
+
+		<TextView
+			android:id="@+id/btnSave"
+			android:layout_width="wrap_content"
+			android:layout_height="match_parent"
+			android:gravity="center_vertical"
+			android:paddingHorizontal="@dimen/_10sdp"
+			android:fontFamily="@font/urbanist_variablefont_wght"
+			android:text="Save"
+			android:textColor="@color/accentColor"
+			android:textSize="20dp"
+			android:layout_alignParentEnd="true"
+			android:layout_centerVertical="true"/>
+
+	</RelativeLayout>
+
+	<ScrollView
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
+		android:layout_weight="1"
+		android:background="@color/white">
+
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="vertical"
+			android:background="@color/tabcolor">
+
+			<LinearLayout
+				android:id="@+id/btnTitle"
+				android:layout_width="match_parent"
+				android:layout_height="60dp"
+				android:orientation="horizontal"
+				android:gravity="center_vertical"
+				android:layout_marginTop="@dimen/_5sdp"
+				android:paddingHorizontal="10dp"
+				android:background="@color/white">
+
+				<LinearLayout
+					android:layout_width="0dp"
+					android:layout_height="wrap_content"
+					android:layout_weight="1"
+					android:orientation="vertical">
+
+					<TextView
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:fontFamily="@font/urbanist_variablefont_wght"
+						android:text="TITLE"
+						android:textColor="@color/text_grey"
+						android:textSize="12dp" />
+
+					<TextView
+						android:id="@+id/titleView"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_marginTop="5dp"
+						android:fontFamily="@font/urbanist_variablefont_wght"
+						android:hint="@string/set_title_new"
+						android:maxLength="15"
+						android:textColor="@color/black"
+						android:textSize="17dp" />
+
+				</LinearLayout>
+
+				<ImageView
+					android:layout_width="@dimen/_16sdp"
+					android:layout_height="@dimen/_16sdp"
+					android:rotation="180"
+					android:src="@drawable/chevron_back_24"
+					app:layout_constraintBottom_toBottomOf="parent"
+					app:layout_constraintEnd_toEndOf="parent"
+					app:layout_constraintTop_toTopOf="parent"
+					app:tint="@color/accentColor" />
+
+			</LinearLayout>
+
+			<LinearLayout
+				android:id="@+id/btnDescription"
+				android:layout_width="match_parent"
+				android:layout_height="60dp"
+				android:orientation="horizontal"
+				android:gravity="center_vertical"
+				android:layout_marginTop="@dimen/_1sdp"
+				android:paddingHorizontal="10dp"
+				android:background="@color/white">
+
+				<LinearLayout
+					android:layout_width="0dp"
+					android:layout_height="wrap_content"
+					android:layout_weight="1"
+					android:orientation="vertical">
+
+					<TextView
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:fontFamily="@font/urbanist_variablefont_wght"
+						android:text="DESCRIPTION"
+						android:textColor="@color/text_grey"
+						android:textSize="12dp" />
+
+					<TextView
+						android:id="@+id/descriptionView"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_marginTop="5dp"
+						android:fontFamily="@font/urbanist_variablefont_wght"
+						android:hint="@string/set_description"
+						android:maxLength="15"
+						android:textColor="@color/black"
+						android:textSize="17dp" />
+
+				</LinearLayout>
+
+				<ImageView
+					android:layout_width="@dimen/_16sdp"
+					android:layout_height="@dimen/_16sdp"
+					android:rotation="180"
+					android:src="@drawable/chevron_back_24"
+					app:layout_constraintBottom_toBottomOf="parent"
+					app:layout_constraintEnd_toEndOf="parent"
+					app:layout_constraintTop_toTopOf="parent"
+					app:tint="@color/accentColor" />
+
+			</LinearLayout>
+
+			<LinearLayout
+				android:id="@+id/btnSelectDate"
+				android:layout_width="match_parent"
+				android:layout_height="60dp"
+				android:orientation="horizontal"
+				android:gravity="center_vertical"
+				android:layout_marginTop="@dimen/_5sdp"
+				android:paddingHorizontal="10dp"
+				android:background="@color/white">
+
+				<TextView
+					android:layout_width="0dp"
+					android:layout_height="wrap_content"
+					android:layout_weight="1"
+					android:fontFamily="@font/urbanist_variablefont_wght"
+					android:text="DATE OF EVENT"
+					android:textColor="@color/text_grey"
+					android:textSize="15dp"
+					app:layout_constraintBottom_toBottomOf="parent"
+					app:layout_constraintStart_toStartOf="parent"
+					app:layout_constraintTop_toTopOf="parent" />
+
+				<TextView
+					android:id="@+id/dateView"
+					android:layout_width="wrap_content"
+					android:layout_height="match_parent"
+					android:gravity="center_vertical"
+					android:fontFamily="@font/urbanist_variablefont_wght"
+					android:text="date"
+					android:textColor="@color/black"
+					android:textSize="16dp"
+					android:textStyle="bold"
+					app:layout_constraintBottom_toBottomOf="parent"
+					app:layout_constraintEnd_toEndOf="parent"
+					app:layout_constraintTop_toTopOf="parent" />
+
+			</LinearLayout>
+
+			<LinearLayout
+				android:id="@+id/linearLayout5"
+				android:layout_width="match_parent"
+				android:layout_height="60dp"
+				android:orientation="horizontal"
+				android:gravity="center_vertical"
+				android:layout_marginTop="@dimen/_1sdp"
+				android:paddingHorizontal="10dp"
+				android:background="@color/white">
+
+				<TextView
+					android:layout_width="0dp"
+					android:layout_height="wrap_content"
+					android:layout_weight="1"
+					android:fontFamily="@font/urbanist_variablefont_wght"
+					android:text="FREQUENCY"
+					android:textColor="@color/text_grey"/>
+
+				<androidx.cardview.widget.CardView
+					android:layout_width="wrap_content"
+					android:layout_height="@dimen/_30sdp"
+					app:cardBackgroundColor="@color/tabcolor"
+					app:cardCornerRadius="10dp"
+					app:layout_constraintBottom_toBottomOf="parent"
+					app:layout_constraintEnd_toEndOf="parent"
+					app:layout_constraintTop_toTopOf="parent">
+
+					<LinearLayout
+						android:layout_width="wrap_content"
+						android:layout_height="match_parent"
+						android:background="@drawable/pair_button"
+						android:gravity="center"
+						android:padding="2dp">
+
+						<TextView
+							android:id="@+id/btnOnce"
+							android:layout_width="wrap_content"
+							android:layout_height="match_parent"
+							android:layout_margin="@dimen/_1sdp"
+							android:fontFamily="@font/urbanist_variablefont_wght"
+							android:gravity="center"
+							android:text="   Once   "
+							android:textColor="@color/black"
+							android:textSize="@dimen/_12sdp"
+							android:textStyle="bold" />
+
+						<TextView
+							android:id="@+id/btnYearly"
+							android:layout_width="wrap_content"
+							android:layout_height="match_parent"
+							android:layout_margin="@dimen/_1sdp"
+							android:fontFamily="@font/urbanist_variablefont_wght"
+							android:gravity="center"
+							android:text="   Yearly   "
+							android:textColor="@color/black"
+							android:textSize="@dimen/_12sdp"
+							android:textStyle="bold" />
+
+					</LinearLayout>
+
+				</androidx.cardview.widget.CardView>
+
+			</LinearLayout>
+
+			<LinearLayout
+				android:id="@+id/repeatingView"
+				android:layout_width="match_parent"
+				android:layout_height="60dp"
+				android:orientation="horizontal"
+				android:gravity="center_vertical"
+				android:layout_marginTop="@dimen/_1sdp"
+				android:paddingHorizontal="10dp"
+				android:background="@color/white">
+
+				<TextView
+					android:layout_width="0dp"
+					android:layout_height="wrap_content"
+					android:layout_weight="1"
+					android:fontFamily="@font/urbanist_variablefont_wght"
+					android:text="REPEATING EVENT?"
+					android:textColor="@color/text_grey"
+					android:textSize="15dp"/>
+
+				<androidx.appcompat.widget.SwitchCompat
+					android:id="@+id/repeatSwitch"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:checked="false"/>
+
+			</LinearLayout>
+
+			<LinearLayout
+				android:id="@+id/linearLayout6"
+				android:layout_width="match_parent"
+				android:layout_height="60dp"
+				android:orientation="horizontal"
+				android:gravity="center_vertical"
+				android:layout_marginTop="@dimen/_1sdp"
+				android:paddingHorizontal="10dp"
+				android:background="@color/white">
+
+				<LinearLayout
+					android:layout_width="0dp"
+					android:layout_height="wrap_content"
+					android:layout_weight="1"
+					android:orientation="vertical">
+
+					<TextView
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:fontFamily="@font/urbanist_variablefont_wght"
+						android:text="REMINDER"
+						android:textColor="@color/text_grey"
+						android:textSize="12dp" />
+
+					<TextView
+						android:id="@+id/reminderView"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_marginTop="5dp"
+						android:fontFamily="@font/urbanist_variablefont_wght"
+						android:text="No Reminder"
+						android:textColor="@color/black"
+						android:textSize="17dp"
+						android:textStyle="bold" />
+
+				</LinearLayout>
+
+				<androidx.cardview.widget.CardView
+					android:layout_width="wrap_content"
+					android:layout_height="30dp"
+					app:cardBackgroundColor="@color/tabcolor"
+					app:cardCornerRadius="10dp">
+
+					<LinearLayout
+						android:layout_width="wrap_content"
+						android:layout_height="match_parent"
+						android:background="@drawable/pair_button"
+						android:gravity="center"
+						android:padding="2dp">
+
+						<TextView
+							android:id="@+id/btnReminderMinus"
+							android:layout_width="wrap_content"
+							android:layout_height="match_parent"
+							android:gravity="center"
+							android:text="   -   "
+							android:textColor="@color/black"
+							android:textSize="20dp"
+							android:textStyle="bold" />
+
+						<View
+							android:layout_width="1dp"
+							android:layout_height="match_parent"
+							android:layout_marginVertical="1dp"
+							android:background="@color/light_grey_100" />
+
+						<TextView
+							android:id="@+id/btnReminderPlus"
+							android:layout_width="wrap_content"
+							android:layout_height="match_parent"
+							android:gravity="center"
+							android:text="   +   "
+							android:textColor="@color/black"
+							android:textSize="20dp"
+							android:textStyle="bold" />
+
+					</LinearLayout>
+
+				</androidx.cardview.widget.CardView>
+
+			</LinearLayout>
+
+			<LinearLayout
+				android:id="@+id/btnNotify"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:orientation="horizontal"
+				android:gravity="center_vertical"
+				android:layout_marginTop="@dimen/_1sdp"
+				android:padding="10dp"
+				android:background="@color/white">
+
+				<LinearLayout
+					android:layout_width="0dp"
+					android:layout_height="wrap_content"
+					android:layout_weight="1"
+					android:orientation="vertical">
+
+					<TextView
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:fontFamily="@font/urbanist_variablefont_wght"
+						android:text="REMINDER NOTIFICATION"
+						android:textColor="@color/text_grey"
+						android:textSize="12dp"/>
+
+					<TextView
+						android:id="@+id/notifyView"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:layout_marginTop="5dp"
+						android:fontFamily="@font/urbanist_variablefont_wght"
+						android:hint="@string/set_notification"
+						android:textColor="@color/black" />
+
+				</LinearLayout>
+
+				<RelativeLayout
+					android:layout_width="@dimen/_16sdp"
+					android:layout_height="@dimen/_16sdp"
+					android:background="@drawable/chevron_border">
+
+					<ImageView
+						android:layout_width="@dimen/_12sdp"
+						android:layout_height="@dimen/_12sdp"
+						android:rotation="270"
+						android:src="@drawable/chevron_back_24"
+						app:layout_constraintBottom_toBottomOf="parent"
+						app:layout_constraintEnd_toEndOf="parent"
+						app:layout_constraintTop_toTopOf="parent"
+						app:tint="@color/accentColor"
+						android:layout_centerInParent="true"/>
+
+				</RelativeLayout>
+
+			</LinearLayout>
+
+			<LinearLayout
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:orientation="horizontal"
+				android:gravity="center_vertical"
+				android:layout_marginTop="@dimen/_5sdp"
+				android:padding="10dp"
+				android:background="@color/white">
+
+				<TextView
+					android:layout_width="0dp"
+					android:layout_height="wrap_content"
+					android:layout_weight="1"
+					android:fontFamily="@font/urbanist_variablefont_wght"
+					android:text="WHO IS THE EVENT FOR?"
+					android:textColor="@color/text_grey"
+					android:textSize="15dp"/>
+
+				<androidx.cardview.widget.CardView
+					android:layout_width="wrap_content"
+					android:layout_height="@dimen/_30sdp"
+					app:cardBackgroundColor="@color/tabcolor"
+					app:cardCornerRadius="10dp">
+
+					<LinearLayout
+						android:layout_width="wrap_content"
+						android:layout_height="match_parent"
+						android:background="@drawable/pair_button"
+						android:gravity="center"
+						android:padding="2dp">
+
+						<TextView
+							android:id="@+id/btnTeam"
+							android:layout_width="wrap_content"
+							android:layout_height="match_parent"
+							android:layout_margin="@dimen/_1sdp"
+							android:fontFamily="@font/urbanist_variablefont_wght"
+							android:gravity="center"
+							android:text="   Team   "
+							android:textColor="@color/black"
+							android:textSize="17dp"
+							android:textStyle="bold" />
+
+						<TextView
+							android:id="@+id/btnContact"
+							android:layout_width="wrap_content"
+							android:layout_height="match_parent"
+							android:layout_margin="@dimen/_1sdp"
+							android:fontFamily="@font/urbanist_variablefont_wght"
+							android:gravity="center"
+							android:text="   Contact   "
+							android:textColor="@color/black"
+							android:textSize="17dp"
+							android:textStyle="bold" />
+
+					</LinearLayout>
+
+				</androidx.cardview.widget.CardView>
+
+			</LinearLayout>
+
+			<LinearLayout
+				android:id="@+id/btnEventTeamMember"
+				android:layout_width="match_parent"
+				android:layout_height="60dp"
+				android:orientation="horizontal"
+				android:gravity="center_vertical"
+				android:layout_marginTop="@dimen/_1sdp"
+				android:paddingHorizontal="10dp"
+				android:background="@color/white">
+
+				<LinearLayout
+					android:layout_width="0dp"
+					android:layout_height="wrap_content"
+					android:layout_weight="1"
+					android:orientation="vertical">
+
+					<TextView
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:fontFamily="@font/urbanist_variablefont_wght"
+						android:text="LINK TO A TEAM MEMBER"
+						android:textColor="@color/text_grey"
+						android:textSize="12dp"/>
+
+					<TextView
+						android:id="@+id/eventTeamMemberView"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_marginTop="5dp"
+						android:fontFamily="@font/urbanist_variablefont_wght"
+						android:hint="Select Team Member..."
+						android:textColor="@color/black"/>
+
+				</LinearLayout>
+
+				<RelativeLayout
+					android:layout_width="@dimen/_16sdp"
+					android:layout_height="@dimen/_16sdp"
+					android:background="@drawable/chevron_border">
+
+					<ImageView
+						android:layout_width="@dimen/_12sdp"
+						android:layout_height="@dimen/_12sdp"
+						android:rotation="270"
+						android:src="@drawable/chevron_back_24"
+						app:layout_constraintBottom_toBottomOf="parent"
+						app:layout_constraintEnd_toEndOf="parent"
+						app:layout_constraintTop_toTopOf="parent"
+						app:tint="@color/accentColor"
+						android:layout_centerInParent="true"/>
+
+				</RelativeLayout>
+
+			</LinearLayout>
+
+			<LinearLayout
+				android:id="@+id/btnEventContact"
+				android:layout_width="match_parent"
+				android:layout_height="60dp"
+				android:orientation="horizontal"
+				android:gravity="center_vertical"
+				android:layout_marginTop="@dimen/_1sdp"
+				android:paddingHorizontal="10dp"
+				android:background="@color/white"
+				android:visibility="gone">
+
+				<LinearLayout
+					android:layout_width="0dp"
+					android:layout_height="wrap_content"
+					android:layout_weight="1"
+					android:orientation="vertical">
+
+					<TextView
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:fontFamily="@font/urbanist_variablefont_wght"
+						android:text="LINK TO A CONTACT"
+						android:textColor="@color/text_grey"
+						android:textSize="12dp"/>
+
+					<TextView
+						android:id="@+id/eventContactView"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_marginTop="5dp"
+						android:fontFamily="@font/urbanist_variablefont_wght"
+						android:hint="Select Contact..."
+						android:textColor="@color/black"/>
+
+				</LinearLayout>
+
+				<RelativeLayout
+					android:layout_width="@dimen/_16sdp"
+					android:layout_height="@dimen/_16sdp"
+					android:background="@drawable/chevron_border">
+
+					<ImageView
+						android:layout_width="@dimen/_12sdp"
+						android:layout_height="@dimen/_12sdp"
+						android:rotation="270"
+						android:src="@drawable/chevron_back_24"
+						app:layout_constraintBottom_toBottomOf="parent"
+						app:layout_constraintEnd_toEndOf="parent"
+						app:layout_constraintTop_toTopOf="parent"
+						app:tint="@color/accentColor"
+						android:layout_centerInParent="true"/>
+
+				</RelativeLayout>
+
+			</LinearLayout>
+
+			<LinearLayout
+				android:id="@+id/btnEventCompany"
+				android:layout_width="match_parent"
+				android:layout_height="60dp"
+				android:orientation="horizontal"
+				android:gravity="center_vertical"
+				android:layout_marginTop="@dimen/_1sdp"
+				android:paddingHorizontal="10dp"
+				android:background="@color/white"
+				android:visibility="gone">
+
+				<LinearLayout
+					android:layout_width="0dp"
+					android:layout_height="wrap_content"
+					android:layout_weight="1"
+					android:orientation="vertical">
+
+					<TextView
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:fontFamily="@font/urbanist_variablefont_wght"
+						android:text="LINK TO A COMPANY"
+						android:textColor="@color/text_grey"
+						android:textSize="12dp"/>
+
+					<TextView
+						android:id="@+id/eventCompanyView"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_marginTop="5dp"
+						android:fontFamily="@font/urbanist_variablefont_wght"
+						android:hint="Select Company..."
+						android:textColor="@color/black"/>
+
+				</LinearLayout>
+
+				<RelativeLayout
+					android:layout_width="@dimen/_16sdp"
+					android:layout_height="@dimen/_16sdp"
+					android:background="@drawable/chevron_border">
+
+					<ImageView
+						android:layout_width="@dimen/_12sdp"
+						android:layout_height="@dimen/_12sdp"
+						android:rotation="270"
+						android:src="@drawable/chevron_back_24"
+						app:layout_constraintBottom_toBottomOf="parent"
+						app:layout_constraintEnd_toEndOf="parent"
+						app:layout_constraintTop_toTopOf="parent"
+						app:tint="@color/accentColor"
+						android:layout_centerInParent="true"/>
+
+				</RelativeLayout>
+
+			</LinearLayout>
+
+		</LinearLayout>
+
+	</ScrollView>
+
+</LinearLayout>

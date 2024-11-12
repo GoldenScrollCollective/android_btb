@@ -20,7 +20,7 @@
             android:layout_gravity="center"
             android:layout_margin="@dimen/_8sdp"
             android:indeterminate="true"
-            android:indeterminateTint="@color/AccentColor"
+            android:indeterminateTint="@color/accentColor"
             android:progressDrawable="@drawable/custom_process"
 
             />

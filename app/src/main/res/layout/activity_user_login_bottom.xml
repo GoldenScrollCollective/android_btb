@@ -17,7 +17,7 @@
         android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:tint="@color/AccentColor" />
+        app:tint="@color/accentColor" />
 
     <TextView
         android:id="@+id/tvTitle"

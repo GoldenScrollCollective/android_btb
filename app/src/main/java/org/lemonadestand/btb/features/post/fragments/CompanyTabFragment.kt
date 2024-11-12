@@ -42,7 +42,6 @@ import org.lemonadestand.btb.constants.ProgressDialogUtil
 import org.lemonadestand.btb.constants.getDate
 import org.lemonadestand.btb.constants.handleCommonResponse
 import org.lemonadestand.btb.databinding.FragmentCompanyTabBinding
-import org.lemonadestand.btb.extensions.ago
 import org.lemonadestand.btb.extensions.hide
 import org.lemonadestand.btb.features.common.models.body.AddCommentBody
 import org.lemonadestand.btb.features.common.models.body.LikeBodyModel
@@ -144,8 +143,8 @@ class CompanyTabFragment: BaseFragment(R.layout.fragment_company_tab) {
 	private fun setUpPublicAdapter() {
 		postsByDateRecyclerViewAdapter = PostsByDateRecyclerViewAdapter()
 		postsByDateRecyclerViewAdapter.onPreview = { post ->
-			val previewBottomSheetDialog = MediaPreviewBottomSheetDialog(this, post)
-			previewBottomSheetDialog.show()
+			val previewBottomSheetDialog = MediaPreviewBottomSheetDialog(post)
+			previewBottomSheetDialog.show(childFragmentManager)
 		}
 		postsByDateRecyclerViewAdapter.onLike = { post, value ->
 			handleLike(post, value)
@@ -475,7 +474,7 @@ class CompanyTabFragment: BaseFragment(R.layout.fragment_company_tab) {
 
 							val requestBody = AddCommentBody(
 								uniq_id = "",
-								resource = "user/${CompanyTabFragment.currentUser!!.uniqId}",
+								resource = "user/${CompanyTabFragment.currentUser!!.uniqueId}",
 								html = message,
 								created = "",
 								parent_id = item.uniqueId,

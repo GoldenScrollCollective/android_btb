@@ -79,10 +79,10 @@ class SelectTeamFragment : Fragment() {
 
                 userList.addAll(it.data)
                 val result =
-                    userList.firstOrNull { its -> its.uniq_id == Utils.getData(context, Utils.UID) }
+                    userList.firstOrNull { its -> its.uniqueId == Utils.getData(context, Utils.UID) }
                 if (result != null) {
                     tempUser = UserListModel(
-                        id = result.id, uniq_id = result.uniq_id, org_id = result.org_id,
+                        id = result.id, uniqueId = result.uniqueId, org_id = result.org_id,
                         active = result.active,
                         name = "Me",
                         handles = result.handles,
@@ -100,7 +100,7 @@ class SelectTeamFragment : Fragment() {
                 if (isEvent) {
 
                     allUser = UserListModel(
-                        id = "", uniq_id = "", org_id = "",
+                        id = "", uniqueId = "", org_id = "",
                         active = "",
                         name = "All Users",
                         public = null,
@@ -131,10 +131,10 @@ class SelectTeamFragment : Fragment() {
 
                 val selection: UserListModel? = if (isEvent) {
                     Log.e("event_id==>1", Utils.getUserIdEvent(context) + "<-" )
-                    userList.firstOrNull { its -> its.uniq_id == Utils.getUserIdEvent(context) }
+                    userList.firstOrNull { its -> its.uniqueId == Utils.getUserIdEvent(context) }
                 } else {
                     Log.e("event_id==>", Utils.getUserIdInterest(context)+ "<-")
-                    userList.firstOrNull { its -> its.uniq_id == Utils.getUserIdInterest(context) }
+                    userList.firstOrNull { its -> its.uniqueId == Utils.getUserIdInterest(context) }
                 }
 
                 if (selection != null) {

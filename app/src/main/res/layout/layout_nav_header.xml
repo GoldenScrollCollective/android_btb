@@ -13,7 +13,7 @@
         android:layout_centerVertical="true"
         android:src="@drawable/chevron_right_24"
         android:rotation="180"
-        app:tint="@color/AccentColor"/>
+        app:tint="@color/accentColor"/>
 
     <TextView
         android:id="@+id/titleView"
@@ -22,7 +22,7 @@
         android:layout_centerVertical="true"
         android:fontFamily="@font/urbanist_bold"
         android:textSize="@dimen/_20sdp"
-        android:textColor="@color/AccentColor"
+        android:textColor="@color/accentColor"
         android:textAlignment="center"
         android:text="Team"/>
 

@@ -81,9 +81,9 @@ class ContactFragment : Fragment() {
                 userList.addAll(it.data)
                 userTemp.addAll(it.data)
                 val selection: UserListModel? = if (isEvent) {
-                    userList.firstOrNull { its -> its.uniq_id == Utils.getUserIdEvent(context) }
+                    userList.firstOrNull { its -> its.uniqueId == Utils.getUserIdEvent(context) }
                 } else {
-                    userList.firstOrNull { its -> its.uniq_id == Utils.getUserIdInterest(context) }
+                    userList.firstOrNull { its -> its.uniqueId == Utils.getUserIdInterest(context) }
                 }
                 if (selection != null) {
                     selection.isSelected = true

@@ -14,13 +14,11 @@ import org.lemonadestand.btb.constants.ClickType
 import org.lemonadestand.btb.constants.ProgressDialogUtil
 import org.lemonadestand.btb.R
 import org.lemonadestand.btb.utils.Utils
-import org.lemonadestand.btb.databinding.ActivityShowAppreciationBinding
 import org.lemonadestand.btb.databinding.ActivityAddBonusBinding
 import org.lemonadestand.btb.constants.handleCommonResponse
 import org.lemonadestand.btb.interfaces.OnItemClickListener
 import org.lemonadestand.btb.features.common.models.UserListModel
 import org.lemonadestand.btb.features.common.models.body.AppReciationBody
-import org.lemonadestand.btb.features.common.models.body.AppReciationMeta
 import org.lemonadestand.btb.features.common.models.body.ShareStoryUser
 import org.lemonadestand.btb.features.login.models.User
 import org.lemonadestand.btb.mvvm.factory.CommonViewModelFactory
@@ -250,7 +248,7 @@ class AddBonusActivity : AppCompatActivity(), OnItemClickListener {
 
             val requestBody = ShareStoryBody(
                 uniq_id = "",
-                resource = "user/${currentUser!!.uniqId}",
+                resource = "user/${currentUser!!.uniqueId}",
                 html = htmlMessage,
                 created = "",
                 parent_id = "",

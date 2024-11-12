@@ -126,7 +126,7 @@ class EditRecordActivity : AppCompatActivity(), OnItemClickListener {
             resource =    resource.replace("user/","")
 
         } else {
-            resource = selectedUserListModel!!.uniq_id
+            resource = selectedUserListModel!!.uniqueId
         }
 
 
@@ -147,7 +147,7 @@ class EditRecordActivity : AppCompatActivity(), OnItemClickListener {
             blessing_complete = dateOfEvent,
             blessing_value = blessValue
         )
-        viewModel.editRecord(requestModel,eventModel!!.uniq_id)
+        viewModel.editRecord(requestModel,eventModel!!.uniqueId)
     }
 
     private fun showBottomSheetUser() {

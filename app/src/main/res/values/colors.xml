@@ -4,7 +4,7 @@
 
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="AccentColor">#0A4E78</color>
+    <color name="accentColor">#0F5A8B</color>
     <color name="btbBlue">#333F4F</color>
     <color name="btbOrange">#DEA037</color>
     <color name="btbRed">#CC2628</color>

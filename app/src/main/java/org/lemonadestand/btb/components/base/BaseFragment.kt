@@ -20,11 +20,6 @@ abstract class BaseFragment(
     protected lateinit var rootView: View
     protected val navController by lazy { findNavController() }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        resolveArguments()
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -37,6 +32,7 @@ abstract class BaseFragment(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         init()
+        resolveArguments()
     }
 
     override fun onResume() {

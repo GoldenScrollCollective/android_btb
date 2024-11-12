@@ -30,11 +30,11 @@
                 android:layout_marginBottom="15dp"
                 android:text="Cancel"
                 android:visibility="gone"
-                android:textColor="@color/AccentColor"
+                android:textColor="@color/accentColor"
                 android:textSize="18dp" />
 
             <TextView
-                android:id="@+id/tvTitle"
+                android:id="@+id/titleView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
@@ -57,7 +57,7 @@
                 android:layout_marginEnd="15dp"
                 android:layout_marginBottom="15dp"
                 android:text="Done"
-                android:textColor="@color/AccentColor"
+                android:textColor="@color/accentColor"
                 android:textSize="18dp" />
 
         </RelativeLayout>

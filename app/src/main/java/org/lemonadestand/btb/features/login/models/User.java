@@ -3,7 +3,6 @@ package org.lemonadestand.btb.features.login.models;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class User {
@@ -96,10 +95,10 @@ public class User {
         return id;
     }
 
-    public void setUniqId(String uniqId) {
+    public void setUniqueId(String uniqId) {
         this.uniqId = uniqId;
     }
-    public String getUniqId() {
+    public String getUniqueId() {
         return uniqId;
     }
 

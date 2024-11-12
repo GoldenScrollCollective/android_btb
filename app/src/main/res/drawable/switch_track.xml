@@ -12,7 +12,7 @@
 
     <item android:state_checked="true">
         <shape android:shape="rectangle">
-            <solid android:color="@color/AccentColor"/>
+            <solid android:color="@color/accentColor"/>
             <corners android:radius="100sp"/>
         </shape>
     </item>

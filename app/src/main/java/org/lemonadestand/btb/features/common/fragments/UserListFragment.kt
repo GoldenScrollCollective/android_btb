@@ -33,7 +33,6 @@ import java.util.Locale
 
 
 class UserListFragment : BottomSheetDialogFragment() {
-
     lateinit var mBinding: FragmentUserListBinding
     private lateinit var userListAdapter: UserListAdapter
     private var shortAnimationDuration: Int = 0

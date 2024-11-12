@@ -107,7 +107,7 @@ class LoginActivity : AppCompatActivity() {
                             Toast.makeText(this@LoginActivity, datas.message, Toast.LENGTH_SHORT).show()
 
                             Utils.saveData(this@LoginActivity, Utils.TOKEN, datas.user.token.rawToken)
-                            Utils.saveData(this@LoginActivity, Utils.UID, datas.user.uniqId.toString())
+                            Utils.saveData(this@LoginActivity, Utils.UID, datas.user.uniqueId.toString())
                             Utils.saveData(this@LoginActivity, Utils.ORG_ID, datas.user.orgId.toString())
                             Utils.saveData(this@LoginActivity, Utils.USER_NAME, datas.user.name.toString())
                             Utils.saveData(this@LoginActivity, Utils.PICTURE, datas.user.picture)

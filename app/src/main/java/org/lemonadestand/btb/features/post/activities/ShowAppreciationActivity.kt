@@ -274,18 +274,18 @@ class ShowAppreciationActivity : BaseActivity(R.layout.activity_show_appreciatio
 
 			appReciationBody = AppReciationBody(
 				uniq_id = "",
-				resource = "user/${selectedUser!!.uniq_id}",
+				resource = "user/${selectedUser!!.uniqueId}",
 				html = htmlMessage,
 				title = whyThank,
 				created = currentDate,
 				parent_id = "",
-				by_user_id = "user/${currentUser!!.uniqId}",
+				by_user_id = "user/${currentUser!!.uniqueId}",
 				modified = currentDate,
 				type = "comment",
 //                visibility = if (mBinding.switchIsPrivate.isChecked) "private" else "public",
 				visibility = "public",
 				user = ShareStoryUser(
-					id = "user/${selectedUser!!.uniq_id}",
+					id = "user/${selectedUser!!.uniqueId}",
 					name = currentUser!!.name,
 					picture = currentUser!!.picture
 				),
@@ -391,7 +391,7 @@ class ShowAppreciationActivity : BaseActivity(R.layout.activity_show_appreciatio
 			reminderUerListJson.clear()
 
 			for (i in 0 until reminderUerList.size) {
-				reminderUerListJson.add(reminderUerList[i].uniq_id)
+				reminderUerListJson.add(reminderUerList[i].uniqueId)
 			}
 
 			Log.e("ReminderUserListJson", reminderUerListJson.toString())

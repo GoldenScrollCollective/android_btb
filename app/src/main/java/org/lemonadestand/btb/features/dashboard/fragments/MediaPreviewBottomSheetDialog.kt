@@ -16,9 +16,8 @@ import org.lemonadestand.btb.features.post.models.Post
 
 
 class MediaPreviewBottomSheetDialog @JvmOverloads constructor(
-    fragment: BaseFragment,
     val post: Post,
-): BaseBottomSheetDialogFragment(fragment, R.layout.fragment_media_preview_sheet) {
+): BaseBottomSheetDialogFragment(R.layout.fragment_media_preview_sheet) {
 
     private lateinit var mediaView: MediaView
 
