@@ -141,10 +141,6 @@ enum class ClickType {
     FileUpload,
 }
 
-enum class SelectedEvent {
-    SCHEDULE, PAST, RECORDED
-}
-
 enum class EventClick {
     SELECT_USER, DELETE_EVENT, EDIT_EVENT, COMMON
 }

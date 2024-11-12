@@ -12,7 +12,6 @@ import com.bumptech.glide.Glide
 import org.lemonadestand.btb.R
 import org.lemonadestand.btb.components.base.BaseFragment
 import org.lemonadestand.btb.constants.ClickType
-import org.lemonadestand.btb.constants.SelectedEvent
 import org.lemonadestand.btb.constants.getImageUrlFromName
 import org.lemonadestand.btb.databinding.FragmentEventsBinding
 import org.lemonadestand.btb.features.common.fragments.TeamAndContactsFragment
@@ -25,9 +24,15 @@ class EventsFragment : BaseFragment(R.layout.fragment_events), OnItemClickListen
 
 	private val bottomSheetFragmentMessage = TeamAndContactsFragment()
 	private lateinit var mBinding: FragmentEventsBinding
-	private var selectButton = SelectedEvent.SCHEDULE
 	private var eventClick = ClickType.COMMON
 
+	private var currentFragment: Fragment? = null
+
+	private var tabIndex = 0
+		set(value) {
+			field = value
+			handleTabIndex()
+		}
 
 	override fun onCreateView(
 		inflater: LayoutInflater, container: ViewGroup?,
@@ -44,49 +49,58 @@ class EventsFragment : BaseFragment(R.layout.fragment_events), OnItemClickListen
 
 	}
 
-	private fun handleClickEvents() {
-		mBinding.tabView.onSelect = {
-			when (it) {
-				0 -> {
-					selectButton = SelectedEvent.SCHEDULE
-					val fragment = ScheduleEventFragment()
-					fragment.onSelect = {
+	override fun update() {
+		super.update()
+
+		handleTabIndex()
+	}
+
+	private fun handleTabIndex() {
+		when (tabIndex) {
+			0 -> {
+				if (currentFragment is ScheduleEventFragment) return
+				currentFragment = ScheduleEventFragment().apply {
+					onSelect = {
 						navController.navigate(EventsFragmentDirections.toDetail(it))
 					}
-					val bundle = Bundle().apply {
+					arguments = Bundle().apply {
 						putParcelable("user", Utils.getEventUser(context))
 					}
-					fragment.arguments = bundle
-					setFragment(fragment)
-				}
-				1 -> {
-					selectButton = SelectedEvent.PAST
-					val fragment = PastEventFragment()
-					fragment.onSelect = {
-						navController.navigate(EventsFragmentDirections.toDetail(it))
-					}
-					val bundle = Bundle().apply {
-						putParcelable("user", Utils.getEventUser(context))
-					}
-					fragment.arguments = bundle
-					setFragment(fragment)
-				}
-				2 -> {
-					selectButton = SelectedEvent.RECORDED
-					val fragment = RecordedEventFragment()
-					val bundle = Bundle().apply {
-						putParcelable("user", Utils.getEventUser(context))
-					}
-					fragment.arguments = bundle
-					setFragment(fragment)
+					setFragment(this)
 				}
 			}
+			1 -> {
+				if (currentFragment is PastEventFragment) return
+				currentFragment = PastEventFragment().apply {
+					onSelect = {
+						navController.navigate(EventsFragmentDirections.toDetail(it))
+					}
+					arguments = Bundle().apply {
+						putParcelable("user", Utils.getEventUser(context))
+					}
+					setFragment(this)
+				}
+			}
+			2 -> {
+				if (currentFragment is RecordedEventFragment) return
+				currentFragment = RecordedEventFragment().apply {
+					arguments = Bundle().apply {
+						putParcelable("user", Utils.getEventUser(context))
+					}
+					setFragment(this)
+				}
+			}
+		}
+	}
+
+	private fun handleClickEvents() {
+		mBinding.tabView.onSelect = {
+			tabIndex = it
 		}
 
 		mBinding.userCard.setOnClickListener {
 			showBottomSheetMessage()
 		}
-
 	}
 
 	private fun handleSelectedData() {
@@ -148,19 +162,7 @@ class EventsFragment : BaseFragment(R.layout.fragment_events), OnItemClickListen
 	}
 
 	private fun callApi() {
-		when (selectButton) {
-			SelectedEvent.SCHEDULE -> {
-				mBinding.tabView.selection = 0
-			}
-
-			SelectedEvent.PAST -> {
-				mBinding.tabView.selection = 1
-			}
-
-			else -> {
-				mBinding.tabView.selection = 2
-			}
-		}
+		handleTabIndex()
 	}
 
 	private fun setSelectUserData(image: String?, userName: String) {
