@@ -57,9 +57,9 @@
 
     <fragment
         android:id="@+id/eventDetailFragment"
-        android:name="org.lemonadestand.btb.features.event.fragments.EventDetailFragment"
+        android:name="org.lemonadestand.btb.features.event.fragments.EditReminderFragment"
         android:label="fragment_event_detail"
-        tools:layout="@layout/fragment_event_detail">
+        tools:layout="@layout/fragment_edit_reminder">
 
         <argument
             android:name="event"

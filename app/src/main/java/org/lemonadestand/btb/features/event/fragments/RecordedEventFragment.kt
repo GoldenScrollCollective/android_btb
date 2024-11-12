@@ -94,15 +94,13 @@ class RecordedEventFragment : Fragment(), OnItemClickListener {
     private fun setUpViewModel() {
         startLoading()
         val repository = EventRepository()
-        val viewModelProviderFactory =
-            CommonViewModelFactory((context as DashboardActivity).application, repository)
+        val viewModelProviderFactory = CommonViewModelFactory((context as DashboardActivity).application, repository)
         viewModel = ViewModelProvider(this, viewModelProviderFactory)[EventViewModel::class.java]
-
 
         viewModel.getRecordEventList(
             ScheduleBody(
                 limit = Singleton.API_LIST_LIMIT,
-                page = "0",
+                page = "1",
                 sort = "desc", //desc //asc
                 order_by = "start",
                 resource = if(user!=null) "user/${user!!.uniqueId}" else "",

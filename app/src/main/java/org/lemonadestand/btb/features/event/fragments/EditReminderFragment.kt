@@ -35,8 +35,8 @@ import java.util.Date
 import kotlin.math.max
 import kotlin.math.min
 
-class EventDetailFragment: BaseFragment(R.layout.fragment_event_detail) {
-	private val args: EventDetailFragmentArgs by navArgs()
+class EditReminderFragment: BaseFragment(R.layout.fragment_edit_reminder) {
+	private val args: EditReminderFragmentArgs by navArgs()
 
 	private lateinit var titleView: TextView
 	private lateinit var descriptionView: TextView
