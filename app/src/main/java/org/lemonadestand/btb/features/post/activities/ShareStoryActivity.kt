@@ -29,6 +29,7 @@ class ShareStoryActivity : BaseActivity(R.layout.activity_share_story) {
     private lateinit var webView: WebView
 
     private lateinit var mBinding: ActivityShareStoryBinding
+
     lateinit var viewModel: HomeViewModel
     private var currentUser : User? = null
 
@@ -82,24 +83,7 @@ class ShareStoryActivity : BaseActivity(R.layout.activity_share_story) {
         mBinding.icBack.setOnClickListener { onBackPressed() }
 
         mBinding.btnSave.setOnClickListener {
-
-//            if (mBinding.htmlEditor.text.toString().isEmpty() || mBinding.htmlEditor.text.toString() == "<p><br></p>") {
-//                Toast.makeText(this, "Please write a message.", Toast.LENGTH_SHORT).show()
-//                return@setOnClickListener
-//            }
-
-//            val requestBody = ShareStoryBody(
-//                uniq_id = "",
-//                resource = "user/${currentUser!!.uniqId}",
-//                html = mBinding.webView.toString(),
-//                created = "",
-//                parent_id = "",
-//                modified = "",
-//                by_user_id = "",
-//                visibility = if(mBinding.switchIsPrivate.isChecked)  "private" else "public",
-//                user = ShareStoryUser(id = "", name = "")
-//            )
-//            viewModel.shareStory(requestBody)
+            handleSave()
         }
     }
 
@@ -136,5 +120,27 @@ class ShareStoryActivity : BaseActivity(R.layout.activity_share_story) {
             Toast.makeText(this, " $it", Toast.LENGTH_SHORT).show()
             ProgressDialogUtil.dismissProgressDialog()
         }
+    }
+
+    private fun handleSave() {
+        if (mBinding.webView.toString().isEmpty() || mBinding.webView.toString() == "<p><br></p>") {
+            Toast.makeText(this, "Please write a message.", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val requestBody = ShareStoryBody(
+            uniq_id = "",
+            resource = "user/${currentUser!!.uniqueId}",
+            html = mBinding.webView.toString(),
+            created = "",
+            parent_id = "",
+            modified = "",
+            by_user_id = "",
+            visibility = if(mBinding.switchIsPrivate.isChecked)  "private" else "public",
+            user = ShareStoryUser(id = "", name = ""),
+            anonymous = if (mBinding.shareAnonymouslySwitch.isChecked) "1" else "0"
+        )
+        viewModel.shareStory(requestBody)
+
     }
 }

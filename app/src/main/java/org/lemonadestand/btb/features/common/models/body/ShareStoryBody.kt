@@ -1,13 +1,12 @@
 package org.lemonadestand.btb.features.common.models.body
 
-import android.opengl.Visibility
-
 
 data class ShareStoryUser(
     var id  :String,
     var name  :String,
     var picture  :String ? = null ,
 )
+
 data class ShareStoryBody (
     var uniq_id  :String,
     var resource  :String,
@@ -17,5 +16,6 @@ data class ShareStoryBody (
     var modified  :String,
     var by_user_id  :String,
     var user  : ShareStoryUser,
-    var visibility: String ? = null
+    var visibility: String ? = null,
+    var anonymous: String = "0"
 )
