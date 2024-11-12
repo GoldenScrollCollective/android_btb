@@ -1,7 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <attr name="selected" format="boolean"/>
+
     <declare-styleable name="FilterButton">
-        <attr name="selected" format="boolean"/>
+        <attr name="selected" />
+    </declare-styleable>
+
+    <declare-styleable name="RadioButton">
+        <attr name="selected" />
+    </declare-styleable>
+
+    <declare-styleable name="RadioGroup">
+        <attr name="selection" format="integer"/>
     </declare-styleable>
 
     <declare-styleable name="NavHeaderView">

@@ -6,7 +6,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.bumptech.glide.Glide
@@ -46,60 +45,42 @@ class EventsFragment : BaseFragment(R.layout.fragment_events), OnItemClickListen
 	}
 
 	private fun handleClickEvents() {
-		mBinding.tvScheduled.setOnClickListener { view ->
-			selectButton = SelectedEvent.SCHEDULE
-			val fragment = ScheduleEventFragment()
-			fragment.onSelect = {
-				navController.navigate(EventsFragmentDirections.toDetail(it))
+		mBinding.tabView.onSelect = {
+			when (it) {
+				0 -> {
+					selectButton = SelectedEvent.SCHEDULE
+					val fragment = ScheduleEventFragment()
+					fragment.onSelect = {
+						navController.navigate(EventsFragmentDirections.toDetail(it))
+					}
+					val bundle = Bundle().apply {
+						putParcelable("user", Utils.getEventUser(context))
+					}
+					fragment.arguments = bundle
+					setFragment(fragment)
+				}
+				1 -> {
+					selectButton = SelectedEvent.PAST
+					val fragment = PastEventFragment()
+					fragment.onSelect = {
+						navController.navigate(EventsFragmentDirections.toDetail(it))
+					}
+					val bundle = Bundle().apply {
+						putParcelable("user", Utils.getEventUser(context))
+					}
+					fragment.arguments = bundle
+					setFragment(fragment)
+				}
+				2 -> {
+					selectButton = SelectedEvent.RECORDED
+					val fragment = RecordedEventFragment()
+					val bundle = Bundle().apply {
+						putParcelable("user", Utils.getEventUser(context))
+					}
+					fragment.arguments = bundle
+					setFragment(fragment)
+				}
 			}
-			val bundle = Bundle().apply {
-				putParcelable("user", Utils.getEventUser(context))
-			}
-			fragment.arguments = bundle
-			setFragment(fragment)
-			setDefaultView()
-			view.alpha = 1f
-
-
-			view.setBackgroundResource(R.drawable.back_for_all)
-			view.elevation = 5f
-
-
-			mBinding.tvScheduled.setTextColor(ContextCompat.getColor(requireContext(),R.color.black))
-		}
-		mBinding.tvScheduled.performClick()
-
-		mBinding.tvPast.setOnClickListener { view ->
-			selectButton = SelectedEvent.PAST
-			val fragment = PastEventFragment()
-			fragment.onSelect = {
-				navController.navigate(EventsFragmentDirections.toDetail(it))
-			}
-			val bundle = Bundle().apply {
-				putParcelable("user", Utils.getEventUser(context))
-			}
-			fragment.arguments = bundle
-			setFragment(fragment)
-			setDefaultView()
-			view.alpha = 1f
-			view.setBackgroundResource(R.drawable.back_for_all)
-			view.elevation = 5f
-			mBinding.tvPast.setTextColor(ContextCompat.getColor(requireContext(),R.color.black))
-		}
-
-		mBinding.tvRecorded.setOnClickListener { view ->
-			selectButton = SelectedEvent.RECORDED
-			val fragment = RecordedEventFragment()
-			val bundle = Bundle().apply {
-				putParcelable("user", Utils.getEventUser(context))
-			}
-			fragment.arguments = bundle
-			setFragment(fragment)
-			setDefaultView()
-			view.alpha = 1f
-			view.setBackgroundResource(R.drawable.back_for_all)
-			view.elevation = 5f
-			mBinding.tvRecorded.setTextColor(ContextCompat.getColor(requireContext(),R.color.black))
 		}
 
 		mBinding.userCard.setOnClickListener {
@@ -126,19 +107,6 @@ class EventsFragment : BaseFragment(R.layout.fragment_events), OnItemClickListen
 
 	private fun setFragment(fragment: Fragment?) {
 		childFragmentManager.beginTransaction().replace(R.id.event_fragment, fragment!!).commit()
-	}
-
-	private fun setDefaultView() {
-		mBinding.tvScheduled.alpha = 0.7f
-		mBinding.tvPast.alpha = 0.7f
-		mBinding.tvRecorded.alpha = 0.7f
-		mBinding.tvScheduled.setBackgroundResource(0)
-		mBinding.tvPast.setBackgroundResource(0)
-		mBinding.tvRecorded.setBackgroundResource(0)
-
-		mBinding.tvScheduled.setTextColor(ContextCompat.getColor(requireContext(),R.color.text_grey))
-		mBinding.tvRecorded.setTextColor(ContextCompat.getColor(requireContext(),R.color.text_grey))
-		mBinding.tvPast.setTextColor(ContextCompat.getColor(requireContext(),R.color.text_grey))
 	}
 
 	private fun showBottomSheetMessage() {
@@ -182,15 +150,15 @@ class EventsFragment : BaseFragment(R.layout.fragment_events), OnItemClickListen
 	private fun callApi() {
 		when (selectButton) {
 			SelectedEvent.SCHEDULE -> {
-				mBinding.tvScheduled.performClick()
+				mBinding.tabView.selection = 0
 			}
 
 			SelectedEvent.PAST -> {
-				mBinding.tvPast.performClick()
+				mBinding.tabView.selection = 1
 			}
 
 			else -> {
-				mBinding.tvRecorded.performClick()
+				mBinding.tabView.selection = 2
 			}
 		}
 	}
