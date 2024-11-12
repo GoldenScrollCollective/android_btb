@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <RelativeLayout
         android:id="@+id/rel_top_bar"
@@ -42,6 +43,7 @@
         android:id="@+id/rv_public_sub"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/rel_top_bar" />
+        android:layout_below="@+id/rel_top_bar"
+        tools:listitem="@layout/row_event_sub"/>
 
 </RelativeLayout>

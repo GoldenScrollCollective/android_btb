@@ -307,10 +307,10 @@ class InterestFragment : Fragment(), OnItemClickListener, ColorPickerDialogListe
     }
 
     private fun startLoading() {
-        mBinding.simmerLayout.startShimmer()
+        mBinding.shimmerLayout.startShimmer()
         mBinding.rvInterest.hide()
 
-        mBinding.simmerLayout.apply {
+        mBinding.shimmerLayout.apply {
             alpha = 0f
             visibility = View.VISIBLE
             animate()
@@ -318,7 +318,7 @@ class InterestFragment : Fragment(), OnItemClickListener, ColorPickerDialogListe
                 .setDuration(0)
                 .setListener(null)
         }
-        mBinding.simmerLayout.startShimmer()
+        mBinding.shimmerLayout.startShimmer()
 
 
     }
@@ -335,12 +335,12 @@ class InterestFragment : Fragment(), OnItemClickListener, ColorPickerDialogListe
                 .setListener(null)
         }
 
-        mBinding.simmerLayout.animate()
+        mBinding.shimmerLayout.animate()
             .alpha(0f)
             .setDuration(650)
             .setListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationEnd(animation: Animator) {
-                    mBinding.simmerLayout.hide()
+                    mBinding.shimmerLayout.hide()
                 }
             })
     }

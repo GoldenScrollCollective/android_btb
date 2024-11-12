@@ -61,7 +61,7 @@ class ContactFragment : Fragment() {
     }
 
     private fun startLoading() {
-        mBinding.simmerLayout.startShimmer()
+        mBinding.shimmerLayout.startShimmer()
         mBinding.rvUserList.hide()
         mBinding.noDataView.hide()
     }
@@ -122,7 +122,7 @@ class ContactFragment : Fragment() {
     }
 
     private fun setAdapter() {
-        mBinding.simmerLayout.startShimmer()
+        mBinding.shimmerLayout.startShimmer()
         shortAnimationDuration = resources.getInteger(android.R.integer.config_shortAnimTime)
         contactAdapter = ContactAdapter(userList, context = requireContext(),isEvent)
         mBinding.rvUserList.adapter = contactAdapter
@@ -142,12 +142,12 @@ class ContactFragment : Fragment() {
                 .setListener(null)
         }
 
-        mBinding.simmerLayout.animate()
+        mBinding.shimmerLayout.animate()
             .alpha(0f)
             .setDuration(650)
             .setListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationEnd(animation: Animator) {
-                    mBinding.simmerLayout.hide()
+                    mBinding.shimmerLayout.hide()
                 }
             })
     }

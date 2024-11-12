@@ -4,21 +4,23 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.RelativeLayout
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.facebook.shimmer.ShimmerFrameLayout
 import org.lemonadestand.btb.R
 import org.lemonadestand.btb.components.base.BaseFragment
 import org.lemonadestand.btb.constants.ClickType
 import org.lemonadestand.btb.constants.ProgressDialogUtil
 import org.lemonadestand.btb.constants.getDate
 import org.lemonadestand.btb.constants.handleCommonResponse
-import org.lemonadestand.btb.databinding.FragmentScheduleEventBinding
 import org.lemonadestand.btb.extensions.hide
+import org.lemonadestand.btb.extensions.setOnSingleClickListener
 import org.lemonadestand.btb.features.common.models.UserListModel
 import org.lemonadestand.btb.features.common.models.body.ScheduleBody
 import org.lemonadestand.btb.features.dashboard.activities.DashboardActivity
@@ -32,9 +34,7 @@ import org.lemonadestand.btb.mvvm.viewmodel.EventViewModel
 import org.lemonadestand.btb.singleton.Singleton
 
 
-class ScheduleEventFragment : BaseFragment(R.layout.fragment_schedule_event), OnItemClickListener {
-
-	lateinit var mBinding: FragmentScheduleEventBinding
+class ScheduledEventsFragment : BaseFragment(R.layout.fragment_scheduled_events), OnItemClickListener {
 
 	private lateinit var eventAdapter: EventAdapter
 	private lateinit var viewModel: EventViewModel
@@ -46,37 +46,39 @@ class ScheduleEventFragment : BaseFragment(R.layout.fragment_schedule_event), On
 	private var clickedSuperPosition = 0
 	private var user : UserListModel? = null
 
+	private lateinit var eventsRecyclerView: RecyclerView
+	private lateinit var noDataView: RelativeLayout
+	private lateinit var shimmerLayout: ShimmerFrameLayout
+
 	var onSelect: ((value: EventModel?) -> Unit)? = null
 
-	override fun onCreateView(
-		inflater: LayoutInflater, container: ViewGroup?,
-		savedInstanceState: Bundle?
-	): View {
-		mBinding = FragmentScheduleEventBinding.inflate(
-			LayoutInflater.from(inflater.context),
-			container,
-			false
-		)
+	override fun init() {
+		super.init()
+
 		shortAnimationDuration = resources.getInteger(android.R.integer.config_shortAnimTime)
 
-		getSelectedUser()
-		setUpPublicAdapter()
-		setUpViewModel()
-		setButtonClicks()
-		setSwipeRefresh()
-
-		return mBinding.root
-	}
-
-	private fun setSwipeRefresh() {
-		mBinding.swipeRefresh.setOnRefreshListener {
+		val swipeRefreshLayout = rootView.findViewById<SwipeRefreshLayout>(R.id.swipeRefreshLayout)
+		swipeRefreshLayout.setOnRefreshListener {
 			refreshData()
-			mBinding.swipeRefresh.isRefreshing = false
+			swipeRefreshLayout.isRefreshing = false
 		}
+
+		eventAdapter = EventAdapter(eventDateList, requireContext())
+		eventAdapter.setOnItemClick(this)
+		eventsRecyclerView = rootView.findViewById<RecyclerView>(R.id.eventsRecyclerView)
+		eventsRecyclerView.adapter = eventAdapter
+
+		noDataView = rootView.findViewById(R.id.noDataView)
+		shimmerLayout = rootView.findViewById(R.id.shimmerLayout)
+
+		val btnFloatingEvent = rootView.findViewById<ImageView>(R.id.btnFloatingEvent)
+		btnFloatingEvent.setOnSingleClickListener { onSelect?.invoke(null) }
+
+		getSelectedUser()
+		setUpViewModel()
 	}
 
-	private fun refreshData()
-	{
+	private fun refreshData() {
 		startLoading()
 		viewModel.getScheduleEventList(
 			ScheduleBody(
@@ -94,21 +96,6 @@ class ScheduleEventFragment : BaseFragment(R.layout.fragment_schedule_event), On
 	private fun getSelectedUser() {
 		val bundle = arguments
 		user  = bundle!!.getParcelable("user")
-	}
-
-	@SuppressLint("InflateParams")
-	private fun setButtonClicks() {
-		mBinding.btnEventTabPast.setOnClickListener {
-			onSelect?.invoke(null)
-		}
-	}
-
-	private fun setUpPublicAdapter() {
-
-		eventAdapter = EventAdapter(eventDateList, requireContext())
-		eventAdapter.setOnItemClick(this)
-		mBinding.rvPastEvent.adapter = eventAdapter
-
 	}
 
 	@SuppressLint("NotifyDataSetChanged")
@@ -199,9 +186,9 @@ class ScheduleEventFragment : BaseFragment(R.layout.fragment_schedule_event), On
 
 
 	private fun startLoading() {
-		mBinding.rvPastEvent.hide()
-		mBinding.noDataView.root.hide()
-		mBinding.simmerLayout.apply {
+		eventsRecyclerView.hide()
+		noDataView.hide()
+		shimmerLayout.apply {
 			alpha = 0f
 			visibility = View.VISIBLE
 			animate()
@@ -209,15 +196,14 @@ class ScheduleEventFragment : BaseFragment(R.layout.fragment_schedule_event), On
 				.setDuration(0)
 				.setListener(null)
 		}
-		mBinding.simmerLayout.startShimmer()
-
+		shimmerLayout.startShimmer()
 	}
 
 	private fun stopLoading(isDataAvailable: Boolean) {
-		mBinding.rvPastEvent.hide()
+		eventsRecyclerView.hide()
 
 
-		val view = if (isDataAvailable) mBinding.rvPastEvent else mBinding.noDataView.root
+		val view = if (isDataAvailable) eventsRecyclerView else noDataView
 		view.apply {
 			alpha = 0f
 			visibility = View.VISIBLE
@@ -227,12 +213,12 @@ class ScheduleEventFragment : BaseFragment(R.layout.fragment_schedule_event), On
 				.setListener(null)
 		}
 
-		mBinding.simmerLayout.animate()
+		shimmerLayout.animate()
 			.alpha(0f)
 			.setDuration(650)
 			.setListener(object : AnimatorListenerAdapter() {
 				override fun onAnimationEnd(animation: Animator) {
-					mBinding.simmerLayout.hide()
+					shimmerLayout.hide()
 				}
 			})
 	}

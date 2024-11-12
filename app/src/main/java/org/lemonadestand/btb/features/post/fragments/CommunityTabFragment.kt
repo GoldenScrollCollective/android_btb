@@ -232,10 +232,10 @@ class CommunityTabFragment: BaseFragment(R.layout.fragment_community_tab) {
 
 
     private fun startLoading() {
-        mBinding.simmerLayout.startShimmer()
+        mBinding.shimmerLayout.startShimmer()
         mBinding.rvPublic.hide()
         mBinding.noDataView.root.hide()
-        mBinding.simmerLayout.apply {
+        mBinding.shimmerLayout.apply {
             alpha = 0f
             visibility = View.VISIBLE
             animate()
@@ -243,7 +243,7 @@ class CommunityTabFragment: BaseFragment(R.layout.fragment_community_tab) {
                 .setDuration(0)
                 .setListener(null)
         }
-        mBinding.simmerLayout.startShimmer()
+        mBinding.shimmerLayout.startShimmer()
     }
 
     private fun stopLoading(isDataAvailable: Boolean) {
@@ -258,20 +258,20 @@ class CommunityTabFragment: BaseFragment(R.layout.fragment_community_tab) {
                 .setListener(null)
         }
 
-        mBinding.simmerLayout.animate()
+        mBinding.shimmerLayout.animate()
             .alpha(0f)
             .setDuration(650)
             .setListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationEnd(animation: Animator) {
-                    mBinding.simmerLayout.hide()
+                    mBinding.shimmerLayout.hide()
                 }
             })
     }
 
     private fun setSwipeRefresh() {
-        mBinding.swipeRefresh.setOnRefreshListener {
+        mBinding.swipeRefreshLayout.setOnRefreshListener {
             refreshData()
-            mBinding.swipeRefresh.isRefreshing = false
+            mBinding.swipeRefreshLayout.isRefreshing = false
         }
     }
 

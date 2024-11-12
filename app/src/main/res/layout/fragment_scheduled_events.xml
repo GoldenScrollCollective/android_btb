@@ -4,10 +4,10 @@
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
-	tools:context=".features.event.fragments.ScheduleEventFragment">
+	tools:context=".features.event.fragments.ScheduledEventsFragment">
 
 	<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-		android:id="@+id/swipe_refresh"
+		android:id="@+id/swipeRefreshLayout"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent">
 
@@ -16,14 +16,15 @@
 			android:layout_height="wrap_content">
 
 			<androidx.recyclerview.widget.RecyclerView
-				android:id="@+id/rv_past_event"
+				android:id="@+id/eventsRecyclerView"
 				android:layout_width="match_parent"
 				android:layout_height="match_parent"
-				app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+				app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+				tools:listitem="@layout/row_event"/>
 
 			<com.facebook.shimmer.ShimmerFrameLayout
+				android:id="@+id/shimmerLayout"
 				android:layout_width="match_parent"
-				android:id="@+id/simmer_layout"
 				android:layout_height="wrap_content"
 				android:animateLayoutChanges="true"
 				android:animationCache="true"
@@ -41,7 +42,7 @@
 				layout="@layout/item_no_event" />
 
 			<ImageView
-				android:id="@+id/btn_event_tab_past"
+				android:id="@+id/btnFloatingEvent"
 				android:layout_width="40dp"
 				android:layout_height="40dp"
 				android:layout_alignParentEnd="true"

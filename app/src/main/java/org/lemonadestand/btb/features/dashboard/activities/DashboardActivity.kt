@@ -30,7 +30,6 @@ class DashboardActivity : BaseActivity(R.layout.activity_dashboard) {
     private lateinit var line1: TextView
     private lateinit var line2: TextView
     private lateinit var line3: TextView
-    private lateinit var line4: TextView
     private lateinit var mainDrawer: DrawerLayout
 
     override fun onResume() {
@@ -124,14 +123,6 @@ class DashboardActivity : BaseActivity(R.layout.activity_dashboard) {
                 line3.setBackgroundColor(Color.rgb(10, 78, 120))
 
             }
-
-            R.id.moreFragment -> {
-                deselectAllColor()
-                resetAllIcons()
-                bottomNav.menu.getItem(3).icon = ContextCompat.getDrawable(this, R.drawable.ic_more_selected)
-                bottomNav.itemIconTintList = null
-                line4.setBackgroundColor(Color.rgb(51, 63, 79))
-            }
         }
 
     }
@@ -171,7 +162,6 @@ class DashboardActivity : BaseActivity(R.layout.activity_dashboard) {
         line1 = findViewById(R.id.line1)
         line2 = findViewById(R.id.line2)
         line3 = findViewById(R.id.line3)
-        line4 = findViewById(R.id.line4)
         navController = findNavController(R.id.host_fragment)
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.host_fragment) as NavHostFragment
         navController = navHostFragment.navController
@@ -181,7 +171,6 @@ class DashboardActivity : BaseActivity(R.layout.activity_dashboard) {
         line1.setBackgroundColor(Color.rgb(255, 255, 255))
         line2.setBackgroundColor(Color.rgb(255, 255, 255))
         line3.setBackgroundColor(Color.rgb(255, 255, 255))
-        line4.setBackgroundColor(Color.rgb(255, 255, 255))
     }
 
     private fun resetAllIcons() {
@@ -191,8 +180,6 @@ class DashboardActivity : BaseActivity(R.layout.activity_dashboard) {
             ContextCompat.getDrawable(this, R.drawable.events)
         bottomNav.menu.getItem(2).icon =
             ContextCompat.getDrawable(this, R.drawable.nav_interest_unselected)
-        bottomNav.menu.getItem(3).icon =
-            ContextCompat.getDrawable(this, R.drawable.nav_more_unselected)
     }
 
     private fun updateNavigationView() {

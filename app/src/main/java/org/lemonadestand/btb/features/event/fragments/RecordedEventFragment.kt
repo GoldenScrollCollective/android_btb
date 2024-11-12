@@ -76,7 +76,7 @@ class RecordedEventFragment : Fragment(), OnItemClickListener {
     private fun setButtonClicks() {
 
 
-        mBinding.btnEventTabPast.setOnClickListener {
+        mBinding.btnFloatingEvent.setOnClickListener {
             val intent = Intent(activity, AddRecordActivity::class.java)
             startActivity(intent)
         }
@@ -86,7 +86,7 @@ class RecordedEventFragment : Fragment(), OnItemClickListener {
 
         eventAdapter = EventAdapter(eventDateList, requireContext())
         eventAdapter.setOnItemClick(this)
-        mBinding.rvPastEvent.adapter = eventAdapter
+        mBinding.eventsRecyclerView.adapter = eventAdapter
 
     }
 
@@ -176,9 +176,9 @@ class RecordedEventFragment : Fragment(), OnItemClickListener {
     }
 
     private fun setSwipeRefresh() {
-        mBinding.swipeRefresh.setOnRefreshListener {
+        mBinding.swipeRefreshLayout.setOnRefreshListener {
             refreshData()
-            mBinding.swipeRefresh.isRefreshing = false
+            mBinding.swipeRefreshLayout.isRefreshing = false
         }
     }
 
@@ -198,9 +198,9 @@ class RecordedEventFragment : Fragment(), OnItemClickListener {
     }
 
     private fun startLoading() {
-        mBinding.rvPastEvent.hide()
+        mBinding.eventsRecyclerView.hide()
         mBinding.noDataView.root.hide()
-        mBinding.simmerLayout.apply {
+        mBinding.shimmerLayout.apply {
             alpha = 0f
             visibility = View.VISIBLE
             animate()
@@ -208,12 +208,11 @@ class RecordedEventFragment : Fragment(), OnItemClickListener {
                 .setDuration(0)
                 .setListener(null)
         }
-        mBinding.simmerLayout.startShimmer()
-
+        mBinding.shimmerLayout.startShimmer()
     }
 
     private fun stopLoading(isDataAvailable: Boolean) {
-        val view = if (isDataAvailable) mBinding.rvPastEvent else mBinding.noDataView.root
+        val view = if (isDataAvailable) mBinding.eventsRecyclerView else mBinding.noDataView.root
         view.apply {
             alpha = 0f
             visibility = View.VISIBLE
@@ -224,12 +223,12 @@ class RecordedEventFragment : Fragment(), OnItemClickListener {
                 .setListener(null)
         }
 
-        mBinding.simmerLayout.animate()
+        mBinding.shimmerLayout.animate()
             .alpha(0f)
             .setDuration(650)
             .setListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationEnd(animation: Animator) {
-                    mBinding.simmerLayout.hide()
+                    mBinding.shimmerLayout.hide()
                 }
             })
     }

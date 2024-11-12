@@ -59,7 +59,7 @@ class UserListFragment : BottomSheetDialogFragment() {
     }
 
     private fun startLoading() {
-        mBinding.simmerLayout.startShimmer()
+        mBinding.shimmerLayout.startShimmer()
         mBinding.rvUserList.hide()
         mBinding.noDataView.hide()
     }
@@ -116,7 +116,7 @@ class UserListFragment : BottomSheetDialogFragment() {
     }
 
     private fun setAdapter() {
-        mBinding.simmerLayout.startShimmer()
+        mBinding.shimmerLayout.startShimmer()
         shortAnimationDuration = resources.getInteger(android.R.integer.config_shortAnimTime)
         userListAdapter = UserListAdapter(userList, context = requireContext())
         userListAdapter.setOnItemClick(callback)
@@ -178,12 +178,12 @@ class UserListFragment : BottomSheetDialogFragment() {
                 .setListener(null)
         }
 
-        mBinding.simmerLayout.animate()
+        mBinding.shimmerLayout.animate()
             .alpha(0f)
             .setDuration(650)
             .setListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationEnd(animation: Animator) {
-                    mBinding.simmerLayout.hide()
+                    mBinding.shimmerLayout.hide()
                 }
             })
     }

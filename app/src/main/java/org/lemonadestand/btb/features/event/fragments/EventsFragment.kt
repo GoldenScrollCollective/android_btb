@@ -58,8 +58,8 @@ class EventsFragment : BaseFragment(R.layout.fragment_events), OnItemClickListen
 	private fun handleTabIndex() {
 		when (tabIndex) {
 			0 -> {
-				if (currentFragment is ScheduleEventFragment) return
-				currentFragment = ScheduleEventFragment().apply {
+				if (currentFragment is ScheduledEventsFragment) return
+				currentFragment = ScheduledEventsFragment().apply {
 					onSelect = {
 						navController.navigate(EventsFragmentDirections.toDetail(it))
 					}

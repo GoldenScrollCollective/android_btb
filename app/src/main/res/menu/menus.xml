@@ -1,26 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item
-        android:id="@+id/homeFragment"
-        android:icon="@drawable/nav_heart_unselected"
-        android:title="Home" />
+	<item
+		android:id="@+id/homeFragment"
+		android:icon="@drawable/nav_heart_unselected"
+		android:title="Home" />
 
-    <item
-        android:id="@+id/eventFragment"
-        android:icon="@drawable/events"
-        android:title="Events" />
-  <!--  <item
-        android:id="@+id/storiesFragment"
-        android:icon="@drawable/nav_book_unselected"
-        android:title="Stories"/>-->
-    <item
-        android:id="@+id/interestFragment"
-        android:icon="@drawable/nav_interest_unselected"
-        android:title="Interests"/>
+	<item
+		android:id="@+id/eventFragment"
+		android:icon="@drawable/events"
+		android:title="Events" />
 
-    <item
-        android:id="@+id/moreFragment"
-        android:icon="@drawable/nav_more_unselected"
-        android:title="More" />
+	<item
+		android:id="@+id/interestFragment"
+		android:icon="@drawable/nav_interest_unselected"
+		android:title="Interests"/>
+
 </menu>

@@ -42,231 +42,231 @@ import org.lemonadestand.btb.features.post.models.User
 import org.lemonadestand.btb.singleton.Singleton.launchActivity
 
 class MineFragment : Fragment(),OnItemClickListener {
-    private lateinit var mBinding: FragmentMineBinding
-    private lateinit var publicAdapter: PublicAdapter
-    private lateinit var viewModel: HomeViewModel
-    private var shortAnimationDuration: Int = 0
-    private var postDateList: ArrayList<PostModelDate> = ArrayList()
-    private var tag = "MineFragment"
-    var clickType = ClickType.COMMON
-    var clickedPosition = 0
-    var clickedSuperPosition = 0
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        mBinding = FragmentMineBinding.inflate(
-            LayoutInflater.from(inflater.context),
-            container,
-            false
+	private lateinit var mBinding: FragmentMineBinding
+	private lateinit var publicAdapter: PublicAdapter
+	private lateinit var viewModel: HomeViewModel
+	private var shortAnimationDuration: Int = 0
+	private var postDateList: ArrayList<PostModelDate> = ArrayList()
+	private var tag = "MineFragment"
+	var clickType = ClickType.COMMON
+	var clickedPosition = 0
+	var clickedSuperPosition = 0
+	override fun onCreateView(
+		inflater: LayoutInflater, container: ViewGroup?,
+		savedInstanceState: Bundle?
+	): View {
+		mBinding = FragmentMineBinding.inflate(
+			LayoutInflater.from(inflater.context),
+			container,
+			false
 
-        )
-        shortAnimationDuration = resources.getInteger(android.R.integer.config_shortAnimTime)
+		)
+		shortAnimationDuration = resources.getInteger(android.R.integer.config_shortAnimTime)
 
-        setUpPublicAdapter()
-        setUpViewModel()
-        setButtonClicks()
-        setSwipeRefresh()
-        return mBinding.root
-    }
+		setUpPublicAdapter()
+		setUpViewModel()
+		setButtonClicks()
+		setSwipeRefresh()
+		return mBinding.root
+	}
 
-    @SuppressLint("InflateParams")
-    private fun setButtonClicks() {
-
-
-        mBinding.btnPublicTab.setOnClickListener {
-            val view: View = LayoutInflater.from(context).inflate(R.layout.custom_public_menu, null)
-            val popupWindow = PopupWindow(
-                view,
-                WindowManager.LayoutParams.WRAP_CONTENT,
-                WindowManager.LayoutParams.WRAP_CONTENT
-            )
-            popupWindow.isFocusable = true
-            popupWindow.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-
-            val location = IntArray(2)
-            mBinding.btnPublicTab.getLocationOnScreen(location)
-            popupWindow.showAtLocation(
-                mBinding.btnPublicTab,
-                Gravity.NO_GRAVITY,
-                location[0],
-                location[1] - (popupWindow.height + (mBinding.btnPublicTab.height * 3))
-            )
-            popupWindow.showAsDropDown(it, 100, 0, 0)
-            val tvShareStory = view.findViewById<TextView>(R.id.tv_share_story)
-            val tvShowAppreciation = view.findViewById<TextView>(R.id.tv_show_appreciation)
-            tvShareStory.setOnClickListener {
-                popupWindow.dismiss()
-                (context as Activity).launchActivity<ShareStoryActivity>()
-            }
-            tvShowAppreciation.setOnClickListener {
-                popupWindow.dismiss()
-                (context as Activity).launchActivity<ShowAppreciationActivity>()
-            }
-        }
-    }
-
-    private fun setUpPublicAdapter() {
-
-        publicAdapter = PublicAdapter(postDateList, requireContext())
-        publicAdapter.setOnItemClick(this)
-        mBinding.rvPublic.adapter = publicAdapter
-
-    }
-
-    @SuppressLint("NotifyDataSetChanged")
-    private fun setUpViewModel() {
-        startLoading()
-        val repository = HomeRepository()
-        val viewModelProviderFactory =
-            CommonViewModelFactory((context as DashboardActivity).application, repository)
-        viewModel = ViewModelProvider(this, viewModelProviderFactory)[HomeViewModel::class.java]
-        viewModel.getPostList(visibility = Singleton.MINE, page = 0)
-        viewModel.postModel.observe(viewLifecycleOwner) {
-            if (!it.data.isNullOrEmpty()) {
-                postDateList.clear()
-
-                val dateList: ArrayList<String> = ArrayList()
-
-                for (i in 0 until it.data.size) {
-                    if (!dateList.contains(getDate(it.data[i].created))) {
-                        dateList.add(getDate(it.data[i].created))
-                        postDateList.add(
-                            PostModelDate(
-                                date = it.data[i].created,
-                                postList = it.data as ArrayList<Post>
-                            )
-                        )
-                    }
-                }
-
-                publicAdapter.notifyDataSetChanged()
-                stopLoading(true)
-            } else {
-                stopLoading(false)
-
-            }
-        }
+	@SuppressLint("InflateParams")
+	private fun setButtonClicks() {
 
 
-        viewModel.liveError.observe(viewLifecycleOwner) {
-            Singleton.handleResponse(response = it, context as Activity, tag)
-            ProgressDialogUtil.dismissProgressDialog()
-        }
+		mBinding.btnPublicTab.setOnClickListener {
+			val view: View = LayoutInflater.from(context).inflate(R.layout.custom_public_menu, null)
+			val popupWindow = PopupWindow(
+				view,
+				WindowManager.LayoutParams.WRAP_CONTENT,
+				WindowManager.LayoutParams.WRAP_CONTENT
+			)
+			popupWindow.isFocusable = true
+			popupWindow.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-        viewModel.commonResponse.observe(viewLifecycleOwner) {
-            handleCommonResponse(context as DashboardActivity, it)
-            ProgressDialogUtil.dismissProgressDialog()
-            if (it.status == Singleton.SUCCESS) {
-                if (clickType == ClickType.DELETE_POST) {
-                    postDateList[clickedSuperPosition].postList.removeAt(clickedPosition)
-                    publicAdapter.updateData(postDateList)
+			val location = IntArray(2)
+			mBinding.btnPublicTab.getLocationOnScreen(location)
+			popupWindow.showAtLocation(
+				mBinding.btnPublicTab,
+				Gravity.NO_GRAVITY,
+				location[0],
+				location[1] - (popupWindow.height + (mBinding.btnPublicTab.height * 3))
+			)
+			popupWindow.showAsDropDown(it, 100, 0, 0)
+			val tvShareStory = view.findViewById<TextView>(R.id.tv_share_story)
+			val tvShowAppreciation = view.findViewById<TextView>(R.id.tv_show_appreciation)
+			tvShareStory.setOnClickListener {
+				popupWindow.dismiss()
+				(context as Activity).launchActivity<ShareStoryActivity>()
+			}
+			tvShowAppreciation.setOnClickListener {
+				popupWindow.dismiss()
+				(context as Activity).launchActivity<ShowAppreciationActivity>()
+			}
+		}
+	}
 
-                }
-                if (clickType == ClickType.LIKE_POST) {
-                    if(postDateList[clickedSuperPosition].postList[clickedPosition].meta.like?.size == 0)
-                    {
-                        postDateList[clickedSuperPosition].postList[clickedPosition].meta.like?.add(
-                            Bonus(by_user = User(), value = "")
-                        )
-                        Log.e("sizeLikes=>",postDateList[clickedSuperPosition].postList[clickedPosition].meta.like?.size.toString())
-                        publicAdapter.updateData(postDateList)
-                    }
+	private fun setUpPublicAdapter() {
 
+		publicAdapter = PublicAdapter(postDateList, requireContext())
+		publicAdapter.setOnItemClick(this)
+		mBinding.rvPublic.adapter = publicAdapter
 
+	}
 
-                }
+	@SuppressLint("NotifyDataSetChanged")
+	private fun setUpViewModel() {
+		startLoading()
+		val repository = HomeRepository()
+		val viewModelProviderFactory =
+			CommonViewModelFactory((context as DashboardActivity).application, repository)
+		viewModel = ViewModelProvider(this, viewModelProviderFactory)[HomeViewModel::class.java]
+		viewModel.getPostList(visibility = Singleton.MINE, page = 0)
+		viewModel.postModel.observe(viewLifecycleOwner) {
+			if (!it.data.isNullOrEmpty()) {
+				postDateList.clear()
 
+				val dateList: ArrayList<String> = ArrayList()
 
-            }
+				for (i in 0 until it.data.size) {
+					if (!dateList.contains(getDate(it.data[i].created))) {
+						dateList.add(getDate(it.data[i].created))
+						postDateList.add(
+							PostModelDate(
+								date = it.data[i].created,
+								postList = it.data as ArrayList<Post>
+							)
+						)
+					}
+				}
 
-        }
+				publicAdapter.notifyDataSetChanged()
+				stopLoading(true)
+			} else {
+				stopLoading(false)
 
-
-        viewModel.isLoading.observe(viewLifecycleOwner) {
-            Log.e("value==>", it.toString())
-            if (it) {
-                ProgressDialogUtil.showProgressDialog(context as DashboardActivity)
-            } else {
-                ProgressDialogUtil.dismissProgressDialog()
-            }
-        }
-
-        viewModel.noInternet.observe(viewLifecycleOwner) {
-            Toast.makeText(context, " $it", Toast.LENGTH_SHORT).show()
-            ProgressDialogUtil.dismissProgressDialog()
-        }
-    }
-
-
-    private fun startLoading() {
-        mBinding.simmerLayout.startShimmer()
-        mBinding.rvPublic.hide()
-        mBinding.noDataView.root.hide()
-        mBinding.simmerLayout.apply {
-            alpha = 0f
-            visibility = View.VISIBLE
-            animate()
-                .alpha(1f)
-                .setDuration(0)
-                .setListener(null)
-        }
-        mBinding.simmerLayout.startShimmer()
-    }
-
-    private fun stopLoading(isDataAvailable: Boolean) {
-        val view = if (isDataAvailable) mBinding.rvPublic else mBinding.noDataView.root
-        view.apply {
-            alpha = 0f
-            visibility = View.VISIBLE
-
-            animate()
-                .alpha(1f)
-                .setDuration(shortAnimationDuration.toLong())
-                .setListener(null)
-        }
-
-        mBinding.simmerLayout.animate()
-            .alpha(0f)
-            .setDuration(650)
-            .setListener(object : AnimatorListenerAdapter() {
-                override fun onAnimationEnd(animation: Animator) {
-                    mBinding.simmerLayout.hide()
-                }
-            })
-    }
-
-    override fun onItemClicked(`object`: Any?, index: Int, type: ClickType, superIndex: Int) {
-
-        clickedPosition = index
-        clickedSuperPosition = superIndex
-        clickType = type
-        if (type == ClickType.DELETE_POST) {
-            val post = `object` as Post
-            viewModel.deletePost(post.uniqueId)
-        } else
-            if (type == ClickType.LIKE_POST) {
-                val likeResponseModel = `object` as LikeBodyModel
-                viewModel.addLike(likeResponseModel)
-                Log.e("likeModel==>", likeResponseModel.toString())
-
-            }
+			}
+		}
 
 
-    }
-    private fun setSwipeRefresh() {
-        mBinding.swipeRefresh.setOnRefreshListener {
-            refreshData()
-            mBinding.swipeRefresh.isRefreshing = false
-        }
-    }
+		viewModel.liveError.observe(viewLifecycleOwner) {
+			Singleton.handleResponse(response = it, context as Activity, tag)
+			ProgressDialogUtil.dismissProgressDialog()
+		}
+
+		viewModel.commonResponse.observe(viewLifecycleOwner) {
+			handleCommonResponse(context as DashboardActivity, it)
+			ProgressDialogUtil.dismissProgressDialog()
+			if (it.status == Singleton.SUCCESS) {
+				if (clickType == ClickType.DELETE_POST) {
+					postDateList[clickedSuperPosition].postList.removeAt(clickedPosition)
+					publicAdapter.updateData(postDateList)
+
+				}
+				if (clickType == ClickType.LIKE_POST) {
+					if(postDateList[clickedSuperPosition].postList[clickedPosition].meta.like?.size == 0)
+					{
+						postDateList[clickedSuperPosition].postList[clickedPosition].meta.like?.add(
+							Bonus(by_user = User(), value = "")
+						)
+						Log.e("sizeLikes=>",postDateList[clickedSuperPosition].postList[clickedPosition].meta.like?.size.toString())
+						publicAdapter.updateData(postDateList)
+					}
 
 
-    private fun refreshData()
-    {
-        startLoading()
-        viewModel.getPostList(visibility = Singleton.MINE, page = 0)
-    }
+
+				}
+
+
+			}
+
+		}
+
+
+		viewModel.isLoading.observe(viewLifecycleOwner) {
+			Log.e("value==>", it.toString())
+			if (it) {
+				ProgressDialogUtil.showProgressDialog(context as DashboardActivity)
+			} else {
+				ProgressDialogUtil.dismissProgressDialog()
+			}
+		}
+
+		viewModel.noInternet.observe(viewLifecycleOwner) {
+			Toast.makeText(context, " $it", Toast.LENGTH_SHORT).show()
+			ProgressDialogUtil.dismissProgressDialog()
+		}
+	}
+
+
+	private fun startLoading() {
+		mBinding.shimmerLayout.startShimmer()
+		mBinding.rvPublic.hide()
+		mBinding.noDataView.root.hide()
+		mBinding.shimmerLayout.apply {
+			alpha = 0f
+			visibility = View.VISIBLE
+			animate()
+				.alpha(1f)
+				.setDuration(0)
+				.setListener(null)
+		}
+		mBinding.shimmerLayout.startShimmer()
+	}
+
+	private fun stopLoading(isDataAvailable: Boolean) {
+		val view = if (isDataAvailable) mBinding.rvPublic else mBinding.noDataView.root
+		view.apply {
+			alpha = 0f
+			visibility = View.VISIBLE
+
+			animate()
+				.alpha(1f)
+				.setDuration(shortAnimationDuration.toLong())
+				.setListener(null)
+		}
+
+		mBinding.shimmerLayout.animate()
+			.alpha(0f)
+			.setDuration(650)
+			.setListener(object : AnimatorListenerAdapter() {
+				override fun onAnimationEnd(animation: Animator) {
+					mBinding.shimmerLayout.hide()
+				}
+			})
+	}
+
+	override fun onItemClicked(`object`: Any?, index: Int, type: ClickType, superIndex: Int) {
+
+		clickedPosition = index
+		clickedSuperPosition = superIndex
+		clickType = type
+		if (type == ClickType.DELETE_POST) {
+			val post = `object` as Post
+			viewModel.deletePost(post.uniqueId)
+		} else
+			if (type == ClickType.LIKE_POST) {
+				val likeResponseModel = `object` as LikeBodyModel
+				viewModel.addLike(likeResponseModel)
+				Log.e("likeModel==>", likeResponseModel.toString())
+
+			}
+
+
+	}
+	private fun setSwipeRefresh() {
+		mBinding.swipeRefreshLayout.setOnRefreshListener {
+			refreshData()
+			mBinding.swipeRefreshLayout.isRefreshing = false
+		}
+	}
+
+
+	private fun refreshData()
+	{
+		startLoading()
+		viewModel.getPostList(visibility = Singleton.MINE, page = 0)
+	}
 
 
 

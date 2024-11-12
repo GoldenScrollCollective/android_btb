@@ -59,7 +59,7 @@ class SelectTeamFragment : Fragment() {
     }
 
     private fun startLoading() {
-        mBinding.simmerLayout.startShimmer()
+        mBinding.shimmerLayout.startShimmer()
         mBinding.rvUserList.hide()
         mBinding.noDataView.hide()
     }
@@ -188,7 +188,7 @@ class SelectTeamFragment : Fragment() {
     }
 
     private fun setAdapter() {
-        mBinding.simmerLayout.startShimmer()
+        mBinding.shimmerLayout.startShimmer()
         shortAnimationDuration = resources.getInteger(android.R.integer.config_shortAnimTime)
         teamAdapter = TeamAdapter(userList, context = requireContext(), isEvent)
         mBinding.rvUserList.adapter = teamAdapter
@@ -207,12 +207,12 @@ class SelectTeamFragment : Fragment() {
                 .setListener(null)
         }
 
-        mBinding.simmerLayout.animate()
+        mBinding.shimmerLayout.animate()
             .alpha(0f)
             .setDuration(650)
             .setListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationEnd(animation: Animator) {
-                    mBinding.simmerLayout.hide()
+                    mBinding.shimmerLayout.hide()
                 }
             })
     }

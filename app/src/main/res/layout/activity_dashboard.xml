@@ -58,12 +58,6 @@
           android:layout_height="2dp"
           android:layout_weight="4" />
 
-      <TextView
-          android:id="@+id/line4"
-          android:layout_width="match_parent"
-          android:layout_height="2dp"
-          android:layout_weight="4" />
-
     </LinearLayout>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
