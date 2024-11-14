@@ -112,7 +112,6 @@
 				android:id="@+id/btnFilter"
 				android:layout_width="32.5dp"
 				android:layout_height="32.5dp"
-				android:layout_marginTop="10dp"
 				android:layout_centerVertical="true"
 				android:layout_alignParentEnd="true"
 				android:src="@drawable/chevron_right_24"
