@@ -39,19 +39,20 @@ class HomeViewModel(
 	}
 
 	fun getPostList(visibility: String, page: Int) = viewModelScope.launch {
-		if (hasInternetConnection()) {
-			homeRepository.getPostList(page = page, visibility = visibility)
-		} else {
+		if (!hasInternetConnection()) {
 			noInternet.postValue("No Internet Connection")
+			return@launch
 		}
+
+		homeRepository.getPostList(page = page, visibility = visibility)
 	}
 
-	fun getPosts(visibility: String, page: Int, community: Int) = viewModelScope.launch {
-		if (hasInternetConnection()) {
-			homeRepository.getPosts(page = page, visibility = visibility, community = community)
-		} else {
+	fun getPosts(page: Int, resource: String = "", visibility: String, community: Int, type: String = "") = viewModelScope.launch {
+		if (!hasInternetConnection()) {
 			noInternet.postValue("No Internet Connection")
+			return@launch
 		}
+		homeRepository.getPosts(page = page, resource, visibility = visibility, community = community, type = type)
 	}
 
 	fun addLike(likeModel : LikeBodyModel) = viewModelScope.launch {

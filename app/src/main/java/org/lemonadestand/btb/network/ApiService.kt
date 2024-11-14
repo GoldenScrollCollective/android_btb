@@ -39,9 +39,10 @@ interface ApiService {
     @GET(Singleton.REST_POST)
     suspend fun getPosts(
         @Query("page") page : Int,
-        @Query("limit") limit : String,
+        @Query("resource") resource: String,
         @Query("visibility") visibility : String,
         @Query("community") community : Int,
+        @Query("type") type : String,
         @Header("Authorization") authorization: String = authToken
     ): Response<PostResponseModel>
 

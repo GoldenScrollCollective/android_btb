@@ -251,7 +251,7 @@ class CompanyTabFragment: BaseFragment(R.layout.fragment_company_tab) {
 
 	fun refreshData(visibility: String = Filter.PUBLIC) {
 		startLoading()
-		viewModel.getPostList(visibility, page = 0)
+		viewModel.getPosts(page = 0, resource = "", visibility = visibility, community = 0)
 	}
 
 	private fun handleLike(post: Post, like: String) {

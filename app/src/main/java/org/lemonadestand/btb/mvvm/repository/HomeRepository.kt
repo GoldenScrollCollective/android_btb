@@ -49,13 +49,14 @@ class HomeRepository {
         }
     }
 
-    suspend fun getPosts(visibility: String, page: Int, community: Int) {
+    suspend fun getPosts(page: Int, resource: String = "", visibility: String, community: Int, type: String = "") {
         CoroutineScope(Dispatchers.IO).launch {
             val response = RetrofitInstance.api.getPosts(
                 page = page,
+                resource = resource,
                 visibility = visibility,
-                limit = Singleton.API_LIST_LIMIT,
-                community = community
+                community = community,
+                type = type,
             )
             if (response.isSuccessful) {
                 postModelLive.postValue(response.body())

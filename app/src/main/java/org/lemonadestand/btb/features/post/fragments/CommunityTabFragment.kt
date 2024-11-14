@@ -122,7 +122,7 @@ class CommunityTabFragment: BaseFragment(R.layout.fragment_community_tab) {
         val repository = HomeRepository()
         val viewModelProviderFactory = CommonViewModelFactory((context as DashboardActivity).application, repository)
         viewModel = ViewModelProvider(this, viewModelProviderFactory)[HomeViewModel::class.java]
-        viewModel.getPosts(visibility = Singleton.PUBLIC, page = 0, community = 1)
+        viewModel.getPosts(page = 0, resource = "", visibility = Singleton.PUBLIC, community = 1, type = "")
         viewModel.postModel.observe(viewLifecycleOwner) {
             stopLoading(true)
 
