@@ -10,6 +10,10 @@ import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility
 import com.amazonaws.regions.Region
 import com.amazonaws.regions.Regions
 import com.amazonaws.services.s3.AmazonS3Client
+import com.amazonaws.services.s3.model.CannedAccessControlList
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.lemonadestand.btb.App
 import org.lemonadestand.btb.extensions.fileExtension
 import org.lemonadestand.btb.extensions.fileName
@@ -48,24 +52,24 @@ object AWSUploadHelper {
 		val fileName = "${Date().time.toInt()}_w${size.width}_h${size.height}_.${fileUri.fileExtension()}"
 		val key = "${currentUser.uniqueId}/${fileName}"
 
-		val uploadObserver = transferUtility.upload(BUCKET_NAME, key, File(filePath))
+		val uploadObserver = transferUtility.upload(BUCKET_NAME, key, File(filePath), CannedAccessControlList.PublicRead)
 		uploadObserver.setTransferListener(object : TransferListener {
 			override fun onStateChanged(id: Int, state: TransferState?) {
 				if (state == TransferState.COMPLETED) {
-					Handler(App.instance.mainLooper).post { callback?.onComplete("${BASE_URL}/${BUCKET_NAME}/${key}", null) }
+					CoroutineScope(Dispatchers.Main).launch { callback?.onComplete("${BASE_URL}/${BUCKET_NAME}/${key}", null) }
 				} else if (state == TransferState.FAILED) {
-					Handler(App.instance.mainLooper).post { callback?.onComplete(null, "Failed to upload file.") }
+					CoroutineScope(Dispatchers.Main).launch { callback?.onComplete(null, "Failed to upload file.") }
 				}
 			}
 
 			override fun onProgressChanged(id: Int, bytesCurrent: Long, bytesTotal: Long) {
 				val progress = bytesCurrent.toFloat() / bytesTotal.toFloat() * 100.0f
 				Log.d(TAG, "$progress% uploaded.")
-				Handler(App.instance.mainLooper).post { callback?.onProgress(progress) }
+				CoroutineScope(Dispatchers.Main).launch { callback?.onProgress(progress) }
 			}
 
 			override fun onError(id: Int, ex: Exception?) {
-				Handler(App.instance.mainLooper).post { callback?.onComplete(null, ex?.localizedMessage) }
+				CoroutineScope(Dispatchers.Main).launch { callback?.onComplete(null, ex?.localizedMessage) }
 			}
 		})
 

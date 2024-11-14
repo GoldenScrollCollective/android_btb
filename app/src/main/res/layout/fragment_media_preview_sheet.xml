@@ -3,8 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <org.lemonadestand.btb.components.MediaView
-        android:id="@+id/mediaView"
+    <org.lemonadestand.btb.components.MediaPreviewView
+        android:id="@+id/mediaPreviewView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"/>

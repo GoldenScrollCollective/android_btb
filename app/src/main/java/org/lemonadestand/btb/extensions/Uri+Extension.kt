@@ -12,21 +12,25 @@ import android.provider.MediaStore
 import android.util.Size
 import org.lemonadestand.btb.App
 import org.lemonadestand.btb.utils.FileHelper
-import java.io.File
 import java.io.FileInputStream
 
 fun Uri.getDataColumn(context: Context, selection: String?, selectionArgs: Array<String>?): String? {
 	var cursor: Cursor? = null
 	val column = "_data"
-	val projection = arrayOf(column)
+	val projection = arrayOf(MediaStore.Images.Media.DATA, MediaStore.Audio.Media.DATA, MediaStore.Video.Media.DATA)
 	try {
-		cursor = this.let { context.contentResolver.query(it, projection, selection, selectionArgs,null) }
-		if (cursor != null && cursor.moveToFirst()) {
-			val column_index: Int = cursor.getColumnIndexOrThrow(column)
-			return cursor.getString(column_index)
+		cursor = this.let {
+			context.contentResolver.query(it, projection, selection, selectionArgs, null)
 		}
+		if (cursor != null && cursor.moveToFirst()) {
+			val columnIndex: Int = cursor.getColumnIndexOrThrow(column)
+			val result = cursor.getString(columnIndex)
+			return result
+		}
+	} catch (exception: Exception) {
+		exception.printStackTrace()
 	} finally {
-		if (cursor != null) cursor.close()
+		cursor?.close()
 	}
 	return null
 }
@@ -59,7 +63,7 @@ fun Uri.filePath(): String? {
 
 		} else if (isDownloadsDocument()) {
 			val id = DocumentsContract.getDocumentId(this)
-			val contentUri = ContentUris.withAppendedId(Uri.parse("content://downloads/public_downloads"), java.lang.Long.valueOf(id))
+			val contentUri = ContentUris.withAppendedId(Uri.parse("content://downloads/public_downloads"), id.toLong())
 			return contentUri.getDataColumn(App.instance, null, null)
 		} else if (isMediaDocument()) {
 			val docId = DocumentsContract.getDocumentId(this)

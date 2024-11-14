@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 import org.lemonadestand.btb.App
 import org.lemonadestand.btb.features.common.models.CommonResponseModel
 import org.lemonadestand.btb.features.common.models.body.AddCommentBody
-import org.lemonadestand.btb.features.common.models.body.AppReciationBody
+import org.lemonadestand.btb.features.common.models.body.AppreciationRequestBody
 import org.lemonadestand.btb.features.common.models.body.LikeBodyModel
 import org.lemonadestand.btb.features.common.models.body.ShareStoryBody
 import org.lemonadestand.btb.features.post.models.PostResponseModel
@@ -74,10 +74,10 @@ class HomeViewModel(
         }
     }
 
-    fun addAppreciation(model : AppReciationBody) = viewModelScope.launch {
+    fun addAppreciation(model : AppreciationRequestBody) = viewModelScope.launch {
         isLoading.postValue(true)
         if (hasInternetConnection()) {
-            homeRepository.addAppReciation(model)
+            homeRepository.addAppreciation(model)
         } else {
             noInternet.postValue("No Internet Connection")
 

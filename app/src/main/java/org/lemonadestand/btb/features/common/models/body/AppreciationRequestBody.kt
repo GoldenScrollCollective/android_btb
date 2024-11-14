@@ -1,7 +1,7 @@
 package org.lemonadestand.btb.features.common.models.body
 
 
-data class AppReciationBody (
+data class AppreciationRequestBody (
     var uniq_id  :String,
     var resource  :String,
     var html  :String,
@@ -13,13 +13,13 @@ data class AppReciationBody (
     var type  :String = "comment",
     var visibility:String,
     var user  : ShareStoryUser,
-    var meta : AppReciationMeta,
-
+    var meta : AppreciationMeta,
+    var media: String? = null,
     var users: ArrayList<String>
 )
 
 
-data class AppReciationMeta (
+data class AppreciationMeta (
     var bonus : String,
     var debit : String,
 )

@@ -4,7 +4,7 @@ import android.widget.ImageView
 import androidx.annotation.DrawableRes
 import com.bumptech.glide.Glide
 
-fun ImageView.setImageUrl(url: String?, @DrawableRes default: Int? = null) {
+fun ImageView.setImageUrl(url: String?, @DrawableRes default: Int? = 0) {
 	if (url.isNullOrEmpty()) {
 		if (default == null) return
 		setImageResource(default)

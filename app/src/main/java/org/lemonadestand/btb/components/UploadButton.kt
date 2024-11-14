@@ -18,7 +18,6 @@ import org.lemonadestand.btb.components.base.BaseActivity
 import org.lemonadestand.btb.utils.AWSUploadHelper
 import org.lemonadestand.btb.utils.FileHelper
 
-
 class UploadButton @JvmOverloads constructor(
 	context: Context,
 	attrs: AttributeSet? = null,
@@ -49,10 +48,10 @@ class UploadButton @JvmOverloads constructor(
 
 	private val selectPhotoLauncher = activity!!.registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
 		val mimeType = FileHelper.mimeType(uri) ?: return@registerForActivityResult
-		if (!mimeType.contains("${this.mimeType}/")) {
+		if (this.mimeType != "*" && !mimeType.contains("${this.mimeType}/")) {
 			return@registerForActivityResult
 		}
-		handlePhoto(uri)
+		handleFile(uri)
 	}
 
 	init {
@@ -76,7 +75,13 @@ class UploadButton @JvmOverloads constructor(
 	}
 
 	private fun handleClick() {
-		val permissions = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE) else arrayOf(Manifest.permission.READ_MEDIA_IMAGES)
+		val permissions = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
+		else if (mimeType == "*") arrayOf(Manifest.permission.READ_MEDIA_IMAGES, Manifest.permission.READ_MEDIA_VIDEO)
+		else if (mimeType == "image") arrayOf(Manifest.permission.READ_MEDIA_IMAGES)
+		else if (mimeType == "audio") arrayOf(Manifest.permission.READ_MEDIA_AUDIO)
+		else if (mimeType == "video") arrayOf(Manifest.permission.READ_MEDIA_VIDEO)
+		else arrayOf()
+
 		if (!Helper.checkPermissionsGranted(permissions)) {
 			activity!!.requestPermissions(permissions) { granted ->
 				if (granted) {
@@ -89,7 +94,7 @@ class UploadButton @JvmOverloads constructor(
 		selectPhotoLauncher.launch("$mimeType/*")
 	}
 
-	private fun handlePhoto(uri: Uri?) {
+	private fun handleFile(uri: Uri?) {
 		FileHelper.filePath(uri) ?: return
 
 		progressView.visibility = VISIBLE

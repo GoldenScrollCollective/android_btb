@@ -219,7 +219,7 @@
 				android:fontFamily="@font/urbanist_variablefont_wght"
 
 				android:maxLines="1"
-				android:text="@string/write_your_message_here"
+				android:hint="@string/write_your_message_here"
 				android:textSize="17dp"
 				app:layout_constraintBottom_toBottomOf="parent"
 				app:layout_constraintStart_toStartOf="parent"
@@ -512,11 +512,10 @@
 
 	</LinearLayout>
 
-	<ImageView
-		android:id="@+id/previewView"
+	<org.lemonadestand.btb.components.MediaPreviewView
+		android:id="@+id/mediaPreviewView"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:adjustViewBounds="true"
-		android:scaleType="fitCenter"/>
+		android:visibility="gone"/>
 
 </LinearLayout>

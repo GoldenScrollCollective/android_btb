@@ -18,7 +18,7 @@ import org.lemonadestand.btb.databinding.ActivityAddBonusBinding
 import org.lemonadestand.btb.constants.handleCommonResponse
 import org.lemonadestand.btb.interfaces.OnItemClickListener
 import org.lemonadestand.btb.features.common.models.UserListModel
-import org.lemonadestand.btb.features.common.models.body.AppReciationBody
+import org.lemonadestand.btb.features.common.models.body.AppreciationRequestBody
 import org.lemonadestand.btb.features.common.models.body.ShareStoryUser
 import org.lemonadestand.btb.features.login.models.User
 import org.lemonadestand.btb.mvvm.factory.CommonViewModelFactory
@@ -48,7 +48,7 @@ class AddBonusActivity : AppCompatActivity(), OnItemClickListener {
 
     var maxValue = 0.0
     var maxValueSpend = 0.0
-    lateinit var appReciationBody: AppReciationBody
+    lateinit var appreciationRequestBody: AppreciationRequestBody
     lateinit var viewModel: HomeViewModel
     var calendar: Calendar? = null
 

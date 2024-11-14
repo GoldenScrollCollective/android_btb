@@ -3,7 +3,7 @@ package org.lemonadestand.btb.features.interest.models
 data class InterestResponseModel (
     val status: Boolean,
     val message: String,
-    val data: List<InterestModel> = emptyList()
+    val data: List<InterestModel>? = emptyList()
 )
 
 data class InterestModel (

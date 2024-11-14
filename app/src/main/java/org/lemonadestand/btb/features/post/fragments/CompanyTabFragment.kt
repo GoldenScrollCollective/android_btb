@@ -33,7 +33,7 @@ import com.github.chantsune.swipetoaction.views.SimpleSwipeLayout
 import com.google.gson.Gson
 import org.lemonadestand.btb.R
 import org.lemonadestand.btb.components.LikeMenuView
-import org.lemonadestand.btb.components.MediaView
+import org.lemonadestand.btb.components.MediaPreviewView
 import org.lemonadestand.btb.components.ReactionsView
 import org.lemonadestand.btb.components.base.BaseFragment
 import org.lemonadestand.btb.components.base.BaseRecyclerViewAdapter
@@ -179,7 +179,6 @@ class CompanyTabFragment: BaseFragment(R.layout.fragment_company_tab) {
 						)
 					}
 				}
-				Log.d("postDateList=>", postDateList.toString())
 				postsByDateRecyclerViewAdapter.values = postDateList
 				stopLoading(true)
 			} else {
@@ -556,9 +555,9 @@ class CompanyTabFragment: BaseFragment(R.layout.fragment_company_tab) {
 
 				val tvComment = findViewById<TextView>(R.id.tv_comment)
 
-				val mediaView = findViewById<MediaView>(R.id.mediaView)
-				mediaView.post = item
-				mediaView.setOnClickListener {
+				val mediaPreviewView = findViewById<MediaPreviewView>(R.id.mediaPreviewView)
+				mediaPreviewView.url = item.media
+				mediaPreviewView.setOnClickListener {
 					onPreview?.invoke(item)
 				}
 

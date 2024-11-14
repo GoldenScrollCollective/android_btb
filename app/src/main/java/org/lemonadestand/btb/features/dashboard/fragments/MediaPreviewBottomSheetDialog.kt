@@ -4,14 +4,12 @@ import android.app.Dialog
 import android.os.Bundle
 import android.view.View
 import android.widget.FrameLayout
-import android.widget.ImageView
 import android.widget.RelativeLayout
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import org.lemonadestand.btb.R
-import org.lemonadestand.btb.components.MediaView
+import org.lemonadestand.btb.components.MediaPreviewView
 import org.lemonadestand.btb.components.base.BaseBottomSheetDialogFragment
-import org.lemonadestand.btb.components.base.BaseFragment
 import org.lemonadestand.btb.features.post.models.Post
 
 
@@ -19,7 +17,7 @@ class MediaPreviewBottomSheetDialog @JvmOverloads constructor(
     val post: Post,
 ): BaseBottomSheetDialogFragment(R.layout.fragment_media_preview_sheet) {
 
-    private lateinit var mediaView: MediaView
+    private lateinit var mediaPreviewView: MediaPreviewView
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = super.onCreateDialog(savedInstanceState)
@@ -36,8 +34,8 @@ class MediaPreviewBottomSheetDialog @JvmOverloads constructor(
     override fun init() {
         super.init()
 
-        mediaView = rootView.findViewById(R.id.mediaView)
-        mediaView.post = post
+        mediaPreviewView = rootView.findViewById(R.id.mediaPreviewView)
+        mediaPreviewView.url = post.media
 
         val btnClose = rootView.findViewById<RelativeLayout>(R.id.btnClose)
         btnClose.setOnClickListener {

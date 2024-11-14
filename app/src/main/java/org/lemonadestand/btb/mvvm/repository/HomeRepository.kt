@@ -1,6 +1,5 @@
 package org.lemonadestand.btb.mvvm.repository
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
@@ -12,7 +11,7 @@ import okhttp3.RequestBody
 import org.lemonadestand.btb.constants.ProgressDialogUtil
 import org.lemonadestand.btb.features.common.models.CommonResponseModel
 import org.lemonadestand.btb.features.common.models.body.AddCommentBody
-import org.lemonadestand.btb.features.common.models.body.AppReciationBody
+import org.lemonadestand.btb.features.common.models.body.AppreciationRequestBody
 import org.lemonadestand.btb.features.common.models.body.LikeBodyModel
 import org.lemonadestand.btb.features.common.models.body.LikeRequestBodyModel
 import org.lemonadestand.btb.features.common.models.body.ShareStoryBody
@@ -113,16 +112,12 @@ class HomeRepository {
         }
     }
 
-    suspend fun addAppReciation(appReciationBody: AppReciationBody) {
-
+    suspend fun addAppreciation(appreciationRequestBody: AppreciationRequestBody) {
         CoroutineScope(Dispatchers.IO).launch {
-
             val gson = Gson()
-            val json = gson.toJson(appReciationBody)
+            val json = gson.toJson(appreciationRequestBody)
             val requestBody = RequestBody.create("application/json".toMediaTypeOrNull(), json)
-            val response = RetrofitInstance.api.addAppreciation(
-                requestBody = requestBody,
-            )
+            val response = RetrofitInstance.api.addAppreciation(requestBody = requestBody)
             if (response.isSuccessful) {
                 commonResponseLive.postValue(response.body())
                 ProgressDialogUtil.dismissProgressDialog()
@@ -132,8 +127,8 @@ class HomeRepository {
             }
         }
     }
-    suspend fun addComment(addCommentModel : AddCommentBody) {
 
+    suspend fun addComment(addCommentModel : AddCommentBody) {
         CoroutineScope(Dispatchers.IO).launch {
 
             val gson = Gson()

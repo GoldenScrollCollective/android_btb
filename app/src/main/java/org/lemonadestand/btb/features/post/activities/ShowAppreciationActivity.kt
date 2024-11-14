@@ -5,25 +5,27 @@ import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.ImageView
 import android.widget.Toast
 import androidx.core.text.HtmlCompat
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
 import com.google.gson.Gson
+import org.lemonadestand.btb.App
 import org.lemonadestand.btb.R
+import org.lemonadestand.btb.components.MediaPreviewView
 import org.lemonadestand.btb.components.UploadButton
 import org.lemonadestand.btb.components.base.BaseActivity
 import org.lemonadestand.btb.constants.ClickType
 import org.lemonadestand.btb.constants.ProgressDialogUtil
 import org.lemonadestand.btb.constants.handleCommonResponse
 import org.lemonadestand.btb.databinding.ActivityShowAppreciationBinding
-import org.lemonadestand.btb.extensions.setImageUrl
+import org.lemonadestand.btb.extensions.lastPathComponent
+import org.lemonadestand.btb.extensions.setOnSingleClickListener
 import org.lemonadestand.btb.features.common.fragments.UserListFragmentMulti
 import org.lemonadestand.btb.features.common.fragments.WriteMessageFragment
 import org.lemonadestand.btb.features.common.models.UserListModel
-import org.lemonadestand.btb.features.common.models.body.AppReciationBody
-import org.lemonadestand.btb.features.common.models.body.AppReciationMeta
+import org.lemonadestand.btb.features.common.models.body.AppreciationRequestBody
+import org.lemonadestand.btb.features.common.models.body.AppreciationMeta
 import org.lemonadestand.btb.features.common.models.body.ShareStoryUser
 import org.lemonadestand.btb.features.login.models.User
 import org.lemonadestand.btb.interfaces.OnItemClickListener
@@ -41,7 +43,7 @@ class ShowAppreciationActivity : BaseActivity(R.layout.activity_show_appreciatio
 	private var bottomSheetFragment: UserListFragmentMulti? = null
 	private var bottomSheetFragmentMessage: WriteMessageFragment? = null
 	private var whyThank: String = ""
-	private var amount = 0
+	private var bonusAmount = 0
 	private var amountSpend = 0
 	private var totalAmount = 0
 	var htmlMessage = ""
@@ -53,7 +55,6 @@ class ShowAppreciationActivity : BaseActivity(R.layout.activity_show_appreciatio
 
 	var maxValue = 0.0
 	var maxValueSpend = 0.0
-	lateinit var appReciationBody: AppReciationBody
 	lateinit var viewModel: HomeViewModel
 	var calendar: Calendar? = null
 
@@ -62,7 +63,19 @@ class ShowAppreciationActivity : BaseActivity(R.layout.activity_show_appreciatio
 	private var reminderUerList: ArrayList<UserListModel> = ArrayList()
 	private var reminderUerListJson: ArrayList<String> = ArrayList()
 
-	private lateinit var uploadButton: UploadButton
+	private lateinit var mediaPreviewView: MediaPreviewView
+	private var uploadedFileUrl: String? = null
+		set(value) {
+			field = value
+			if (this::mediaPreviewView.isInitialized) {
+				if (value == null) {
+					mediaPreviewView.visibility = View.GONE
+					return
+				}
+				mediaPreviewView.visibility = View.VISIBLE
+				mediaPreviewView.url = value
+			}
+		}
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -74,11 +87,9 @@ class ShowAppreciationActivity : BaseActivity(R.layout.activity_show_appreciatio
 		setSpinner()
 		setUpViewModel()
 
-		val previewView = findViewById<ImageView>(R.id.previewView)
-		uploadButton = findViewById(R.id.uploadButton)
-		uploadButton.onUploaded = {
-			previewView.setImageUrl(it)
-		}
+		mediaPreviewView = findViewById(R.id.mediaPreviewView)
+		val uploadButton = findViewById<UploadButton>(R.id.uploadButton)
+		uploadButton.onUploaded = { uploadedFileUrl = it }
 	}
 
 	private fun getData() {
@@ -124,10 +135,7 @@ class ShowAppreciationActivity : BaseActivity(R.layout.activity_show_appreciatio
 			"Generosity"
 		)
 
-		//mBinding.spinner.adapter = ArrayAdapter(this,R.layout.row_dropdown_item, android.R.layout.simple_list_item_1, data)
-		mBinding.spinner.adapter =
-			ArrayAdapter(this, R.layout.row_dropdown_item, R.id.tv_item_name, data);
-
+		mBinding.spinner.adapter = ArrayAdapter(this, R.layout.row_dropdown_item, R.id.tv_item_name, data);
 		mBinding.spinner.onItemSelectedListener = object :
 			AdapterView.OnItemSelectedListener {
 			override fun onItemSelected(
@@ -148,7 +156,7 @@ class ShowAppreciationActivity : BaseActivity(R.layout.activity_show_appreciatio
 	private fun setTotalMoney(type : String){
 		if( type == "give")
 		{
-			totalAmount = amount * reminderUerList.size
+			totalAmount = bonusAmount * reminderUerList.size
 			Log.i("TotalAmount====>", totalAmount.toString())
 
 			mBinding.totalDebit.text = buildString {
@@ -190,14 +198,14 @@ class ShowAppreciationActivity : BaseActivity(R.layout.activity_show_appreciatio
 			maxValueSpend = currentUser!!.spend.toDouble()
 			if (debit == "give")
 			{
-				if (amount == maxValue.toInt())
+				if (bonusAmount == maxValue.toInt())
 				{
 					return@setOnClickListener
 				}
-				amount += 1
+				bonusAmount += 1
 				mBinding.amount.text = buildString {
 					append("$")
-					append(amount)
+					append(bonusAmount)
 				}
 			}
 			else{
@@ -217,13 +225,13 @@ class ShowAppreciationActivity : BaseActivity(R.layout.activity_show_appreciatio
 		mBinding.btnDecrease.setOnClickListener {
 			if (debit == "give")
 			{
-				if (amount > 0) {
-					amount -= 1
+				if (bonusAmount > 0) {
+					bonusAmount -= 1
 				}
 
 				mBinding.amount.text = buildString {
 					append("$")
-					append(amount)
+					append(bonusAmount)
 				}
 			}
 			else
@@ -242,7 +250,7 @@ class ShowAppreciationActivity : BaseActivity(R.layout.activity_show_appreciatio
 		mBinding.btnGiving.setOnClickListener {
 			debit = "give"
 			mBinding.amount.text = buildString {
-				append("\$${amount}")
+				append("\$${bonusAmount}")
 			}
 			updateGivingButtonUi(true)
 
@@ -259,38 +267,7 @@ class ShowAppreciationActivity : BaseActivity(R.layout.activity_show_appreciatio
 			setTotalMoney(debit)
 		}
 
-		mBinding.btnSave.setOnClickListener {
-			if (selectedUser == null) {
-				Toast.makeText(
-					this,
-					"Please select what would you like to thank!",
-					Toast.LENGTH_SHORT
-				).show()
-				return@setOnClickListener
-			}
-
-			appReciationBody = AppReciationBody(
-				uniq_id = "",
-				resource = "user/${selectedUser!!.uniqueId}",
-				html = htmlMessage,
-				title = whyThank,
-				created = currentDate,
-				parent_id = "",
-				by_user_id = "user/${currentUser!!.uniqueId}",
-				modified = currentDate,
-				type = "comment",
-//                visibility = if (mBinding.switchIsPrivate.isChecked) "private" else "public",
-				visibility = "public",
-				user = ShareStoryUser(
-					id = "user/${selectedUser!!.uniqueId}",
-					name = currentUser!!.name,
-					picture = currentUser!!.picture
-				),
-				meta = AppReciationMeta(bonus = "$totalAmount", debit = debit),
-				users = reminderUerListJson
-			)
-			viewModel.addAppreciation(appReciationBody)
-		}
+		mBinding.btnSave.setOnSingleClickListener { handleSave() }
 	}
 
 	private fun updateGivingButtonUi(isGiving: Boolean) {
@@ -342,32 +319,17 @@ class ShowAppreciationActivity : BaseActivity(R.layout.activity_show_appreciatio
 	}
 
 	private fun showBottomSheetMessage() {
-
-		val fragmentManager: FragmentManager = supportFragmentManager
 		bottomSheetFragmentMessage = WriteMessageFragment()
-
 		bottomSheetFragmentMessage?.setCallback(this)
-		if (mBinding.txtMessage.text != getString(R.string.write_your_message_here)) {
-			Log.e("htmlMessage=>", htmlMessage)
-			val args = Bundle()
-			args.putString("message", htmlMessage)
-			bottomSheetFragmentMessage?.arguments = args
-		}
-		bottomSheetFragmentMessage?.show(fragmentManager, bottomSheetFragmentMessage!!.tag)
-
-
+		bottomSheetFragmentMessage?.arguments = Bundle().apply { putString("message", htmlMessage) }
+		bottomSheetFragmentMessage?.show(supportFragmentManager, bottomSheetFragmentMessage!!.tag)
 	}
 
 	override fun onItemClicked(`object`: Any?, index: Int, type: ClickType, superIndex: Int) {
 		if (index == -1) {
 			val message = `object`.toString()
 			htmlMessage = message
-			if (message != getString(R.string.write_your_message_here)) {
-
-				mBinding.txtMessage.text =
-					HtmlCompat.fromHtml(message, HtmlCompat.FROM_HTML_MODE_LEGACY)
-			}
-
+			mBinding.txtMessage.text = HtmlCompat.fromHtml(message, HtmlCompat.FROM_HTML_MODE_LEGACY)
 			return
 		}
 		bottomSheetFragment?.dismiss()
@@ -399,8 +361,8 @@ class ShowAppreciationActivity : BaseActivity(R.layout.activity_show_appreciatio
 			}
 		}
 
-		if(amount > 0) {
-			totalAmount = amount * reminderUerListJson.size
+		if(bonusAmount > 0) {
+			totalAmount = bonusAmount * reminderUerListJson.size
 
 			mBinding.totalDebit.text = buildString {
 				append("$")
@@ -444,5 +406,40 @@ class ShowAppreciationActivity : BaseActivity(R.layout.activity_show_appreciatio
 			Toast.makeText(this, " $it", Toast.LENGTH_SHORT).show()
 			ProgressDialogUtil.dismissProgressDialog()
 		}
+	}
+
+	private fun handleSave() {
+		val currentUser = Utils.getUser(App.instance) ?: return
+		if (selectedUser == null) {
+			Toast.makeText(this, "Please select what would you like to thank!", Toast.LENGTH_SHORT).show()
+			return
+		}
+		if (whyThank.isEmpty()) {
+			Toast.makeText(this, "Please select why you're saying thanks.", Toast.LENGTH_SHORT).show()
+			return
+		}
+
+		val requestBody = AppreciationRequestBody(
+			by_user_id = "user/${currentUser.uniqueId}",
+			uniq_id = "",
+			resource = "user/${selectedUser!!.uniqueId}",
+			html = htmlMessage,
+			title = whyThank,
+			created = currentDate,
+			media = uploadedFileUrl?.lastPathComponent(),
+			parent_id = "",
+			modified = currentDate,
+			type = "comment",
+//                visibility = if (mBinding.switchIsPrivate.isChecked) "private" else "public",
+			visibility = "public",
+			user = ShareStoryUser(
+				id = "user/${selectedUser!!.uniqueId}",
+				name = currentUser.name,
+				picture = currentUser.picture
+			),
+			meta = AppreciationMeta(bonus = "$totalAmount", debit = debit),
+			users = reminderUerListJson
+		)
+		viewModel.addAppreciation(requestBody)
 	}
 }

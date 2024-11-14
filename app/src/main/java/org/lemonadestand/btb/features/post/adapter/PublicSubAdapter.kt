@@ -38,7 +38,7 @@ import android.graphics.drawable.GradientDrawable
 import android.util.TypedValue
 import android.view.Gravity
 import android.widget.EditText
-import org.lemonadestand.btb.components.MediaView
+import org.lemonadestand.btb.components.MediaPreviewView
 import org.lemonadestand.btb.components.ReactionsView
 import org.lemonadestand.btb.features.common.models.body.AddCommentBody
 import org.lemonadestand.btb.features.common.models.body.ShareStoryUser
@@ -118,8 +118,8 @@ class PublicSubAdapter(private val list: ArrayList<Post>, var context: Context, 
         }
 
         holder.tvComment.text = HtmlCompat.fromHtml(post.html, HtmlCompat.FROM_HTML_MODE_LEGACY).trim()
-        holder.mediaView.post = post
-        holder.mediaView.setOnClickListener {
+        holder.mediaPreviewView.url = post.media
+        holder.mediaPreviewView.setOnClickListener {
             onPreview?.invoke(post)
         }
 
@@ -447,7 +447,7 @@ class PublicSubAdapter(private val list: ArrayList<Post>, var context: Context, 
         var lnComment: LinearLayout
         var swipeLayout: SimpleSwipeLayout
         var tvComment: TextView
-        var mediaView: MediaView
+        var mediaPreviewView: MediaPreviewView
         val reactionsView: ReactionsView
         var txtShared: TextView
         var userImage: ImageView
@@ -468,7 +468,7 @@ class PublicSubAdapter(private val list: ArrayList<Post>, var context: Context, 
             lnComment = itemView.findViewById(R.id.ln_comment)
             swipeLayout = itemView.findViewById(R.id.swipe_layout)
             tvComment = itemView.findViewById(R.id.tv_comment)
-            mediaView = itemView.findViewById(R.id.mediaView)
+            mediaPreviewView = itemView.findViewById(R.id.mediaPreviewView)
             reactionsView = itemView.findViewById(R.id.reactionsView)
             userImage = itemView.findViewById(R.id.user_image)
             txtShared = itemView.findViewById(R.id.txt_shared)
