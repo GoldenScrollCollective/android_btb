@@ -16,6 +16,7 @@ import org.lemonadestand.btb.components.base.BaseActivity
 import org.lemonadestand.btb.constants.ProgressDialogUtil
 import org.lemonadestand.btb.constants.handleCommonResponse
 import org.lemonadestand.btb.databinding.ActivityShareStoryBinding
+import org.lemonadestand.btb.extensions.lastPathComponent
 import org.lemonadestand.btb.features.common.models.body.ShareStoryBody
 import org.lemonadestand.btb.features.common.models.body.ShareStoryUser
 import org.lemonadestand.btb.features.login.models.User
@@ -151,6 +152,7 @@ class ShareStoryActivity : BaseActivity(R.layout.activity_share_story) {
 			uniq_id = "",
 			resource = "user/${currentUser!!.uniqueId}",
 			html = mBinding.webView.toString(),
+			media = uploadedFileUrl?.lastPathComponent(),
 			created = "",
 			parent_id = "",
 			modified = "",

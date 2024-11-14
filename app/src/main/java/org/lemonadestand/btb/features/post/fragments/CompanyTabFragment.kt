@@ -30,6 +30,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.github.chantsune.swipetoaction.views.SimpleSwipeLayout
+import com.github.chantsune.swipetoaction.views.SwipeLayout
 import com.google.gson.Gson
 import org.lemonadestand.btb.R
 import org.lemonadestand.btb.components.LikeMenuView
@@ -199,8 +200,7 @@ class CompanyTabFragment: BaseFragment(R.layout.fragment_company_tab) {
 			if (it.status == Singleton.SUCCESS) {
 				if (clickType == ClickType.DELETE_POST) {
 					postDateList[clickedSuperPosition].postList.removeAt(clickedPosition)
-					postsByDateRecyclerViewAdapter.values = postDateList
-
+					postsByDateRecyclerViewAdapter.notifyDataSetChanged()
 				}
 				if (clickType == ClickType.LIKE_POST) {
 					if(postDateList[clickedSuperPosition].postList[clickedPosition].meta.like?.size == 0)
@@ -294,6 +294,7 @@ class CompanyTabFragment: BaseFragment(R.layout.fragment_company_tab) {
 	}
 
 	private fun handleDelete(post: Post) {
+		clickType = ClickType.DELETE_POST
 		viewModel.deletePost(post.uniqueId)
 	}
 
@@ -642,6 +643,7 @@ class CompanyTabFragment: BaseFragment(R.layout.fragment_company_tab) {
 					when (swipeItem.position) {
 						0 -> {
 							onDelete?.invoke(item)
+							swipeLayout.setItemState(SwipeLayout.ITEM_STATE_COLLAPSED, true)
 						}
 						1 -> {
 							Toast.makeText(holder.itemView.context, "Settings", Toast.LENGTH_SHORT)

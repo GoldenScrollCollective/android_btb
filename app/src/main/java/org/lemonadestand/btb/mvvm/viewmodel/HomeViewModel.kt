@@ -20,104 +20,104 @@ import org.lemonadestand.btb.mvvm.repository.HomeRepository
 import retrofit2.Response
 
 class HomeViewModel(
-    app: Application,
-    private val homeRepository: HomeRepository
+	app: Application,
+	private val homeRepository: HomeRepository
 ) : AndroidViewModel(app) {
 
-    val liveError: LiveData<Response<*>>
-        get() = homeRepository.error
-    val commonResponse: LiveData<CommonResponseModel>
-        get() = homeRepository.commonResponseModel
-    val postModel: LiveData<PostResponseModel>
-        get() = homeRepository.postModel
+	val liveError: LiveData<Response<*>>
+		get() = homeRepository.error
+	val commonResponse: LiveData<CommonResponseModel>
+		get() = homeRepository.commonResponseModel
+	val postModel: LiveData<PostResponseModel>
+		get() = homeRepository.postModel
 
-    val noInternet: MutableLiveData<String> = MutableLiveData()
-    var isLoading: MutableLiveData<Boolean> = MutableLiveData()
+	val noInternet: MutableLiveData<String> = MutableLiveData()
+	var isLoading: MutableLiveData<Boolean> = MutableLiveData()
 
-    init {
-        isLoading.postValue(false)
-    }
+	init {
+		isLoading.postValue(false)
+	}
 
-     fun getPostList(visibility: String, page: Int) = viewModelScope.launch {
-        if (hasInternetConnection()) {
-            homeRepository.getPostList(page = page, visibility = visibility)
-        } else {
-            noInternet.postValue("No Internet Connection")
-        }
-    }
+	fun getPostList(visibility: String, page: Int) = viewModelScope.launch {
+		if (hasInternetConnection()) {
+			homeRepository.getPostList(page = page, visibility = visibility)
+		} else {
+			noInternet.postValue("No Internet Connection")
+		}
+	}
 
-    fun getPosts(visibility: String, page: Int, community: Int) = viewModelScope.launch {
-        if (hasInternetConnection()) {
-            homeRepository.getPosts(page = page, visibility = visibility, community = community)
-        } else {
-            noInternet.postValue("No Internet Connection")
-        }
-    }
+	fun getPosts(visibility: String, page: Int, community: Int) = viewModelScope.launch {
+		if (hasInternetConnection()) {
+			homeRepository.getPosts(page = page, visibility = visibility, community = community)
+		} else {
+			noInternet.postValue("No Internet Connection")
+		}
+	}
 
-    fun addLike(likeModel : LikeBodyModel) = viewModelScope.launch {
-        isLoading.postValue(true)
-        if (hasInternetConnection()) {
-            homeRepository.addLike(likeModel)
-        } else {
-            noInternet.postValue("No Internet Connection")
+	fun addLike(likeModel : LikeBodyModel) = viewModelScope.launch {
+		isLoading.postValue(true)
+		if (hasInternetConnection()) {
+			homeRepository.addLike(likeModel)
+		} else {
+			noInternet.postValue("No Internet Connection")
 
-        }
-    }
+		}
+	}
 
-    fun shareStory(model : ShareStoryBody) = viewModelScope.launch {
-        isLoading.postValue(true)
-        if (hasInternetConnection()) {
-            homeRepository.shareStory(model)
-        } else {
-            noInternet.postValue("No Internet Connection")
+	fun shareStory(model : ShareStoryBody) = viewModelScope.launch {
+		isLoading.postValue(true)
+		if (hasInternetConnection()) {
+			homeRepository.shareStory(model)
+		} else {
+			noInternet.postValue("No Internet Connection")
 
-        }
-    }
+		}
+	}
 
-    fun addAppreciation(model : AppreciationRequestBody) = viewModelScope.launch {
-        isLoading.postValue(true)
-        if (hasInternetConnection()) {
-            homeRepository.addAppreciation(model)
-        } else {
-            noInternet.postValue("No Internet Connection")
+	fun addAppreciation(model : AppreciationRequestBody) = viewModelScope.launch {
+		isLoading.postValue(true)
+		if (hasInternetConnection()) {
+			homeRepository.addAppreciation(model)
+		} else {
+			noInternet.postValue("No Internet Connection")
 
-        }
-    }
+		}
+	}
 
-    fun addComment(model : AddCommentBody) = viewModelScope.launch {
-        isLoading.postValue(true)
-        if (hasInternetConnection()) {
-            homeRepository.addComment(model)
-        } else {
-            noInternet.postValue("No Internet Connection")
+	fun addComment(model : AddCommentBody) = viewModelScope.launch {
+		isLoading.postValue(true)
+		if (hasInternetConnection()) {
+			homeRepository.addComment(model)
+		} else {
+			noInternet.postValue("No Internet Connection")
 
-        }
-    }
-    fun deletePost(uniqueId : String) = viewModelScope.launch {
-        isLoading.postValue(true)
-        if (hasInternetConnection()) {
-            homeRepository.deletePost(uniqueId)
-        } else {
-            noInternet.postValue("No Internet Connection")
+		}
+	}
+	fun deletePost(uniqueId : String) = viewModelScope.launch {
+		isLoading.postValue(true)
+		if (!hasInternetConnection()) {
+			noInternet.postValue("No Internet Connection")
+			return@launch
+		}
 
-        }
-    }
+		homeRepository.deletePost(uniqueId)
+	}
 
 
-    private fun hasInternetConnection(): Boolean {
-        val connectivityManager = getApplication<App>().getSystemService(
-            Context.CONNECTIVITY_SERVICE
-        ) as ConnectivityManager
+	private fun hasInternetConnection(): Boolean {
+		val connectivityManager = getApplication<App>().getSystemService(
+			Context.CONNECTIVITY_SERVICE
+		) as ConnectivityManager
 
-        val activeNetwork = connectivityManager.activeNetwork ?: return false
-        val capabilities = connectivityManager.getNetworkCapabilities(activeNetwork) ?: return false
+		val activeNetwork = connectivityManager.activeNetwork ?: return false
+		val capabilities = connectivityManager.getNetworkCapabilities(activeNetwork) ?: return false
 
-        return when {
-            capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
-            capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
-            capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
-            else -> false
-        }
-    }
+		return when {
+			capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
+			capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
+			capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
+			else -> false
+		}
+	}
 
 }
