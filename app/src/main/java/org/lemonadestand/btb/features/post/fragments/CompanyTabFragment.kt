@@ -101,44 +101,9 @@ class CompanyTabFragment: BaseFragment(R.layout.fragment_company_tab) {
 
 		currentUser = Utils.getUser(requireActivity())
 
-		setButtonClicks()
 		setSwipeRefresh()
 
 		return mBinding.root
-	}
-
-	@SuppressLint("InflateParams")
-	private fun setButtonClicks() {
-		mBinding.btnPublicTab.setOnClickListener {
-			val view: View = LayoutInflater.from(context).inflate(R.layout.custom_public_menu, null)
-			val popupWindow = PopupWindow(
-				view,
-				WindowManager.LayoutParams.WRAP_CONTENT,
-				WindowManager.LayoutParams.WRAP_CONTENT
-			)
-			popupWindow.isFocusable = true
-			popupWindow.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-
-			val location = IntArray(2)
-			mBinding.btnPublicTab.getLocationOnScreen(location)
-			popupWindow.showAtLocation(
-				mBinding.btnPublicTab,
-				Gravity.NO_GRAVITY,
-				location[0],
-				location[1] - (popupWindow.height + (mBinding.btnPublicTab.height * 3))
-			)
-			popupWindow.showAsDropDown(it, 100, 0, 0)
-			val tvShareStory = view.findViewById<TextView>(R.id.tv_share_story)
-			val tvShowAppreciation = view.findViewById<TextView>(R.id.tv_show_appreciation)
-			tvShareStory.setOnClickListener {
-				popupWindow.dismiss()
-				(context as Activity).launchActivity<ShareStoryActivity>()
-			}
-			tvShowAppreciation.setOnClickListener {
-				popupWindow.dismiss()
-				(context as Activity).launchActivity<ShowAppreciationActivity>()
-			}
-		}
 	}
 
 	private fun setUpPublicAdapter() {
