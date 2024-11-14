@@ -29,6 +29,7 @@ import org.lemonadestand.btb.mvvm.factory.CommonViewModelFactory
 import org.lemonadestand.btb.mvvm.repository.EventRepository
 import org.lemonadestand.btb.mvvm.viewmodel.EventViewModel
 import org.lemonadestand.btb.singleton.Singleton
+import org.lemonadestand.btb.singleton.Sort
 
 
 class PastEventFragment : Fragment(), OnItemClickListener {
@@ -206,7 +207,7 @@ class PastEventFragment : Fragment(), OnItemClickListener {
             PastEventBody(
                 limit = Singleton.API_LIST_LIMIT,
                 page = "0",
-                sort = "asc", //desc //asc
+                sort = Sort.desc.value, //desc //asc
                 order_by = "start",
                 resource = if (user != null) "user/${user!!.uniqueId}" else "",
                 completed = "0",

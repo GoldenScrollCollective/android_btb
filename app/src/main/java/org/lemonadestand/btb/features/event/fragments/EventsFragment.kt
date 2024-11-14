@@ -82,8 +82,8 @@ class EventsFragment : BaseFragment(R.layout.fragment_events), OnItemClickListen
 				}
 			}
 			2 -> {
-				if (currentFragment is RecordedEventFragment) return
-				currentFragment = RecordedEventFragment().apply {
+				if (currentFragment is CompletedEventsFragment) return
+				currentFragment = CompletedEventsFragment().apply {
 					arguments = Bundle().apply {
 						putParcelable("user", Utils.getEventUser(context))
 					}
