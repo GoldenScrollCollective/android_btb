@@ -102,8 +102,8 @@ class UploadButton @JvmOverloads constructor(
 		imageView.visibility = GONE
 
 		AWSUploadHelper.upload(uri, object : AWSUploadHelper.Callback {
-			override fun onProgress(progress: Float) {
-				progressView.text = "${Math.round(progress)}%"
+			override fun onProgress(progress: Int) {
+				progressView.text = "$progress%"
 			}
 
 			override fun onComplete(result: String?, error: String?) {
