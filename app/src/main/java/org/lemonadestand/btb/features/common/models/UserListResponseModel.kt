@@ -10,7 +10,7 @@ import org.lemonadestand.btb.core.models.Address
 data class UserListResponseModel (
     val status: Boolean,
     val message: String,
-    val data: List<UserListModel>
+    val data: List<UserListModel>? = arrayListOf()
 ) : Parcelable
 
 

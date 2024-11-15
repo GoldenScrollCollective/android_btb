@@ -74,7 +74,7 @@ class SelectContactListFragment : BottomSheetDialogFragment() {
         viewModel = ViewModelProvider(this, viewModelProviderFactory)[UserViewModel::class.java]
         viewModel.getContactList(page = 0)
         viewModel.contactResponseModel.observe(viewLifecycleOwner) {
-            if (it.data.isNotEmpty()) {
+            if (!it.data.isNullOrEmpty()) {
                 userList.clear()
                 userTemp.clear()
                 userList.addAll(it.data)

@@ -73,7 +73,7 @@ class UserListFragment : BottomSheetDialogFragment() {
         viewModel = ViewModelProvider(this, viewModelProviderFactory)[UserViewModel::class.java]
         viewModel.getUserList(page = 0)
         viewModel.userResponseModel.observe(viewLifecycleOwner) {
-            if (it.data.isNotEmpty()) {
+            if (!it.data.isNullOrEmpty()) {
                 userList.clear()
                 userTemp.clear()
                 userList.addAll(it.data)
