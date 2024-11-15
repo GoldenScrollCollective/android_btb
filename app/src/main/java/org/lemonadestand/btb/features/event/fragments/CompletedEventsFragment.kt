@@ -34,11 +34,14 @@ import org.lemonadestand.btb.mvvm.viewmodel.EventViewModel
 import org.lemonadestand.btb.singleton.Singleton
 import org.lemonadestand.btb.singleton.Singleton.launchActivity
 import org.lemonadestand.btb.singleton.Sort
+import org.lemonadestand.btb.utils.Utils
 
 
 class CompletedEventsFragment : Fragment(), OnItemClickListener {
 
 	lateinit var mBinding: FragmentCompletedEventsBinding
+	private val resource: UserListModel?
+		get() = Utils.getResource(context)
 
 	private lateinit var eventAdapter: EventAdapter
 	private lateinit var viewModel: EventViewModel
@@ -48,7 +51,6 @@ class CompletedEventsFragment : Fragment(), OnItemClickListener {
 	private var clickType = ClickType.COMMON
 	private var clickedPosition = 0
 	private var clickedSuperPosition = 0
-	private var user : UserListModel? = null
 	override fun onCreateView(
 		inflater: LayoutInflater, container: ViewGroup?,
 		savedInstanceState: Bundle?
@@ -60,54 +62,27 @@ class CompletedEventsFragment : Fragment(), OnItemClickListener {
 		)
 		shortAnimationDuration = resources.getInteger(android.R.integer.config_shortAnimTime)
 
-		getSelectedUser()
 		setUpPublicAdapter()
 		setUpViewModel()
-		setButtonClicks()
 		setSwipeRefresh()
+
+		refreshData()
 
 		return mBinding.root
 	}
-	private fun getSelectedUser() {
-		val bundle = arguments
-		user  = bundle!!.getParcelable("user")
-	}
-
-	@SuppressLint("InflateParams")
-	private fun setButtonClicks() {
-
-
-		mBinding.btnFloatingEvent.setOnClickListener {
-			val intent = Intent(activity, AddRecordActivity::class.java)
-			startActivity(intent)
-		}
-	}
 
 	private fun setUpPublicAdapter() {
-
 		eventAdapter = EventAdapter(eventDateList, requireContext())
 		eventAdapter.setOnItemClick(this)
 		mBinding.eventsRecyclerView.adapter = eventAdapter
-
 	}
 
 	@SuppressLint("NotifyDataSetChanged")
 	private fun setUpViewModel() {
-		startLoading()
 		val repository = EventRepository()
 		val viewModelProviderFactory = CommonViewModelFactory((context as DashboardActivity).application, repository)
 		viewModel = ViewModelProvider(this, viewModelProviderFactory)[EventViewModel::class.java]
 
-		viewModel.getRecordEventList(
-			ScheduleBody(
-				limit = Singleton.API_LIST_LIMIT,
-				page = "1",
-				sort = "desc", //desc //asc
-				order_by = "blessing_complete",
-				resource = if(user!=null) "user/${user!!.uniqueId}" else "",
-				completed = "1",
-			)
-		)
 		viewModel.recordEventModel.observe(viewLifecycleOwner) {
 			if (!it.data.isNullOrEmpty()) {
 				eventDateList.clear()
@@ -143,10 +118,8 @@ class CompletedEventsFragment : Fragment(), OnItemClickListener {
 				stopLoading(true)
 			} else {
 				stopLoading(false)
-
 			}
 		}
-
 
 		viewModel.liveError.observe(viewLifecycleOwner) {
 			Singleton.handleResponse(response = it, context as Activity, tag)
@@ -181,7 +154,7 @@ class CompletedEventsFragment : Fragment(), OnItemClickListener {
 		}
 	}
 
-	private fun refreshData() {
+	fun refreshData() {
 		startLoading()
 		viewModel.getRecordEventList(
 			ScheduleBody(
@@ -189,7 +162,7 @@ class CompletedEventsFragment : Fragment(), OnItemClickListener {
 				page = "0",
 				sort = Sort.desc.value, //desc //asc
 				order_by = "blessing_complete",
-				resource = if(user!=null) "user/${user!!.uniqueId}" else "",
+				resource = if (!resource?.uniqueId.isNullOrEmpty()) "user/${resource!!.uniqueId}" else "",
 				completed = "1",
 			)
 		)
@@ -232,7 +205,6 @@ class CompletedEventsFragment : Fragment(), OnItemClickListener {
 	}
 
 	override fun onItemClicked(`object`: Any?, index: Int, type: ClickType, superIndex: Int) {
-
 		clickedPosition = index
 		clickedSuperPosition = superIndex
 		clickType = type

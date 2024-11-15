@@ -288,7 +288,7 @@ class CompanyTabFragment: BaseFragment(R.layout.fragment_company_tab) {
 				adapter.onDelete = { post -> onDelete?.invoke(post) }
 
 				val recyclerView = findViewById<RecyclerView>(R.id.rv_public_sub)
-				recyclerView.setHasFixedSize(true)
+				recyclerView.setHasFixedSize(false)
 				recyclerView.layoutManager = LinearLayoutManager(context)
 				recyclerView.adapter = adapter
 				adapter.values = tempPostList

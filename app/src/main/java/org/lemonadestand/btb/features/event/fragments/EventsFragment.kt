@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import com.bumptech.glide.Glide
 import org.lemonadestand.btb.R
 import org.lemonadestand.btb.components.base.BaseFragment
@@ -20,11 +19,9 @@ import org.lemonadestand.btb.interfaces.OnItemClickListener
 import org.lemonadestand.btb.utils.Utils
 import java.util.Locale
 
-class EventsFragment : BaseFragment(R.layout.fragment_events), OnItemClickListener {
+class EventsFragment : BaseFragment(R.layout.fragment_events) {
 
-	private val bottomSheetFragmentMessage = TeamAndContactsFragment()
 	private lateinit var mBinding: FragmentEventsBinding
-	private var eventClick = ClickType.COMMON
 
 	private var currentFragment: Fragment? = null
 
@@ -32,6 +29,12 @@ class EventsFragment : BaseFragment(R.layout.fragment_events), OnItemClickListen
 		set(value) {
 			field = value
 			handleTabIndex()
+		}
+	private var selectedUser: UserListModel? = Utils.getResource(context)
+		set(value) {
+			field = value
+			Utils.setResource(context, value)
+			handleSelectedUser()
 		}
 
 	override fun onCreateView(
@@ -43,10 +46,29 @@ class EventsFragment : BaseFragment(R.layout.fragment_events), OnItemClickListen
 			container,
 			false
 		)
-		handleClickEvents()
-		handleSelectedData()
-		return mBinding.root
+		handleSelectedUser()
 
+		mBinding.tabView.onSelect = {
+			tabIndex = it
+		}
+
+		mBinding.userCard.setOnClickListener {
+			val teamAndContactsFragment = TeamAndContactsFragment()
+			teamAndContactsFragment.setCallback(object : OnItemClickListener {
+				override fun onItemClicked(`object`: Any?, index: Int, type: ClickType, superIndex: Int) {
+					val value = `object` as UserListModel
+					selectedUser = value
+					teamAndContactsFragment.dismiss()
+				}
+			})
+			teamAndContactsFragment.arguments = Bundle().apply {
+				putString("title", "Show Event For :")
+				putBoolean("is_event", true)
+			}
+			teamAndContactsFragment.show(requireActivity().supportFragmentManager, teamAndContactsFragment.tag)
+		}
+
+		return mBinding.root
 	}
 
 	override fun update() {
@@ -64,7 +86,7 @@ class EventsFragment : BaseFragment(R.layout.fragment_events), OnItemClickListen
 						navController.navigate(EventsFragmentDirections.toDetail(it))
 					}
 					arguments = Bundle().apply {
-						putParcelable("user", Utils.getEventUser(context))
+						putParcelable("user", Utils.getResource(context))
 					}
 					setFragment(this)
 				}
@@ -76,7 +98,7 @@ class EventsFragment : BaseFragment(R.layout.fragment_events), OnItemClickListen
 						navController.navigate(EventsFragmentDirections.toDetail(it))
 					}
 					arguments = Bundle().apply {
-						putParcelable("user", Utils.getEventUser(context))
+						putParcelable("user", Utils.getResource(context))
 					}
 					setFragment(this)
 				}
@@ -85,7 +107,7 @@ class EventsFragment : BaseFragment(R.layout.fragment_events), OnItemClickListen
 				if (currentFragment is CompletedEventsFragment) return
 				currentFragment = CompletedEventsFragment().apply {
 					arguments = Bundle().apply {
-						putParcelable("user", Utils.getEventUser(context))
+						putParcelable("user", Utils.getResource(context))
 					}
 					setFragment(this)
 				}
@@ -93,86 +115,20 @@ class EventsFragment : BaseFragment(R.layout.fragment_events), OnItemClickListen
 		}
 	}
 
-	private fun handleClickEvents() {
-		mBinding.tabView.onSelect = {
-			tabIndex = it
-		}
-
-		mBinding.userCard.setOnClickListener {
-			showBottomSheetMessage()
-		}
-	}
-
-	private fun handleSelectedData() {
-		val user = Utils.getEventUser(context)
-		if (user != null) {
-			setSelectUserData(
-				user.picture,
-				user.name
-			)
+	private fun handleSelectedUser() {
+		if (selectedUser?.picture != null) {
+			Glide.with(requireContext()).load(selectedUser?.picture).into(mBinding.ivImage)
 		} else {
-			setSelectUserData(
-				Utils.getUser(context).organization.picture,
-				"All Users"
-			)
+			val imageI = selectedUser?.name?.lowercase(Locale.ROOT)?.getImageUrlFromName()
+			Glide.with(requireContext()).load(imageI).into(mBinding.ivImage)
 		}
-	}
 
+		if (currentFragment is ScheduledEventsFragment) (currentFragment as ScheduledEventsFragment).refreshData()
+		if (currentFragment is PastEventFragment) (currentFragment as PastEventFragment).refreshData()
+		if (currentFragment is CompletedEventsFragment) (currentFragment as CompletedEventsFragment).refreshData()
+	}
 
 	private fun setFragment(fragment: Fragment?) {
 		childFragmentManager.beginTransaction().replace(R.id.event_fragment, fragment!!).commit()
-	}
-
-	private fun showBottomSheetMessage() {
-		eventClick =  ClickType.SELECT_USER
-		val fragmentManager: FragmentManager = requireActivity().supportFragmentManager
-		bottomSheetFragmentMessage.setCallback(this)
-		val args = Bundle()
-		args.putString("title", "Show Event For :")
-		args.putBoolean("is_event", true)
-		bottomSheetFragmentMessage.arguments = args
-		bottomSheetFragmentMessage.show(fragmentManager, bottomSheetFragmentMessage.tag)
-	}
-
-	override fun onItemClicked(`object`: Any?, index: Int, type: ClickType, superIndex: Int) {
-		val data = `object` as UserListModel
-		Log.e("data=>", data.name)
-		when (eventClick) {
-			ClickType.SELECT_USER -> {
-				bottomSheetFragmentMessage.dismiss()
-				setSelectUserData(data.picture, userName = data.name)
-				callApi()
-			}
-
-			ClickType.EDIT_EVENT -> {
-				Log.e("eventFragment=>","editEvent")
-			}
-
-			ClickType.DELETE_EVENT -> {
-
-				Log.e("eventFragment=>","deleteEvent")
-			}
-
-			else -> {
-
-			}
-		}
-
-
-	}
-
-	private fun callApi() {
-		handleTabIndex()
-	}
-
-	private fun setSelectUserData(image: String?, userName: String) {
-		//https://ui-avatars.com/api/?name=lee guang
-		if (image != null) {
-			Glide.with(requireContext()).load(image).into(mBinding.ivImage)
-		} else {
-			var userName1 = ""
-			val imageI = userName.lowercase(Locale.ROOT).getImageUrlFromName()
-			Glide.with(requireContext()).load(imageI).into(mBinding.ivImage)
-		}
 	}
 }

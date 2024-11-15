@@ -134,10 +134,9 @@ public class Utils {
         }
     }
 
-    public static UserListModel getEventUser(Context context) {
+    public static UserListModel getResource(Context context) {
         try {
-            SharedPreferences sharedPreferences = context.getSharedPreferences(FILENAME, Context.MODE_PRIVATE);
-            String data = sharedPreferences.getString(USER_EVENT, null);
+            String data = getData(context, USER_EVENT);
             Gson gson = new Gson();
             return gson.fromJson(data, UserListModel.class);
         } catch (Exception e) {
@@ -145,7 +144,14 @@ public class Utils {
         }
     }
 
-
+    public static void setResource(Context context, UserListModel value) {
+        try {
+            String data = new Gson().toJson(value);
+            saveData(context, USER_EVENT, data);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     public static void removeData(Context context, String key) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(FILENAME, Context.MODE_PRIVATE);

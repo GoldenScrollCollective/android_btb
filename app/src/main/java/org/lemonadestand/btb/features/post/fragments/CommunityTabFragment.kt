@@ -126,18 +126,20 @@ class CommunityTabFragment: BaseFragment(R.layout.fragment_community_tab) {
         viewModel.postModel.observe(viewLifecycleOwner) {
             stopLoading(true)
 
-            if (it.data.isNotEmpty()) {
+            val data = it.data ?: return@observe
+
+            if (data.isNotEmpty()) {
                 postDateList.clear()
 
                 val dateList: ArrayList<String> = ArrayList()
 
-                for (i in 0 until it.data.size) {
-                    if (!dateList.contains(getDate(it.data[i].created!!))) {
-                        dateList.add(getDate(it.data[i].created!!))
+                for (i in data.indices) {
+                    if (!dateList.contains(getDate(data[i].created!!))) {
+                        dateList.add(getDate(data[i].created!!))
                         postDateList.add(
                             PostModelDate(
-                                date = it.data[i].created,
-                                postList = it.data as ArrayList<Post>
+                                date = data[i].created,
+                                postList = data as ArrayList<Post>
                             )
                         )
                     }
@@ -276,7 +278,7 @@ class CommunityTabFragment: BaseFragment(R.layout.fragment_community_tab) {
                 adapter.onDelete = { post -> onDelete?.invoke(post) }
 
                 val recyclerView = findViewById<RecyclerView>(R.id.rv_public_sub)
-                recyclerView.setHasFixedSize(true)
+                recyclerView.setHasFixedSize(false)
                 recyclerView.layoutManager = LinearLayoutManager(context)
                 recyclerView.adapter = adapter
                 adapter.values = tempPostList

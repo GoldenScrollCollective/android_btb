@@ -15,7 +15,7 @@ import kotlin.Exception
 data class PostResponseModel (
     val status: Boolean,
     val message: String,
-    val data: List<Post>
+    val data: List<Post>? = listOf()
 ) : Parcelable
 
 @Parcelize

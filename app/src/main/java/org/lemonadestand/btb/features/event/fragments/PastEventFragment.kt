@@ -30,12 +30,14 @@ import org.lemonadestand.btb.mvvm.repository.EventRepository
 import org.lemonadestand.btb.mvvm.viewmodel.EventViewModel
 import org.lemonadestand.btb.singleton.Singleton
 import org.lemonadestand.btb.singleton.Sort
+import org.lemonadestand.btb.utils.Utils
 
 
 class PastEventFragment : Fragment(), OnItemClickListener {
 
     lateinit var mBinding: FragmentPastEventBinding
-    private var user: UserListModel? = null
+    private val resource: UserListModel?
+        get() = Utils.getResource(context)
 
     private lateinit var eventAdapter: EventAdapter
     private lateinit var viewModel: EventViewModel
@@ -59,23 +61,13 @@ class PastEventFragment : Fragment(), OnItemClickListener {
         )
         shortAnimationDuration = resources.getInteger(android.R.integer.config_shortAnimTime)
 
-        getSelectedUser()
         setUpPublicAdapter()
         setUpViewModel()
-        setButtonClicks()
         setSwipeRefresh()
 
+        refreshData()
+
         return mBinding.root
-    }
-
-    private fun getSelectedUser() {
-        val bundle = arguments
-        user = bundle!!.getParcelable("user")
-    }
-
-    @SuppressLint("InflateParams")
-    private fun setButtonClicks() {
-
     }
 
     private fun setUpPublicAdapter() {
@@ -88,24 +80,10 @@ class PastEventFragment : Fragment(), OnItemClickListener {
 
     @SuppressLint("NotifyDataSetChanged")
     private fun setUpViewModel() {
-        startLoading()
         val repository = EventRepository()
-        val viewModelProviderFactory =
-            CommonViewModelFactory((context as DashboardActivity).application, repository)
+        val viewModelProviderFactory = CommonViewModelFactory((context as DashboardActivity).application, repository)
         viewModel = ViewModelProvider(this, viewModelProviderFactory)[EventViewModel::class.java]
 
-
-        viewModel.getPastEventList(
-            PastEventBody(
-                limit = Singleton.API_LIST_LIMIT,
-                page = "0",
-                sort = "desc", //desc //asc
-                order_by = "start",
-                resource = if (user != null) "user/${user!!.uniqueId}" else "",
-                completed = "0",
-                archive = "1"
-            )
-        )
         viewModel.pastEventModel.observe(viewLifecycleOwner) {
             if (!it.data.isNullOrEmpty()) {
                 eventDateList.clear()
@@ -141,10 +119,8 @@ class PastEventFragment : Fragment(), OnItemClickListener {
                 stopLoading(true)
             } else {
                 stopLoading(false)
-
             }
         }
-
 
         viewModel.liveError.observe(viewLifecycleOwner) {
             Singleton.handleResponse(response = it, context as Activity, tag)
@@ -163,7 +139,6 @@ class PastEventFragment : Fragment(), OnItemClickListener {
 
         }
 
-
         viewModel.isLoading.observe(viewLifecycleOwner) {
             Log.e("value==>", it.toString())
             if (it) {
@@ -178,7 +153,6 @@ class PastEventFragment : Fragment(), OnItemClickListener {
             ProgressDialogUtil.dismissProgressDialog()
         }
     }
-
 
     private fun startLoading() {
         mBinding.eventsRecyclerView.hide()
@@ -201,7 +175,7 @@ class PastEventFragment : Fragment(), OnItemClickListener {
         }
     }
 
-    private fun refreshData() {
+    fun refreshData() {
         startLoading()
         viewModel.getPastEventList(
             PastEventBody(
@@ -209,7 +183,7 @@ class PastEventFragment : Fragment(), OnItemClickListener {
                 page = "0",
                 sort = Sort.desc.value, //desc //asc
                 order_by = "start",
-                resource = if (user != null) "user/${user!!.uniqueId}" else "",
+                resource = if (!resource?.uniqueId.isNullOrEmpty()) "user/${resource!!.uniqueId}" else "",
                 completed = "0",
                 archive = "1"
             )

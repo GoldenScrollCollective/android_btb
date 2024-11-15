@@ -32,6 +32,7 @@ import org.lemonadestand.btb.mvvm.factory.CommonViewModelFactory
 import org.lemonadestand.btb.mvvm.repository.EventRepository
 import org.lemonadestand.btb.mvvm.viewmodel.EventViewModel
 import org.lemonadestand.btb.singleton.Singleton
+import org.lemonadestand.btb.utils.Utils
 
 
 class ScheduledEventsFragment : BaseFragment(R.layout.fragment_scheduled_events), OnItemClickListener {
@@ -44,11 +45,13 @@ class ScheduledEventsFragment : BaseFragment(R.layout.fragment_scheduled_events)
 	private var clickType = ClickType.COMMON
 	private var clickedPosition = 0
 	private var clickedSuperPosition = 0
-	private var user : UserListModel? = null
 
 	private lateinit var eventsRecyclerView: RecyclerView
 	private lateinit var noDataView: RelativeLayout
 	private lateinit var shimmerLayout: ShimmerFrameLayout
+
+	private val resource: UserListModel?
+		get() = Utils.getResource(context)
 
 	var onSelect: ((value: EventModel?) -> Unit)? = null
 
@@ -74,11 +77,12 @@ class ScheduledEventsFragment : BaseFragment(R.layout.fragment_scheduled_events)
 		val btnFloatingEvent = rootView.findViewById<ImageView>(R.id.btnFloatingEvent)
 		btnFloatingEvent.setOnSingleClickListener { onSelect?.invoke(null) }
 
-		getSelectedUser()
 		setUpViewModel()
+
+		refreshData()
 	}
 
-	private fun refreshData() {
+	fun refreshData() {
 		startLoading()
 		viewModel.getScheduleEventList(
 			ScheduleBody(
@@ -86,16 +90,10 @@ class ScheduledEventsFragment : BaseFragment(R.layout.fragment_scheduled_events)
 				page = "0",
 				sort = "asc", //desc //asc
 				order_by = "start",
-				resource = if(user!=null) "user/${user!!.uniqueId}" else "",
+				resource = if (!resource?.uniqueId.isNullOrEmpty()) "user/${resource!!.uniqueId}" else "",
 				completed = "0",
 			)
 		)
-	}
-
-
-	private fun getSelectedUser() {
-		val bundle = arguments
-		user  = bundle!!.getParcelable("user")
 	}
 
 	@SuppressLint("NotifyDataSetChanged")
@@ -106,17 +104,6 @@ class ScheduledEventsFragment : BaseFragment(R.layout.fragment_scheduled_events)
 			CommonViewModelFactory((context as DashboardActivity).application, repository)
 		viewModel = ViewModelProvider(this, viewModelProviderFactory)[EventViewModel::class.java]
 
-
-		viewModel.getScheduleEventList(
-			ScheduleBody(
-				limit = Singleton.API_LIST_LIMIT,
-				page = "0",
-				sort = "asc", //desc //asc
-				order_by = "start",
-				resource = if(user!=null) "user/${user!!.uniqueId}" else "",
-				completed = "0",
-			)
-		)
 		viewModel.scheduleEventModel.observe(viewLifecycleOwner) {
 			if (!it.data.isNullOrEmpty()) {
 				eventDateList.clear()
@@ -152,11 +139,8 @@ class ScheduledEventsFragment : BaseFragment(R.layout.fragment_scheduled_events)
 				stopLoading(true)
 			} else {
 				stopLoading(false)
-
-
 			}
 		}
-
 
 		viewModel.liveError.observe(viewLifecycleOwner) {
 			Singleton.handleResponse(response = it, context as Activity, tag)
@@ -167,7 +151,6 @@ class ScheduledEventsFragment : BaseFragment(R.layout.fragment_scheduled_events)
 			handleCommonResponse(context as DashboardActivity, it)
 			ProgressDialogUtil.dismissProgressDialog()
 		}
-
 
 		viewModel.isLoading.observe(viewLifecycleOwner) {
 			Log.e("value==>", it.toString())
