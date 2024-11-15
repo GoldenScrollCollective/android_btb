@@ -222,7 +222,7 @@ class InterestFragment : Fragment(), OnItemClickListener, ColorPickerDialogListe
         viewModel.getInterestDataUiList()
 
         viewModel.interestResponseModelUi.observe(viewLifecycleOwner) {
-            if (it.data.isNullOrEmpty()) {
+            if (!it.data.isNullOrEmpty()) {
                 interestUiList.clear()
                 Log.e("apiData=>", it.data.toString())
                 interestUiList.addAll(it.data ?: arrayListOf())

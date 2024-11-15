@@ -5,6 +5,7 @@ import android.util.AttributeSet
 import android.widget.LinearLayout
 import androidx.appcompat.widget.AppCompatTextView
 import org.lemonadestand.btb.R
+import org.lemonadestand.btb.extensions.setOnSingleClickListener
 
 class RadioGroup @JvmOverloads constructor(
     context: Context,
@@ -42,15 +43,14 @@ class RadioGroup @JvmOverloads constructor(
         for (i in 0..childCount) {
             val child = getChildAt(i)
             if (child is RadioButton) {
-                child.setOnClickListener {
+                child.setOnSingleClickListener {
                     selection = i
                     onSelect?.invoke(i)
                 }
                 buttons.add(child)
             }
         }
-
-        buttons[0].performClick()
+        handleSelection()
     }
 
     private fun handleSelection() {

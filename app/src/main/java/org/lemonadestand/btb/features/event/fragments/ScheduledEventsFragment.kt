@@ -6,7 +6,6 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.util.Log
 import android.view.View
-import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
@@ -20,7 +19,6 @@ import org.lemonadestand.btb.constants.ProgressDialogUtil
 import org.lemonadestand.btb.constants.getDate
 import org.lemonadestand.btb.constants.handleCommonResponse
 import org.lemonadestand.btb.extensions.hide
-import org.lemonadestand.btb.extensions.setOnSingleClickListener
 import org.lemonadestand.btb.features.common.models.UserListModel
 import org.lemonadestand.btb.features.common.models.body.ScheduleBody
 import org.lemonadestand.btb.features.dashboard.activities.DashboardActivity
@@ -68,14 +66,11 @@ class ScheduledEventsFragment : BaseFragment(R.layout.fragment_scheduled_events)
 
 		eventAdapter = EventAdapter(eventDateList, requireContext())
 		eventAdapter.setOnItemClick(this)
-		eventsRecyclerView = rootView.findViewById<RecyclerView>(R.id.eventsRecyclerView)
+		eventsRecyclerView = rootView.findViewById(R.id.eventsRecyclerView)
 		eventsRecyclerView.adapter = eventAdapter
 
 		noDataView = rootView.findViewById(R.id.noDataView)
 		shimmerLayout = rootView.findViewById(R.id.shimmerLayout)
-
-		val btnFloatingEvent = rootView.findViewById<ImageView>(R.id.btnFloatingEvent)
-		btnFloatingEvent.setOnSingleClickListener { onSelect?.invoke(null) }
 
 		setUpViewModel()
 

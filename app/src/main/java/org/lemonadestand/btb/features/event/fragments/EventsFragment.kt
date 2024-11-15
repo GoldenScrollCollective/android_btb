@@ -13,9 +13,11 @@ import org.lemonadestand.btb.components.base.BaseFragment
 import org.lemonadestand.btb.constants.ClickType
 import org.lemonadestand.btb.constants.getImageUrlFromName
 import org.lemonadestand.btb.databinding.FragmentEventsBinding
+import org.lemonadestand.btb.extensions.setOnSingleClickListener
 import org.lemonadestand.btb.features.common.fragments.TeamAndContactsFragment
 import org.lemonadestand.btb.features.common.models.UserListModel
 import org.lemonadestand.btb.interfaces.OnItemClickListener
+import org.lemonadestand.btb.utils.Storage
 import org.lemonadestand.btb.utils.Utils
 import java.util.Locale
 
@@ -25,9 +27,10 @@ class EventsFragment : BaseFragment(R.layout.fragment_events) {
 
 	private var currentFragment: Fragment? = null
 
-	private var tabIndex = 0
+	private var tabIndex: Int = Storage.eventsTabIndex
 		set(value) {
 			field = value
+			Storage.eventsTabIndex = value
 			handleTabIndex()
 		}
 	private var selectedUser: UserListModel? = Utils.getResource(context)
@@ -48,9 +51,11 @@ class EventsFragment : BaseFragment(R.layout.fragment_events) {
 		)
 		handleSelectedUser()
 
+		mBinding.tabView.selection = tabIndex
 		mBinding.tabView.onSelect = {
 			tabIndex = it
 		}
+		handleTabIndex()
 
 		mBinding.userCard.setOnClickListener {
 			val teamAndContactsFragment = TeamAndContactsFragment()
@@ -68,13 +73,9 @@ class EventsFragment : BaseFragment(R.layout.fragment_events) {
 			teamAndContactsFragment.show(requireActivity().supportFragmentManager, teamAndContactsFragment.tag)
 		}
 
+		mBinding.btnFloatingEvent.setOnSingleClickListener { navController.navigate(EventsFragmentDirections.toDetail()) }
+
 		return mBinding.root
-	}
-
-	override fun update() {
-		super.update()
-
-		handleTabIndex()
 	}
 
 	private fun handleTabIndex() {
@@ -90,6 +91,7 @@ class EventsFragment : BaseFragment(R.layout.fragment_events) {
 					}
 					setFragment(this)
 				}
+				mBinding.btnFloatingEvent.visibility = View.VISIBLE
 			}
 			1 -> {
 				if (currentFragment is PastEventFragment) return
@@ -102,6 +104,7 @@ class EventsFragment : BaseFragment(R.layout.fragment_events) {
 					}
 					setFragment(this)
 				}
+				mBinding.btnFloatingEvent.visibility = View.GONE
 			}
 			2 -> {
 				if (currentFragment is CompletedEventsFragment) return
@@ -111,6 +114,7 @@ class EventsFragment : BaseFragment(R.layout.fragment_events) {
 					}
 					setFragment(this)
 				}
+				mBinding.btnFloatingEvent.visibility = View.VISIBLE
 			}
 		}
 	}
