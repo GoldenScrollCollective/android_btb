@@ -9,16 +9,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import android.widget.ImageView
 import android.widget.PopupWindow
 import android.widget.TextView
-import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.content.ContextCompat
-import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.replace
 import com.bumptech.glide.Glide
-import com.google.android.material.navigation.NavigationView
 import org.lemonadestand.btb.R
 import org.lemonadestand.btb.components.base.BaseFragment
 import org.lemonadestand.btb.constants.getImageUrlFromName
@@ -65,7 +60,10 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
 		if (currentUser?.picture != null) {
 			context?.let { Glide.with(it).load(currentUser.picture).into(mBinding.userSortName) }
 		} else {
-			context?.let { Glide.with(it).load(currentUser.name.trim().lowercase().getImageUrlFromName()).into(mBinding.userSortName) }
+			context?.let {
+				Glide.with(it).load(currentUser.name.trim().lowercase().getImageUrlFromName())
+					.into(mBinding.userSortName)
+			}
 		}
 		mBinding.userSortName.setOnClickListener {
 			val dashboardActivity = requireActivity() as DashboardActivity
@@ -80,9 +78,15 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
 				WindowManager.LayoutParams.WRAP_CONTENT
 			)
 
-			popupWindow.setBackgroundDrawable(ColorDrawable(ContextCompat.getColor(requireContext(), android.R.color.darker_gray))) // Transparent color to remove default shadow
-			popupWindow.elevation = 20f
-
+			popupWindow.setBackgroundDrawable(
+				ColorDrawable(
+					ContextCompat.getColor(
+						requireContext(),
+						android.R.color.darker_gray
+					)
+				)
+			) // Transparent color to remove default shadow
+//			popupWindow.elevation = 20f
 			popupWindow.isFocusable = true
 			popupWindow.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
@@ -134,17 +138,20 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
 	}
 
 	private fun handleTabIndex() {
-		when(tabIndex) {
+		when (tabIndex) {
 			0 -> {
 				if (currentFragment is CompanyTabFragment) return
 				currentFragment = CompanyTabFragment()
-				childFragmentManager.beginTransaction().replace(R.id.home_fragment, currentFragment!!).commit()
+				childFragmentManager.beginTransaction()
+					.replace(R.id.home_fragment, currentFragment!!).commit()
 				mBinding.btnFilter.visibility = View.VISIBLE
 			}
+
 			1 -> {
 				if (currentFragment is CommunityTabFragment) return
 				currentFragment = CommunityTabFragment()
-				childFragmentManager.beginTransaction().replace(R.id.home_fragment, currentFragment!!).commit()
+				childFragmentManager.beginTransaction()
+					.replace(R.id.home_fragment, currentFragment!!).commit()
 				mBinding.btnFilter.visibility = View.GONE
 			}
 		}

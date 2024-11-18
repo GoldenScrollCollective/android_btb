@@ -20,8 +20,8 @@ import org.lemonadestand.btb.constants.ClickType
 import org.lemonadestand.btb.core.models.EventFor
 import org.lemonadestand.btb.extensions.setOnSingleClickListener
 import org.lemonadestand.btb.features.common.fragments.SelectContactListFragment
+import org.lemonadestand.btb.features.common.fragments.SelectMultiUsersBottomSheetFragment
 import org.lemonadestand.btb.features.common.fragments.UserListFragment
-import org.lemonadestand.btb.features.common.fragments.UserListFragmentMulti
 import org.lemonadestand.btb.features.common.models.UserListModel
 import org.lemonadestand.btb.features.common.models.body.ReminderRequestBody
 import org.lemonadestand.btb.features.event.models.EventModel
@@ -35,7 +35,7 @@ import java.util.Date
 import kotlin.math.max
 import kotlin.math.min
 
-class EditReminderFragment: BaseFragment(R.layout.fragment_edit_reminder) {
+class EditReminderFragment : BaseFragment(R.layout.fragment_edit_reminder) {
 	private val args: EditReminderFragmentArgs by navArgs()
 
 	private lateinit var titleView: TextView
@@ -208,13 +208,13 @@ class EditReminderFragment: BaseFragment(R.layout.fragment_edit_reminder) {
 
 		reminderView = rootView.findViewById(R.id.reminderView)
 		btnReminderMinus = rootView.findViewById(R.id.btnReminderMinus)
-		btnReminderMinus.setOnSingleClickListener { reminderDays = min(max(0, reminderDays-1), 100) }
+		btnReminderMinus.setOnSingleClickListener { reminderDays = min(max(0, reminderDays - 1), 100) }
 		btnReminderPlus = rootView.findViewById(R.id.btnReminderPlus)
-		btnReminderPlus.setOnSingleClickListener { reminderDays = min(max(0, reminderDays+1), 100) }
+		btnReminderPlus.setOnSingleClickListener { reminderDays = min(max(0, reminderDays + 1), 100) }
 
 		val btnNotify = rootView.findViewById<LinearLayout>(R.id.btnNotify)
 		btnNotify.setOnSingleClickListener {
-			val fragment = UserListFragmentMulti()
+			val fragment = SelectMultiUsersBottomSheetFragment()
 			fragment.arguments = Bundle().apply {
 				putString("title", "Select Team Members")
 				putString("list", Gson().toJson(notifyUsers.map { UserListModel(username = it) }))
@@ -341,13 +341,13 @@ class EditReminderFragment: BaseFragment(R.layout.fragment_edit_reminder) {
 				}
 			} else {
 				resource = selectedTeamMember!!.uniqueId
-				resource = resource.replace("user/","")
+				resource = resource.replace("user/", "")
 			}
 		} else {
 			if (selectedContact == null) {
-				if(event!!.parent != null ) {
+				if (event!!.parent != null) {
 					resource = event!!.resource.id
-					resource = resource.replace("contact/","")
+					resource = resource.replace("contact/", "")
 				} else {
 					Toast.makeText(requireActivity(), "Please select contact.", Toast.LENGTH_SHORT).show()
 				}

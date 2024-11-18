@@ -18,22 +18,23 @@
 		<RelativeLayout
 			android:id="@+id/top_cn"
 			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:padding="10sp">
+			android:layout_height="@dimen/_36sdp"
+			android:paddingHorizontal="10sp">
 
 			<androidx.cardview.widget.CardView
 				android:id="@+id/cardView"
 				android:layout_width="@dimen/_24sdp"
 				android:layout_height="@dimen/_24sdp"
 				android:layout_centerVertical="true"
-				android:backgroundTint="@color/lightgrey"
-				app:cardCornerRadius="7dp">
+				android:backgroundTint="@color/light_grey_ios"
+				app:cardCornerRadius="@dimen/_4sdp">
 
 				<ImageView
 					android:id="@+id/userSortName"
 					android:layout_width="match_parent"
 					android:layout_height="match_parent"
-					android:scaleType="fitXY"/>
+					android:adjustViewBounds="true"
+					android:scaleType="fitXY" />
 
 			</androidx.cardview.widget.CardView>
 
@@ -55,67 +56,68 @@
 				android:id="@+id/tabView"
 				android:layout_width="@dimen/_180sdp"
 				android:layout_height="35sp"
-				android:orientation="horizontal"
 				android:layout_centerInParent="true"
 				android:background="@drawable/tab_bg"
+				android:orientation="horizontal"
 				app:selection="0">
 
 				<org.lemonadestand.btb.components.radio.RadioButton
 					android:layout_width="0dp"
 					android:layout_height="match_parent"
-					android:layout_weight="1"
 					android:layout_margin="2dp"
-					android:gravity="center"
+					android:layout_weight="1"
 					android:fontFamily="@font/urbanist_bold"
-					android:textSize="14sp"
+					android:gravity="center"
+					android:text="Company"
 					android:textColor="@color/black"
-					android:text="Company"/>
+					android:textSize="14sp" />
 
 				<org.lemonadestand.btb.components.radio.RadioButton
 					android:layout_width="0dp"
 					android:layout_height="match_parent"
-					android:layout_weight="1"
 					android:layout_margin="2dp"
-					android:gravity="center"
+					android:layout_weight="1"
 					android:fontFamily="@font/urbanist_bold"
-					android:textSize="14sp"
+					android:gravity="center"
+					android:text="Community"
 					android:textColor="@color/black"
-					android:text="Community"/>
+					android:textSize="14sp" />
 
 				<org.lemonadestand.btb.components.radio.RadioButton
 					android:layout_width="0dp"
 					android:layout_height="match_parent"
-					android:layout_weight="1"
 					android:layout_margin="2dp"
-					android:gravity="center"
+					android:layout_weight="1"
 					android:fontFamily="@font/urbanist_bold"
-					android:textSize="14sp"
-					android:textColor="@color/black"
+					android:gravity="center"
 					android:text="Mine"
-					android:visibility="gone"/>
+					android:textColor="@color/black"
+					android:textSize="14sp"
+					android:visibility="gone" />
 
 				<org.lemonadestand.btb.components.radio.RadioButton
 					android:layout_width="0dp"
 					android:layout_height="match_parent"
-					android:layout_weight="1"
 					android:layout_margin="2dp"
-					android:gravity="center"
+					android:layout_weight="1"
 					android:fontFamily="@font/urbanist_bold"
-					android:textSize="14sp"
-					android:textColor="@color/black"
+					android:gravity="center"
 					android:text="Archived"
-					android:visibility="gone"/>
+					android:textColor="@color/black"
+					android:textSize="14sp"
+					android:visibility="gone" />
 
 			</org.lemonadestand.btb.components.radio.RadioGroup>
 
 			<ImageView
 				android:id="@+id/btnFilter"
-				android:layout_width="32.5dp"
-				android:layout_height="32.5dp"
-				android:layout_centerVertical="true"
+				android:layout_width="@dimen/_24sdp"
+				android:layout_height="@dimen/_24sdp"
 				android:layout_alignParentEnd="true"
-				android:src="@drawable/chevron_right_24"
-				android:rotation="90"/>
+				android:layout_centerVertical="true"
+				android:padding="@dimen/_4sdp"
+				android:rotation="270"
+				android:src="@drawable/chevron_prev_24" />
 
 		</RelativeLayout>
 
@@ -132,11 +134,11 @@
 		android:id="@+id/btnFloatingPlus"
 		android:layout_width="40dp"
 		android:layout_height="40dp"
-		android:layout_marginEnd="20dp"
-		android:layout_marginBottom="20dp"
 		android:layout_alignParentEnd="true"
 		android:layout_alignParentBottom="true"
-		android:src="@drawable/circle_plus"
-		android:scaleType="fitXY"/>
+		android:layout_marginEnd="20dp"
+		android:layout_marginBottom="20dp"
+		android:scaleType="fitXY"
+		android:src="@drawable/circle_plus" />
 
 </RelativeLayout>

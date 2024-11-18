@@ -1,115 +1,115 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@color/white"
-    tools:context=".features.event.fragments.EventsFragment">
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:background="@color/white"
+	android:orientation="vertical"
+	tools:context=".features.event.fragments.EventsFragment">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:orientation="vertical">
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="59dp">
+		<RelativeLayout
+			android:layout_width="match_parent"
+			android:layout_height="@dimen/_36sdp">
 
-            <TextView
-                android:id="@+id/navName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/urbanist_bold"
-                android:text="Events"
-                android:textColor="@color/accentColor"
-                android:textSize="24dp"
-                android:textStyle="bold"
-                android:layout_centerInParent="true"/>
+			<androidx.appcompat.widget.AppCompatTextView
+				android:id="@+id/navName"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_centerInParent="true"
+				android:fontFamily="@font/urbanist_bold"
+				android:text="Events"
+				android:textAlignment="center"
+				android:textColor="@color/accentColor"
+				android:textSize="18sp" />
 
-            <androidx.cardview.widget.CardView
-                android:id="@+id/user_card"
-                android:layout_width="@dimen/_30sdp"
-                android:layout_height="@dimen/_30sdp"
-                android:layout_centerVertical="true"
-                android:layout_marginEnd="10dp"
-                app:cardCornerRadius="7dp"
-                android:layout_alignParentEnd="true">
+			<androidx.cardview.widget.CardView
+				android:id="@+id/user_card"
+				android:layout_width="@dimen/_24sdp"
+				android:layout_height="@dimen/_24sdp"
+				android:layout_alignParentEnd="true"
+				android:layout_centerVertical="true"
+				android:layout_marginEnd="10dp"
+				app:cardCornerRadius="7dp">
 
-                <ImageView
-                    android:id="@+id/iv_image"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:scaleType="fitXY" />
+				<ImageView
+					android:id="@+id/iv_image"
+					android:layout_width="match_parent"
+					android:layout_height="match_parent"
+					android:scaleType="fitXY" />
 
-            </androidx.cardview.widget.CardView>
+			</androidx.cardview.widget.CardView>
 
-        </RelativeLayout>
+		</RelativeLayout>
 
-        <org.lemonadestand.btb.components.radio.RadioGroup
-            android:id="@+id/tabView"
-            android:layout_width="match_parent"
-            android:layout_height="35sp"
-            android:orientation="horizontal"
-            android:layout_margin="7dp"
-            android:background="@drawable/tab_bg"
-            app:selection="0">
+		<org.lemonadestand.btb.components.radio.RadioGroup
+			android:id="@+id/tabView"
+			android:layout_width="match_parent"
+			android:layout_height="35sp"
+			android:layout_marginHorizontal="@dimen/_7sdp"
+			android:background="@drawable/tab_bg"
+			android:orientation="horizontal"
+			app:selection="0">
 
-            <org.lemonadestand.btb.components.radio.RadioButton
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:layout_margin="2dp"
-                android:gravity="center"
-                android:fontFamily="@font/urbanist_bold"
-                android:textSize="14sp"
-                android:textColor="@color/black"
-                android:text="Scheduled"/>
+			<org.lemonadestand.btb.components.radio.RadioButton
+				android:layout_width="0dp"
+				android:layout_height="match_parent"
+				android:layout_margin="2dp"
+				android:layout_weight="1"
+				android:fontFamily="@font/urbanist_bold"
+				android:gravity="center"
+				android:text="Scheduled"
+				android:textColor="@color/black"
+				android:textSize="14sp" />
 
-            <org.lemonadestand.btb.components.radio.RadioButton
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:layout_margin="2dp"
-                android:gravity="center"
-                android:fontFamily="@font/urbanist_bold"
-                android:textSize="14sp"
-                android:textColor="@color/black"
-                android:text="Past"/>
+			<org.lemonadestand.btb.components.radio.RadioButton
+				android:layout_width="0dp"
+				android:layout_height="match_parent"
+				android:layout_margin="2dp"
+				android:layout_weight="1"
+				android:fontFamily="@font/urbanist_bold"
+				android:gravity="center"
+				android:text="Past"
+				android:textColor="@color/black"
+				android:textSize="14sp" />
 
-            <org.lemonadestand.btb.components.radio.RadioButton
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:layout_margin="2dp"
-                android:gravity="center"
-                android:fontFamily="@font/urbanist_bold"
-                android:textSize="14sp"
-                android:textColor="@color/black"
-                android:text="Completed"/>
+			<org.lemonadestand.btb.components.radio.RadioButton
+				android:layout_width="0dp"
+				android:layout_height="match_parent"
+				android:layout_margin="2dp"
+				android:layout_weight="1"
+				android:fontFamily="@font/urbanist_bold"
+				android:gravity="center"
+				android:text="Completed"
+				android:textColor="@color/black"
+				android:textSize="14sp" />
 
-        </org.lemonadestand.btb.components.radio.RadioGroup>
+		</org.lemonadestand.btb.components.radio.RadioGroup>
 
-        <FrameLayout
-            android:id="@+id/event_fragment"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"/>
+		<FrameLayout
+			android:id="@+id/event_fragment"
+			android:layout_width="match_parent"
+			android:layout_height="0dp"
+			android:layout_weight="1" />
 
-    </LinearLayout>
+	</LinearLayout>
 
-    <ImageView
-        android:id="@+id/btnFloatingEvent"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="20dp"
-        android:scaleType="fitXY"
-        android:src="@drawable/circle_plus"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+	<ImageView
+		android:id="@+id/btnFloatingEvent"
+		android:layout_width="40dp"
+		android:layout_height="40dp"
+		android:layout_alignParentEnd="true"
+		android:layout_alignParentBottom="true"
+		android:layout_marginEnd="20dp"
+		android:layout_marginBottom="20dp"
+		android:scaleType="fitXY"
+		android:src="@drawable/circle_plus"
+		app:layout_constraintBottom_toBottomOf="parent"
+		app:layout_constraintEnd_toEndOf="parent" />
 
 </RelativeLayout>

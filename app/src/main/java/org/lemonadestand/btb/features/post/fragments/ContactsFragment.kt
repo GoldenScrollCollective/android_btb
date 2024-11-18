@@ -41,7 +41,7 @@ class ContactsFragment: BaseFragment(R.layout.fragment_contacts) {
         super.init()
 
         val navHeaderView = rootView.findViewById<NavHeaderView>(R.id.navHeaderView)
-        navHeaderView.onBackPressed = { navController.navigateUp() }
+        navHeaderView.onLeftPressed = { navController.navigateUp() }
 
         swipeRefresh = rootView.findViewById(R.id.swipeRefresh)
         swipeRefresh.setOnRefreshListener {

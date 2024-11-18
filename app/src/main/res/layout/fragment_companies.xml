@@ -1,55 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical">
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:orientation="vertical">
 
-    <org.lemonadestand.btb.components.NavHeaderView
-        android:id="@+id/navHeaderView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:title="@string/companies"/>
+	<org.lemonadestand.btb.components.NavHeaderView
+		android:id="@+id/navHeaderView"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		app:title="@string/companies"/>
 
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/swipeRefresh"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
+	<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+		android:id="@+id/swipeRefresh"
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
+		android:layout_weight="1">
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+		<RelativeLayout
+			android:layout_width="match_parent"
+			android:layout_height="match_parent">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                tools:listitem="@layout/layout_companies_item"/>
+			<androidx.recyclerview.widget.RecyclerView
+				android:id="@+id/recyclerView"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+				tools:listitem="@layout/layout_companies_item"/>
 
-            <include
-                android:id="@+id/noDataView"
-                layout="@layout/layout_no_companies"/>
+			<include
+				android:id="@+id/noDataView"
+				layout="@layout/layout_no_companies"/>
 
-            <com.facebook.shimmer.ShimmerFrameLayout
-                android:id="@+id/shimmerLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:animateLayoutChanges="true"
-                android:animationCache="true"
-                app:shimmer_repeat_mode="restart"
-                app:shimmer_shape="linear">
+			<com.facebook.shimmer.ShimmerFrameLayout
+				android:id="@+id/shimmerLayout"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:animateLayoutChanges="true"
+				android:animationCache="true"
+				app:shimmer_repeat_mode="restart"
+				app:shimmer_shape="linear">
 
-                <include
-                    android:visibility="visible"
-                    layout="@layout/layout_companies_shimmer"/>
+				<include
+					android:visibility="visible"
+					layout="@layout/layout_companies_shimmer"/>
 
-            </com.facebook.shimmer.ShimmerFrameLayout>
+			</com.facebook.shimmer.ShimmerFrameLayout>
 
-        </RelativeLayout>
+		</RelativeLayout>
 
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+	</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 </LinearLayout>

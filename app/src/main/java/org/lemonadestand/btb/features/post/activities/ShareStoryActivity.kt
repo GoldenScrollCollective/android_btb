@@ -24,6 +24,7 @@ import org.lemonadestand.btb.mvvm.factory.CommonViewModelFactory
 import org.lemonadestand.btb.mvvm.repository.HomeRepository
 import org.lemonadestand.btb.mvvm.viewmodel.HomeViewModel
 import org.lemonadestand.btb.singleton.Singleton
+import org.lemonadestand.btb.utils.AWSUploadHelper
 import org.lemonadestand.btb.utils.Utils
 
 class ShareStoryActivity : BaseActivity(R.layout.activity_share_story) {
@@ -33,7 +34,7 @@ class ShareStoryActivity : BaseActivity(R.layout.activity_share_story) {
 	private lateinit var mBinding: ActivityShareStoryBinding
 
 	lateinit var viewModel: HomeViewModel
-	private var currentUser : User? = null
+	private var currentUser: User? = null
 
 	private lateinit var mediaPreviewView: MediaPreviewView
 	private var uploadedFileUrl: String? = null
@@ -53,9 +54,12 @@ class ShareStoryActivity : BaseActivity(R.layout.activity_share_story) {
 		super.init()
 
 		mBinding = ActivityShareStoryBinding.inflate(layoutInflater)
+
+		mBinding.navHeaderView.onLeftPressed = { handleCancel() }
+		mBinding.navHeaderView.onRightPressed = { handleSave() }
+
 		setContentView(mBinding.root)
 		getData()
-		setOnClicks()
 		setUpViewModel()
 
 		webView = mBinding.webView
@@ -97,14 +101,6 @@ class ShareStoryActivity : BaseActivity(R.layout.activity_share_story) {
 
 	private fun getData() {
 		currentUser = Utils.getUser(this)
-	}
-
-	private fun setOnClicks() {
-		mBinding.icBack.setOnClickListener { onBackPressed() }
-
-		mBinding.btnSave.setOnClickListener {
-			handleSave()
-		}
 	}
 
 	private fun setUpViewModel() {
@@ -157,11 +153,15 @@ class ShareStoryActivity : BaseActivity(R.layout.activity_share_story) {
 			parent_id = "",
 			modified = "",
 			by_user_id = "",
-			visibility = if(mBinding.switchIsPrivate.isChecked)  "private" else "public",
+			visibility = if (mBinding.switchIsPrivate.isChecked) "private" else "public",
 			user = ShareStoryUser(id = "", name = ""),
 			anonymous = if (mBinding.shareAnonymouslySwitch.isChecked) "1" else "0"
 		)
 		viewModel.shareStory(requestBody)
+	}
 
+	private fun handleCancel() {
+		AWSUploadHelper.delete(uploadedFileUrl)
+		onBackPressedDispatcher.onBackPressed()
 	}
 }

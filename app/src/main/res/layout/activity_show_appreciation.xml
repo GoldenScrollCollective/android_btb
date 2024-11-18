@@ -4,74 +4,27 @@
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
-	android:orientation="vertical"
-	android:backgroundTint="@color/white"
 	android:background="@color/white"
+	android:backgroundTint="@color/white"
+	android:orientation="vertical"
 	tools:context=".features.post.activities.ShowAppreciationActivity">
 
-
-	<RelativeLayout
+	<org.lemonadestand.btb.components.NavHeaderView
+		android:id="@+id/navHeaderView"
 		android:layout_width="match_parent"
-		android:layout_height="@dimen/_40sdp"
-		android:layout_gravity="center_vertical"
-		android:background="@color/white">
-
-
-		<ImageView
-			android:id="@+id/ic_back"
-			android:layout_width="@dimen/_30sdp"
-			android:layout_height="@dimen/_30sdp"
-			android:layout_alignParentStart="true"
-			android:layout_centerVertical="true"
-			android:src="@drawable/icon_back"
-			app:tint="@color/btbOrange" />
-
-		<TextView
-			android:id="@+id/navName"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_centerInParent="true"
-			android:paddingHorizontal="@dimen/_30sdp"
-			android:fontFamily="@font/averiaseriflibre_regular"
-			android:text="Say Thanks..."
-			android:textColor="@color/btbOrange"
-			android:textSize="@dimen/_22sdp"
-			android:textStyle="bold" />
-
-		<androidx.appcompat.widget.AppCompatTextView
-			android:id="@+id/btn_save"
-			android:layout_width="wrap_content"
-			android:layout_height="match_parent"
-			android:layout_centerVertical="true"
-			android:layout_marginEnd="@dimen/_10sdp"
-			android:layout_alignParentEnd="true"
-			android:background="@drawable/gradient_bg"
-			android:gravity="center"
-			android:text="Save"
-			android:textColor="@color/btbOrange"
-			android:textSize="@dimen/_14sdp" />
-
-
-	</RelativeLayout>
-
+		android:layout_height="wrap_content"
+		app:title="Say Thanks..." />
 
 	<View
 		android:layout_width="match_parent"
 		android:layout_height="@dimen/_5sdp"
-		android:layout_marginTop="@dimen/_10sdp"
 		android:background="@color/light_grey_100" />
-
-
-
-
-
 
 	<androidx.constraintlayout.widget.ConstraintLayout
 		android:id="@+id/select_user"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:layout_marginVertical="@dimen/_2sdp"
-		>
+		android:layout_marginVertical="@dimen/_2sdp">
 
 		<TextView
 			android:id="@+id/textView25"
@@ -80,10 +33,10 @@
 			android:layout_marginStart="10dp"
 			android:layout_marginTop="5dp"
 			android:text="Who would you like to thank ?"
-			android:textSize="@dimen/_10sdp"
+			android:textAllCaps="true"
 
 			android:textColor="@color/text_grey"
-			android:textAllCaps="true"
+			android:textSize="@dimen/_10sdp"
 			app:layout_constraintStart_toStartOf="parent"
 			app:layout_constraintTop_toTopOf="parent" />
 
@@ -93,7 +46,7 @@
 			android:layout_height="wrap_content"
 			android:layout_marginStart="10dp"
 			android:fontFamily="@font/urbanist_variablefont_wght"
-			android:text="Select team members"
+			android:hint="Select team members..."
 			app:layout_constraintBottom_toBottomOf="parent"
 			app:layout_constraintStart_toStartOf="parent"
 			app:layout_constraintTop_toBottomOf="@+id/textView25" />
@@ -116,9 +69,9 @@
 
 		android:layout_width="match_parent"
 		android:layout_height="2dp"
+		android:layout_marginTop="@dimen/_5sdp"
 		android:background="@drawable/background_line"
 		app:layout_constraintEnd_toEndOf="parent"
-		android:layout_marginTop="@dimen/_5sdp"
 
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toBottomOf="@+id/linearLayout3" />
@@ -127,8 +80,7 @@
 		android:id="@+id/cn_thanks"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:layout_marginVertical="@dimen/_2sdp"
-		>
+		android:layout_marginVertical="@dimen/_2sdp">
 
 		<TextView
 			android:id="@+id/w_r_u_thanks"
@@ -137,10 +89,10 @@
 			android:layout_marginStart="10dp"
 			android:layout_marginTop="5dp"
 			android:text="Why would you like to thank ?"
-			android:textSize="@dimen/_10sdp"
+			android:textAllCaps="true"
 
 			android:textColor="@color/text_grey"
-			android:textAllCaps="true"
+			android:textSize="@dimen/_10sdp"
 			app:layout_constraintStart_toStartOf="parent"
 			app:layout_constraintTop_toTopOf="parent" />
 
@@ -173,12 +125,10 @@
 		android:id="@+id/spinner"
 		android:layout_width="match_parent"
 		android:layout_height="0dp"
-		android:visibility="visible"
 		android:dropDownWidth="@dimen/_400sdp"
 		android:dropDownVerticalOffset="@dimen/_5sdp"
 		android:spinnerMode="dropdown"
-		/>
-
+		android:visibility="visible" />
 
 
 	<LinearLayout
@@ -194,8 +144,7 @@
 			android:id="@+id/btn_message"
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"
-			android:layout_marginTop="@dimen/_10sdp"
-			>
+			android:layout_marginTop="@dimen/_10sdp">
 
 			<TextView
 				android:id="@+id/textView4"
@@ -204,10 +153,10 @@
 				android:layout_marginStart="10dp"
 
 				android:text="Message"
-				android:textSize="@dimen/_10sdp"
+				android:textAllCaps="true"
 
 				android:textColor="@color/text_grey"
-				android:textAllCaps="true"
+				android:textSize="@dimen/_10sdp"
 				app:layout_constraintStart_toStartOf="parent"
 				app:layout_constraintTop_toTopOf="parent" />
 
@@ -218,8 +167,8 @@
 				android:layout_marginStart="10dp"
 				android:fontFamily="@font/urbanist_variablefont_wght"
 
-				android:maxLines="1"
 				android:hint="@string/write_your_message_here"
+				android:maxLines="1"
 				android:textSize="17dp"
 				app:layout_constraintBottom_toBottomOf="parent"
 				app:layout_constraintStart_toStartOf="parent"
@@ -244,9 +193,9 @@
 
 		android:layout_width="match_parent"
 		android:layout_height="2dp"
+		android:layout_marginTop="@dimen/_5sdp"
 		android:background="@drawable/background_line"
 		app:layout_constraintEnd_toEndOf="parent"
-		android:layout_marginTop="@dimen/_5sdp"
 
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toBottomOf="@+id/linearLayout3" />
@@ -284,9 +233,9 @@
 				android:id="@+id/amount"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
+				android:layout_marginStart="10dp"
 				android:text="$0"
 				android:textAllCaps="true"
-				android:layout_marginStart="10dp"
 				android:textColor="@color/black"
 				android:textSize="@dimen/_12sdp"
 				android:textStyle="bold"
@@ -295,14 +244,13 @@
 				app:layout_constraintTop_toBottomOf="@+id/calcDate" />
 
 
-
 			<androidx.cardview.widget.CardView
 				android:id="@+id/cardView3"
 				android:layout_width="wrap_content"
 				android:layout_height="30dp"
 				android:layout_marginEnd="10dp"
-				app:cardCornerRadius="@dimen/_7sdp"
 				app:cardBackgroundColor="@color/tabcolor"
+				app:cardCornerRadius="@dimen/_7sdp"
 				app:layout_constraintBottom_toBottomOf="parent"
 				app:layout_constraintEnd_toEndOf="parent"
 				app:layout_constraintTop_toTopOf="parent">
@@ -326,9 +274,8 @@
 					<View
 						android:layout_width="1dp"
 						android:layout_height="match_parent"
-						android:background="@color/light_grey_100"
 						android:layout_marginVertical="@dimen/_3sdp"
-						/>
+						android:background="@color/light_grey_100" />
 
 					<TextView
 						android:id="@+id/btnIncrease"
@@ -347,6 +294,7 @@
 
 
 	</LinearLayout>
+
 	<androidx.constraintlayout.widget.ConstraintLayout
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content">
@@ -358,10 +306,10 @@
 			android:layout_marginStart="10dp"
 
 			android:text="Debit From?"
-			android:textSize="@dimen/_10sdp"
+			android:textAllCaps="true"
 
 			android:textColor="@color/text_grey"
-			android:textAllCaps="true"
+			android:textSize="@dimen/_10sdp"
 			app:layout_constraintBottom_toBottomOf="parent"
 			app:layout_constraintStart_toStartOf="parent"
 			app:layout_constraintTop_toTopOf="parent" />
@@ -369,13 +317,13 @@
 		<androidx.cardview.widget.CardView
 			android:layout_width="wrap_content"
 			android:layout_height="30dp"
+			android:layout_marginTop="@dimen/_5sdp"
 			android:layout_marginEnd="10dp"
-			app:cardCornerRadius="@dimen/_7sdp"
-			app:cardElevation="0dp"
+			android:layout_marginBottom="@dimen/_5sdp"
 			app:cardBackgroundColor="@color/tabcolor"
 
-			android:layout_marginTop="@dimen/_5sdp"
-			android:layout_marginBottom="@dimen/_5sdp"
+			app:cardCornerRadius="@dimen/_7sdp"
+			app:cardElevation="0dp"
 			app:layout_constraintBottom_toBottomOf="parent"
 			app:layout_constraintEnd_toEndOf="parent"
 			app:layout_constraintTop_toTopOf="parent">
@@ -391,19 +339,19 @@
 					android:id="@+id/btn_giving"
 					android:layout_width="wrap_content"
 					android:layout_height="match_parent"
+					android:layout_marginEnd="@dimen/_1sdp"
 					android:gravity="center"
 					android:text=" Giving ($0) "
 					android:textColor="@color/black"
 					android:textSize="@dimen/_10sdp"
-					android:layout_marginEnd="@dimen/_1sdp"
 					android:textStyle="bold" />
 
 				<TextView
 					android:id="@+id/btn_spending"
 					android:layout_width="wrap_content"
 					android:layout_height="match_parent"
-					android:gravity="center"
 					android:layout_marginStart="@dimen/_1sdp"
+					android:gravity="center"
 					android:text=" Spending ($0) "
 					android:textColor="@color/black"
 					android:textSize="@dimen/_10sdp"
@@ -479,9 +427,9 @@
 
 		android:layout_width="match_parent"
 		android:layout_height="2dp"
+		android:layout_marginTop="@dimen/_5sdp"
 		android:background="@drawable/background_line"
 		app:layout_constraintEnd_toEndOf="parent"
-		android:layout_marginTop="@dimen/_5sdp"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toBottomOf="@+id/linearLayout3" />
 
@@ -489,8 +437,8 @@
 	<LinearLayout
 		android:layout_width="match_parent"
 		android:layout_height="@dimen/_35sdp"
-		android:orientation="horizontal"
 		android:gravity="center_vertical"
+		android:orientation="horizontal"
 		android:paddingHorizontal="@dimen/_10sdp">
 
 		<androidx.appcompat.widget.AppCompatTextView
@@ -508,7 +456,7 @@
 			android:id="@+id/uploadButton"
 			android:layout_width="@dimen/_56sdp"
 			android:layout_height="@dimen/_35sdp"
-			app:mimeType="image"/>
+			app:mimeType="image" />
 
 	</LinearLayout>
 
@@ -516,6 +464,6 @@
 		android:id="@+id/mediaPreviewView"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:visibility="gone"/>
+		android:visibility="gone" />
 
 </LinearLayout>

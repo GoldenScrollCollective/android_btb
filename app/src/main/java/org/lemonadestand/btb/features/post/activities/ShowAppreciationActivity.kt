@@ -7,7 +7,6 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.core.text.HtmlCompat
-import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
 import com.google.gson.Gson
 import org.lemonadestand.btb.App
@@ -20,12 +19,11 @@ import org.lemonadestand.btb.constants.ProgressDialogUtil
 import org.lemonadestand.btb.constants.handleCommonResponse
 import org.lemonadestand.btb.databinding.ActivityShowAppreciationBinding
 import org.lemonadestand.btb.extensions.lastPathComponent
-import org.lemonadestand.btb.extensions.setOnSingleClickListener
-import org.lemonadestand.btb.features.common.fragments.UserListFragmentMulti
+import org.lemonadestand.btb.features.common.fragments.SelectMultiUsersBottomSheetFragment
 import org.lemonadestand.btb.features.common.fragments.WriteMessageFragment
 import org.lemonadestand.btb.features.common.models.UserListModel
-import org.lemonadestand.btb.features.common.models.body.AppreciationRequestBody
 import org.lemonadestand.btb.features.common.models.body.AppreciationMeta
+import org.lemonadestand.btb.features.common.models.body.AppreciationRequestBody
 import org.lemonadestand.btb.features.common.models.body.ShareStoryUser
 import org.lemonadestand.btb.features.login.models.User
 import org.lemonadestand.btb.interfaces.OnItemClickListener
@@ -33,6 +31,7 @@ import org.lemonadestand.btb.mvvm.factory.CommonViewModelFactory
 import org.lemonadestand.btb.mvvm.repository.HomeRepository
 import org.lemonadestand.btb.mvvm.viewmodel.HomeViewModel
 import org.lemonadestand.btb.singleton.Singleton
+import org.lemonadestand.btb.utils.AWSUploadHelper
 import org.lemonadestand.btb.utils.Utils
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -40,8 +39,8 @@ import java.util.Calendar
 
 class ShowAppreciationActivity : BaseActivity(R.layout.activity_show_appreciation), OnItemClickListener {
 	private lateinit var mBinding: ActivityShowAppreciationBinding
-	private var bottomSheetFragment: UserListFragmentMulti? = null
-	private var bottomSheetFragmentMessage: WriteMessageFragment? = null
+	private var bottomSheetFragment: SelectMultiUsersBottomSheetFragment? = null
+
 	private var whyThank: String = ""
 	private var bonusAmount = 0
 	private var amountSpend = 0
@@ -80,12 +79,16 @@ class ShowAppreciationActivity : BaseActivity(R.layout.activity_show_appreciatio
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		mBinding = ActivityShowAppreciationBinding.inflate(layoutInflater)
+
 		setContentView(mBinding.root)
 		getData()
 		setBackgrounds()
 		setClickEvents()
 		setSpinner()
 		setUpViewModel()
+
+		mBinding.navHeaderView.onLeftPressed = { handleCancel() }
+		mBinding.navHeaderView.onRightPressed = { handleSave() }
 
 		mediaPreviewView = findViewById(R.id.mediaPreviewView)
 		val uploadButton = findViewById<UploadButton>(R.id.uploadButton)
@@ -98,16 +101,14 @@ class ShowAppreciationActivity : BaseActivity(R.layout.activity_show_appreciatio
 		val dateFormat1 = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
 		val formattedDate1 = dateFormat1.format(calendar!!.time)
 		currentDate = formattedDate1
-		if(currentUser!!.give != null)
-		{
+		if (currentUser!!.give != null) {
 			maxValue = currentUser!!.give.toDouble()
 //            maxValue = 10.0
 			mBinding.btnGiving.text = buildString {
 				append(" Giving (\$${maxValue}) ")
 			}
 		}
-		if(currentUser!!.spend != null)
-		{
+		if (currentUser!!.spend != null) {
 			maxValueSpend = currentUser!!.spend.toDouble()
 			mBinding.btnSpending.text = buildString {
 				append(" Spending (\$${maxValueSpend}) ")
@@ -135,7 +136,7 @@ class ShowAppreciationActivity : BaseActivity(R.layout.activity_show_appreciatio
 			"Generosity"
 		)
 
-		mBinding.spinner.adapter = ArrayAdapter(this, R.layout.row_dropdown_item, R.id.tv_item_name, data);
+		mBinding.spinner.adapter = ArrayAdapter(this, R.layout.row_dropdown_item, R.id.tv_item_name, data)
 		mBinding.spinner.onItemSelectedListener = object :
 			AdapterView.OnItemSelectedListener {
 			override fun onItemSelected(
@@ -153,9 +154,8 @@ class ShowAppreciationActivity : BaseActivity(R.layout.activity_show_appreciatio
 		}
 	}
 
-	private fun setTotalMoney(type : String){
-		if( type == "give")
-		{
+	private fun setTotalMoney(type: String) {
+		if (type == "give") {
 			totalAmount = bonusAmount * reminderUerList.size
 			Log.i("TotalAmount====>", totalAmount.toString())
 
@@ -163,8 +163,7 @@ class ShowAppreciationActivity : BaseActivity(R.layout.activity_show_appreciatio
 				append("$")
 				append(totalAmount)
 			}
-		}
-		else {
+		} else {
 			totalAmount = amountSpend * reminderUerList.size
 
 			mBinding.totalDebit.text = buildString {
@@ -175,15 +174,19 @@ class ShowAppreciationActivity : BaseActivity(R.layout.activity_show_appreciatio
 	}
 
 	private fun setClickEvents() {
-		mBinding.icBack.setOnClickListener { onBackPressed() }
-
-
 		mBinding.btnMessage.setOnClickListener {
 			showBottomSheetMessage()
 		}
 
 		mBinding.selectUser.setOnClickListener {
-			showBottomSheet()
+			SelectMultiUsersBottomSheetFragment().apply {
+				arguments = Bundle().apply {
+					putString("title", "Select team members")
+					putString("list", Gson().toJson(reminderUerList))
+				}
+				setCallback(this@ShowAppreciationActivity)
+				show(supportFragmentManager, tag)
+			}
 		}
 
 		mBinding.cnThanks.setOnClickListener {
@@ -192,14 +195,12 @@ class ShowAppreciationActivity : BaseActivity(R.layout.activity_show_appreciatio
 
 		mBinding.btnIncrease.setOnClickListener {
 			currentUser = Utils.getUser(this)
-			Log.e("Money",maxValue.toString())
+			Log.e("Money", maxValue.toString())
 			maxValue = currentUser!!.give.toDouble()
 //            maxValue = 10.0
 			maxValueSpend = currentUser!!.spend.toDouble()
-			if (debit == "give")
-			{
-				if (bonusAmount == maxValue.toInt())
-				{
+			if (debit == "give") {
+				if (bonusAmount == maxValue.toInt()) {
 					return@setOnClickListener
 				}
 				bonusAmount += 1
@@ -207,10 +208,8 @@ class ShowAppreciationActivity : BaseActivity(R.layout.activity_show_appreciatio
 					append("$")
 					append(bonusAmount)
 				}
-			}
-			else{
-				if (amountSpend == maxValueSpend.toInt())
-				{
+			} else {
+				if (amountSpend == maxValueSpend.toInt()) {
 					return@setOnClickListener
 				}
 				amountSpend += 1
@@ -223,8 +222,7 @@ class ShowAppreciationActivity : BaseActivity(R.layout.activity_show_appreciatio
 			setTotalMoney(debit)
 		}
 		mBinding.btnDecrease.setOnClickListener {
-			if (debit == "give")
-			{
+			if (debit == "give") {
 				if (bonusAmount > 0) {
 					bonusAmount -= 1
 				}
@@ -233,9 +231,7 @@ class ShowAppreciationActivity : BaseActivity(R.layout.activity_show_appreciatio
 					append("$")
 					append(bonusAmount)
 				}
-			}
-			else
-			{
+			} else {
 				if (amountSpend > 0) {
 					amountSpend -= 1
 				}
@@ -266,8 +262,6 @@ class ShowAppreciationActivity : BaseActivity(R.layout.activity_show_appreciatio
 
 			setTotalMoney(debit)
 		}
-
-		mBinding.btnSave.setOnSingleClickListener { handleSave() }
 	}
 
 	private fun updateGivingButtonUi(isGiving: Boolean) {
@@ -282,47 +276,12 @@ class ShowAppreciationActivity : BaseActivity(R.layout.activity_show_appreciatio
 	}
 
 
-	private fun showBottomSheet() {
-		if (bottomSheetFragment == null) {
-			val fragmentManager: FragmentManager = supportFragmentManager
-//            bottomSheetFragment = UserListFragment()
-			val fragment = UserListFragmentMulti()
-
-			val bundle = Bundle()
-			Log.e("Multi selector json from users=>", reminderUerList.toString())
-			val json = Gson().toJson(reminderUerList)
-			Log.i("Multi selector json from activity=>", json.toString())
-			bundle.putString("list", json)
-
-			fragment.arguments = bundle
-
-			bottomSheetFragment = fragment
-
-			bottomSheetFragment?.setCallback(this)
-			bottomSheetFragment?.show(fragmentManager, bottomSheetFragment!!.tag)
-
-		} else {
-			Log.e("BottomSheet===>", reminderUerListJson.toString())
-			val fragment = UserListFragmentMulti()
-
-			val bundle = Bundle()
-			val json = Gson().toJson(reminderUerList)
-			bundle.putString("list", json)
-			fragment.arguments = bundle
-
-			bottomSheetFragment = fragment
-
-			bottomSheetFragment?.setCallback(this)
-
-			bottomSheetFragment!!.show(supportFragmentManager, bottomSheetFragment!!.tag)
-		}
-	}
-
 	private fun showBottomSheetMessage() {
-		bottomSheetFragmentMessage = WriteMessageFragment()
-		bottomSheetFragmentMessage?.setCallback(this)
-		bottomSheetFragmentMessage?.arguments = Bundle().apply { putString("message", htmlMessage) }
-		bottomSheetFragmentMessage?.show(supportFragmentManager, bottomSheetFragmentMessage!!.tag)
+		WriteMessageFragment().apply {
+			setCallback(this@ShowAppreciationActivity)
+			arguments = Bundle().apply { putString("message", htmlMessage) }
+			show(supportFragmentManager, tag)
+		}
 	}
 
 	override fun onItemClicked(`object`: Any?, index: Int, type: ClickType, superIndex: Int) {
@@ -334,17 +293,15 @@ class ShowAppreciationActivity : BaseActivity(R.layout.activity_show_appreciatio
 		}
 		bottomSheetFragment?.dismiss()
 
-		val list = `object` as ArrayList<UserListModel>
+		val list = `object` as ArrayList<UserListModel>?
 		val textString: String
-
-		selectedUser = list[0]
 
 		if (list.isNullOrEmpty()) {
 			reminderUerList = ArrayList()
 			reminderUerListJson = ArrayList()
 			textString = getString(R.string.set_notification)
-
 		} else {
+			selectedUser = list[0]
 			reminderUerList = list
 			textString = reminderUerList.joinToString(separator = ", ") { it.name }
 			reminderUerListJson.clear()
@@ -354,14 +311,14 @@ class ShowAppreciationActivity : BaseActivity(R.layout.activity_show_appreciatio
 			}
 
 			Log.e("ReminderUserListJson", reminderUerListJson.toString())
-			if(reminderUerListJson.size > 1) {
+			if (reminderUerListJson.size > 1) {
 				mBinding.linearLayout9.visibility = View.VISIBLE
 			} else {
 				mBinding.linearLayout9.visibility = View.GONE
 			}
 		}
 
-		if(bonusAmount > 0) {
+		if (bonusAmount > 0) {
 			totalAmount = bonusAmount * reminderUerListJson.size
 
 			mBinding.totalDebit.text = buildString {
@@ -441,5 +398,10 @@ class ShowAppreciationActivity : BaseActivity(R.layout.activity_show_appreciatio
 			users = reminderUerListJson
 		)
 		viewModel.addAppreciation(requestBody)
+	}
+
+	private fun handleCancel() {
+		AWSUploadHelper.delete(uploadedFileUrl)
+		onBackPressedDispatcher.onBackPressed()
 	}
 }

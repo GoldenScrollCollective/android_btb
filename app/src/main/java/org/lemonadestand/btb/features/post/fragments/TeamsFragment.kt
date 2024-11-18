@@ -41,7 +41,7 @@ class TeamsFragment: BaseFragment(R.layout.fragment_teams) {
         super.init()
 
         val navHeaderView = rootView.findViewById<NavHeaderView>(R.id.navHeaderView)
-        navHeaderView.onBackPressed = { navController.navigateUp() }
+        navHeaderView.onLeftPressed = { navController.navigateUp() }
 
         swipeRefresh = rootView.findViewById(R.id.swipeRefresh)
         swipeRefresh.setOnRefreshListener {

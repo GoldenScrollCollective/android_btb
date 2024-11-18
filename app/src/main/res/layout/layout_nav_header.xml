@@ -1,29 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="@dimen/_32sdp"
-    android:paddingHorizontal="@dimen/_8sdp">
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:layout_width="match_parent"
+	android:layout_height="@dimen/_36sdp"
+	android:background="@color/white">
 
-    <ImageView
-        android:id="@+id/btnBack"
-        android:layout_width="32.5dp"
-        android:layout_height="32.5dp"
-        android:layout_marginTop="10dp"
-        android:layout_centerVertical="true"
-        android:src="@drawable/chevron_right_24"
-        android:rotation="180"
-        app:tint="@color/accentColor"/>
+	<RelativeLayout
+		android:id="@+id/btnLeft"
+		android:layout_width="wrap_content"
+		android:layout_height="match_parent"
+		android:paddingStart="@dimen/_10sdp">
 
-    <TextView
-        android:id="@+id/titleView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:fontFamily="@font/urbanist_bold"
-        android:textSize="@dimen/_20sdp"
-        android:textColor="@color/accentColor"
-        android:textAlignment="center"
-        android:text="Team"/>
+		<ImageView
+			android:layout_width="@dimen/_24sdp"
+			android:layout_height="@dimen/_24sdp"
+			android:padding="@dimen/_4sdp"
+			android:layout_marginTop="10dp"
+			android:layout_centerVertical="true"
+			android:src="@drawable/chevron_prev_24"
+			app:tint="@color/accentColor"/>
+
+	</RelativeLayout>
+
+	<androidx.appcompat.widget.AppCompatTextView
+		android:id="@+id/titleView"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_centerInParent="true"
+		android:fontFamily="@font/urbanist_bold"
+		android:textSize="18sp"
+		android:textColor="@color/accentColor"
+		android:textAlignment="center"
+		android:text="Team"/>
+
+	<androidx.appcompat.widget.AppCompatTextView
+		android:id="@+id/btnRight"
+		android:layout_width="wrap_content"
+		android:layout_height="match_parent"
+		android:layout_marginEnd="@dimen/_10sdp"
+		android:gravity="center"
+		android:layout_alignParentEnd="true"
+		android:fontFamily="@font/urbanist_medium"
+		android:textColor="@color/accentColor"
+		android:textSize="18sp"
+		android:text="Save"/>
 
 </RelativeLayout>

@@ -3,9 +3,6 @@ package org.lemonadestand.btb.utils
 import android.net.Uri
 import android.util.Log
 import com.amazonaws.auth.BasicAWSCredentials
-import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener
-import com.amazonaws.mobileconnectors.s3.transferutility.TransferState
-import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility
 import com.amazonaws.regions.Region
 import com.amazonaws.regions.Regions
 import com.amazonaws.services.s3.AmazonS3Client
@@ -22,7 +19,6 @@ import org.lemonadestand.btb.extensions.fileExtension
 import org.lemonadestand.btb.extensions.filePath
 import org.lemonadestand.btb.extensions.mediaDimension
 import java.io.File
-import java.lang.Exception
 import java.util.Date
 import kotlin.math.min
 
@@ -42,6 +38,13 @@ object AWSUploadHelper {
 		fun onComplete(result: String?, error: String?)
 	}
 
+	private val s3Client: AmazonS3Client
+
+	init {
+		val credentials = BasicAWSCredentials(ACCESS_KEY_ID, SECRET_ACCESS_KEY)
+		s3Client = AmazonS3Client(credentials, Region.getRegion(Regions.US_WEST_2))
+	}
+
 	fun upload(fileUri: Uri?, callback: Callback? = null) {
 		fileUri ?: return
 
@@ -50,13 +53,11 @@ object AWSUploadHelper {
 			val filePath = fileUri.filePath() ?: return@launch
 			val size = fileUri.mediaDimension() ?: return@launch
 
-			val credentials = BasicAWSCredentials(ACCESS_KEY_ID, SECRET_ACCESS_KEY)
-			val s3Client = AmazonS3Client(credentials, Region.getRegion(Regions.US_WEST_2))
-			val transferUtility = TransferUtility.builder()
-				.context(App.instance)
-				.s3Client(s3Client)
-				.defaultBucket(BUCKET_NAME)
-				.build()
+//			val transferUtility = TransferUtility.builder()
+//				.context(App.instance)
+//				.s3Client(s3Client)
+//				.defaultBucket(BUCKET_NAME)
+//				.build()
 
 			val fileName = "${Date().time.toInt()}_w${size.width}_h${size.height}_.${fileUri.fileExtension()}"
 			val key = "${currentUser.uniqueId}/${fileName}"
@@ -76,7 +77,7 @@ object AWSUploadHelper {
 					.withFile(file)
 					.withKey(key)
 					.withUploadId(uploadId)
-					.withPartNumber(partNumber+1)
+					.withPartNumber(partNumber + 1)
 					.withFileOffset(partNumber * MIN_DEFAULT_PART_SIZE)
 					.withPartSize(partSize)
 				uploadPartRequest.setGeneralProgressListener { event ->
@@ -119,5 +120,16 @@ object AWSUploadHelper {
 //			}
 //		})
 
+	}
+
+	fun delete(fileUri: String?) {
+		fileUri ?: return
+
+		CoroutineScope(Dispatchers.IO).launch {
+			val currentUser = Utils.getUser(App.instance) ?: return@launch
+			val parts = fileUri.split(currentUser.uniqueId)
+			val key = "${currentUser.uniqueId}${parts.last()}"
+			s3Client.deleteObject(BUCKET_NAME, key)
+		}
 	}
 }

@@ -47,15 +47,27 @@ class HomeViewModel(
 		homeRepository.getPostList(page = page, visibility = visibility)
 	}
 
-	fun getPosts(page: Int, resource: String = "", visibility: String, community: Int, type: String = "") = viewModelScope.launch {
+	fun getPosts(
+		page: Int,
+		resource: String = "",
+		visibility: String,
+		community: Int,
+		type: String? = null
+	) = viewModelScope.launch {
 		if (!hasInternetConnection()) {
 			noInternet.postValue("No Internet Connection")
 			return@launch
 		}
-		homeRepository.getPosts(page = page, resource, visibility = visibility, community = community, type = type)
+		homeRepository.getPosts(
+			page = page,
+			resource,
+			visibility = visibility,
+			community = community,
+			type = type
+		)
 	}
 
-	fun addLike(likeModel : LikeBodyModel) = viewModelScope.launch {
+	fun addLike(likeModel: LikeBodyModel) = viewModelScope.launch {
 		isLoading.postValue(true)
 		if (hasInternetConnection()) {
 			homeRepository.addLike(likeModel)
@@ -65,7 +77,7 @@ class HomeViewModel(
 		}
 	}
 
-	fun shareStory(model : ShareStoryBody) = viewModelScope.launch {
+	fun shareStory(model: ShareStoryBody) = viewModelScope.launch {
 		isLoading.postValue(true)
 		if (hasInternetConnection()) {
 			homeRepository.shareStory(model)
@@ -75,7 +87,7 @@ class HomeViewModel(
 		}
 	}
 
-	fun addAppreciation(model : AppreciationRequestBody) = viewModelScope.launch {
+	fun addAppreciation(model: AppreciationRequestBody) = viewModelScope.launch {
 		isLoading.postValue(true)
 		if (hasInternetConnection()) {
 			homeRepository.addAppreciation(model)
@@ -85,7 +97,7 @@ class HomeViewModel(
 		}
 	}
 
-	fun addComment(model : AddCommentBody) = viewModelScope.launch {
+	fun addComment(model: AddCommentBody) = viewModelScope.launch {
 		isLoading.postValue(true)
 		if (hasInternetConnection()) {
 			homeRepository.addComment(model)
@@ -94,7 +106,8 @@ class HomeViewModel(
 
 		}
 	}
-	fun deletePost(uniqueId : String) = viewModelScope.launch {
+
+	fun deletePost(uniqueId: String) = viewModelScope.launch {
 		isLoading.postValue(true)
 		if (!hasInternetConnection()) {
 			noInternet.postValue("No Internet Connection")
