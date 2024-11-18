@@ -2,7 +2,6 @@ package org.lemonadestand.btb.features.event.fragments
 
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,13 +9,11 @@ import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import org.lemonadestand.btb.R
 import org.lemonadestand.btb.components.base.BaseFragment
-import org.lemonadestand.btb.constants.ClickType
 import org.lemonadestand.btb.constants.getImageUrlFromName
 import org.lemonadestand.btb.databinding.FragmentEventsBinding
 import org.lemonadestand.btb.extensions.setOnSingleClickListener
 import org.lemonadestand.btb.features.common.fragments.TeamAndContactsFragment
 import org.lemonadestand.btb.features.common.models.UserListModel
-import org.lemonadestand.btb.interfaces.OnItemClickListener
 import org.lemonadestand.btb.utils.Storage
 import org.lemonadestand.btb.utils.Utils
 import java.util.Locale
@@ -59,13 +56,10 @@ class EventsFragment : BaseFragment(R.layout.fragment_events) {
 
 		mBinding.userCard.setOnClickListener {
 			val teamAndContactsFragment = TeamAndContactsFragment()
-			teamAndContactsFragment.setCallback(object : OnItemClickListener {
-				override fun onItemClicked(`object`: Any?, index: Int, type: ClickType, superIndex: Int) {
-					val value = `object` as UserListModel
-					selectedUser = value
-					teamAndContactsFragment.dismiss()
-				}
-			})
+			teamAndContactsFragment.onSelect = {
+				selectedUser = it
+				teamAndContactsFragment.dismiss()
+			}
 			teamAndContactsFragment.arguments = Bundle().apply {
 				putString("title", "Show Event For :")
 				putBoolean("is_event", true)
@@ -93,6 +87,7 @@ class EventsFragment : BaseFragment(R.layout.fragment_events) {
 				}
 				mBinding.btnFloatingEvent.visibility = View.VISIBLE
 			}
+
 			1 -> {
 				if (currentFragment is PastEventFragment) return
 				currentFragment = PastEventFragment().apply {
@@ -106,6 +101,7 @@ class EventsFragment : BaseFragment(R.layout.fragment_events) {
 				}
 				mBinding.btnFloatingEvent.visibility = View.GONE
 			}
+
 			2 -> {
 				if (currentFragment is CompletedEventsFragment) return
 				currentFragment = CompletedEventsFragment().apply {

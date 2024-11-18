@@ -6,213 +6,213 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
-
+import com.bumptech.glide.Glide
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import org.lemonadestand.btb.R
-
-import androidx.core.view.GravityCompat
-import androidx.drawerlayout.widget.DrawerLayout
-import com.bumptech.glide.Glide
 import org.lemonadestand.btb.components.base.BaseActivity
 import org.lemonadestand.btb.constants.getImageUrlFromName
 import org.lemonadestand.btb.extensions.setOnSingleClickListener
 import org.lemonadestand.btb.features.login.activities.LoginActivity
+import org.lemonadestand.btb.features.post.fragments.HomeFragmentDirections
 import org.lemonadestand.btb.utils.Utils
 
 class DashboardActivity : BaseActivity(R.layout.activity_dashboard) {
 
-    private lateinit var bottomNav: BottomNavigationView
-    private lateinit var navController: NavController
-    private lateinit var line1: TextView
-    private lateinit var line2: TextView
-    private lateinit var line3: TextView
-    private lateinit var mainDrawer: DrawerLayout
+	private lateinit var bottomNav: BottomNavigationView
+	private lateinit var navController: NavController
+	private lateinit var line1: TextView
+	private lateinit var line2: TextView
+	private lateinit var line3: TextView
+	private lateinit var mainDrawer: DrawerLayout
 
-    override fun onResume() {
-        super.onResume()
+	override fun onResume() {
+		super.onResume()
 
-        updateNavigationView()
-    }
+		updateNavigationView()
+	}
 
-    override fun init() {
-        super.init()
+	override fun init() {
+		super.init()
 
-        initLayoutViews()
-        setDrawerNavigation()
-        setBottomNavigation()
-        setBottomListener()
-        handleBottomUiEvent(bottomNav.selectedItemId)
+		initLayoutViews()
+		setDrawerNavigation()
+		setBottomNavigation()
+		setBottomListener()
+		handleBottomUiEvent(bottomNav.selectedItemId)
 
-        mainDrawer = findViewById(R.id.main_drawer)
-    }
+		mainDrawer = findViewById(R.id.main_drawer)
+	}
 
-    // Expose a method to control DrawerLayout visibility
-    fun toggleDrawer() {
-        if (mainDrawer.isDrawerOpen(GravityCompat.START)) {
-            mainDrawer.closeDrawer(GravityCompat.START)
-        } else {
-            mainDrawer.openDrawer(GravityCompat.START)
-        }
-    }
-
-
-    private fun setBottomListener() {
-
-        bottomNav.setOnItemSelectedListener { item ->
-            when (item.itemId) {
-
-                R.id.homeFragment -> {
-                    navController.navigate(R.id.homeFragment)
-                    handleBottomUiEvent(R.id.homeFragment)
-                }
-
-                R.id.eventFragment -> {
-                    navController.navigate(R.id.eventFragment)
-                    handleBottomUiEvent(R.id.eventFragment)
-                }
-                R.id.interestFragment -> {
-                    navController.navigate(R.id.interestFragment)
-                    handleBottomUiEvent(R.id.interestFragment)
-                }
-
-                R.id.moreFragment -> {
-                    navController.navigate(R.id.moreFragment)
-                    handleBottomUiEvent(R.id.moreFragment)
-                }
-            }
-            true
-        }
+	// Expose a method to control DrawerLayout visibility
+	fun toggleDrawer() {
+		if (mainDrawer.isDrawerOpen(GravityCompat.START)) {
+			mainDrawer.closeDrawer(GravityCompat.START)
+		} else {
+			mainDrawer.openDrawer(GravityCompat.START)
+		}
+	}
 
 
-    }
+	private fun setBottomListener() {
 
-    private fun handleBottomUiEvent(id: Int) {
+		bottomNav.setOnItemSelectedListener { item ->
+			when (item.itemId) {
 
-        when (id) {
-            R.id.homeFragment -> {
-                Log.e("clicked=>", "done")
-                deselectAllColor()
-                bottomNav.itemIconTintList = null
-                resetAllIcons()
-                bottomNav.menu.getItem(0).icon =
-                    ContextCompat.getDrawable(this, R.drawable.nav_heart_selected)
+				R.id.homeFragment -> {
+					navController.navigate(R.id.homeFragment)
+					handleBottomUiEvent(R.id.homeFragment)
+				}
 
-                line1.setBackgroundColor(Color.rgb(222, 160, 55))
-            }
+				R.id.eventFragment -> {
+					navController.navigate(R.id.eventFragment)
+					handleBottomUiEvent(R.id.eventFragment)
+				}
 
-            R.id.eventFragment -> {
-                deselectAllColor()
-                resetAllIcons()
-                bottomNav.menu.getItem(1).icon =
-                    ContextCompat.getDrawable(this, R.drawable.events_gold)
-                bottomNav.itemIconTintList = null
+				R.id.interestFragment -> {
+					navController.navigate(R.id.interestFragment)
+					handleBottomUiEvent(R.id.interestFragment)
+				}
 
-                line2.setBackgroundColor(Color.rgb(222, 160, 55))
-            }
+				R.id.moreFragment -> {
+					navController.navigate(R.id.moreFragment)
+					handleBottomUiEvent(R.id.moreFragment)
+				}
+			}
+			true
+		}
 
-            R.id.interestFragment -> {
-                deselectAllColor()
-                resetAllIcons()
-                bottomNav.menu.getItem(2).icon =
-                    ContextCompat.getDrawable(this, R.drawable.nav_interest_selected)
-                bottomNav.itemIconTintList = null
-                line3.setBackgroundColor(Color.rgb(10, 78, 120))
 
-            }
-        }
+	}
 
-    }
+	private fun handleBottomUiEvent(id: Int) {
 
-    private fun setDrawerNavigation() {
-        val navBtnTeam = findViewById<LinearLayout>(R.id.navBtnTeam)
-        navBtnTeam.setOnSingleClickListener {
-            toggleDrawer()
-            navController.navigate(R.id.teamsFragment)
-        }
+		when (id) {
+			R.id.homeFragment -> {
+				Log.e("clicked=>", "done")
+				deselectAllColor()
+				bottomNav.itemIconTintList = null
+				resetAllIcons()
+				bottomNav.menu.getItem(0).icon =
+					ContextCompat.getDrawable(this, R.drawable.nav_heart_selected)
 
-        val navBtnCompanies = findViewById<LinearLayout>(R.id.navBtnCompanies)
-        navBtnCompanies.setOnSingleClickListener {
-            toggleDrawer()
-            navController.navigate(R.id.companiesFragment)
-        }
+				line1.setBackgroundColor(Color.rgb(222, 160, 55))
+			}
 
-        val navBtnContacts = findViewById<LinearLayout>(R.id.navBtnContacts)
-        navBtnContacts.setOnSingleClickListener {
-            toggleDrawer()
-            navController.navigate(R.id.contactsFragment)
-        }
+			R.id.eventFragment -> {
+				deselectAllColor()
+				resetAllIcons()
+				bottomNav.menu.getItem(1).icon =
+					ContextCompat.getDrawable(this, R.drawable.events_gold)
+				bottomNav.itemIconTintList = null
 
-        val navBtnLogout = findViewById<LinearLayout>(R.id.navBtnLogout)
-        navBtnLogout.setOnClickListener {
-            toggleDrawer()
-            handleLogout()
-        }
-    }
+				line2.setBackgroundColor(Color.rgb(222, 160, 55))
+			}
 
-    private fun setBottomNavigation() {
-        bottomNav.setupWithNavController(navController)
-    }
+			R.id.interestFragment -> {
+				deselectAllColor()
+				resetAllIcons()
+				bottomNav.menu.getItem(2).icon =
+					ContextCompat.getDrawable(this, R.drawable.nav_interest_selected)
+				bottomNav.itemIconTintList = null
+				line3.setBackgroundColor(Color.rgb(10, 78, 120))
 
-    private fun initLayoutViews() {
-        bottomNav = findViewById(R.id.bottom_navigation_dashboard)
-        line1 = findViewById(R.id.line1)
-        line2 = findViewById(R.id.line2)
-        line3 = findViewById(R.id.line3)
-        navController = findNavController(R.id.host_fragment)
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.host_fragment) as NavHostFragment
-        navController = navHostFragment.navController
-    }
+			}
+		}
 
-    private fun deselectAllColor() {
-        line1.setBackgroundColor(Color.rgb(255, 255, 255))
-        line2.setBackgroundColor(Color.rgb(255, 255, 255))
-        line3.setBackgroundColor(Color.rgb(255, 255, 255))
-    }
+	}
 
-    private fun resetAllIcons() {
-        bottomNav.menu.getItem(0).icon =
-            ContextCompat.getDrawable(this, R.drawable.nav_heart_unselected)
-        bottomNav.menu.getItem(1).icon =
-            ContextCompat.getDrawable(this, R.drawable.events)
-        bottomNav.menu.getItem(2).icon =
-            ContextCompat.getDrawable(this, R.drawable.nav_interest_unselected)
-    }
+	private fun setDrawerNavigation() {
+		val navBtnTeam = findViewById<LinearLayout>(R.id.navBtnTeam)
+		navBtnTeam.setOnSingleClickListener {
+			toggleDrawer()
+			navController.navigate(HomeFragmentDirections.toTeams())
+		}
 
-    private fun updateNavigationView() {
-        val currentUser = Utils.getUser(this) ?: return
+		val navBtnCompanies = findViewById<LinearLayout>(R.id.navBtnCompanies)
+		navBtnCompanies.setOnSingleClickListener {
+			toggleDrawer()
+			navController.navigate(HomeFragmentDirections.toCompanies())
+		}
 
-        val navUserPictureView = findViewById<ImageView>(R.id.navUserPicture)
-        if (currentUser.picture != null) {
-            Glide.with(this).load(currentUser.picture).into(navUserPictureView)
-        } else {
-            currentUser.name?.let {
-                Glide.with(this).load(it.trim().lowercase().getImageUrlFromName())
-                    .into(navUserPictureView)
-            }
-        }
+		val navBtnContacts = findViewById<LinearLayout>(R.id.navBtnContacts)
+		navBtnContacts.setOnSingleClickListener {
+			toggleDrawer()
+			navController.navigate(HomeFragmentDirections.toContacts())
+		}
 
-        val navUserNameView = findViewById<TextView>(R.id.navUserName)
-        navUserNameView.text = currentUser.name
+		val navBtnLogout = findViewById<LinearLayout>(R.id.navBtnLogout)
+		navBtnLogout.setOnClickListener {
+			toggleDrawer()
+			handleLogout()
+		}
+	}
 
-        val navOrgNameView = findViewById<TextView>(R.id.navOrgName)
-        navOrgNameView.text = currentUser.organization.name
+	private fun setBottomNavigation() {
+		bottomNav.setupWithNavController(navController)
+	}
 
-        val navGiveView = findViewById<TextView>(R.id.navGiveView)
-        navGiveView.text = "$${currentUser.give}"
+	private fun initLayoutViews() {
+		bottomNav = findViewById(R.id.bottom_navigation_dashboard)
+		line1 = findViewById(R.id.line1)
+		line2 = findViewById(R.id.line2)
+		line3 = findViewById(R.id.line3)
+		navController = findNavController(R.id.host_fragment)
+		val navHostFragment = supportFragmentManager.findFragmentById(R.id.host_fragment) as NavHostFragment
+		navController = navHostFragment.navController
+	}
 
-        val navSpendView = findViewById<TextView>(R.id.navSpendView)
-        navSpendView.text = "$${currentUser.spend}"
-    }
+	private fun deselectAllColor() {
+		line1.setBackgroundColor(Color.rgb(255, 255, 255))
+		line2.setBackgroundColor(Color.rgb(255, 255, 255))
+		line3.setBackgroundColor(Color.rgb(255, 255, 255))
+	}
 
-    private fun handleLogout() {
-        Utils.saveData(this@DashboardActivity, Utils.TOKEN, null)
-        Utils.saveUser(this@DashboardActivity, null)
+	private fun resetAllIcons() {
+		bottomNav.menu.getItem(0).icon =
+			ContextCompat.getDrawable(this, R.drawable.nav_heart_unselected)
+		bottomNav.menu.getItem(1).icon =
+			ContextCompat.getDrawable(this, R.drawable.events)
+		bottomNav.menu.getItem(2).icon =
+			ContextCompat.getDrawable(this, R.drawable.nav_interest_unselected)
+	}
 
-        startActivity(LoginActivity::class.java)
-        finish()
-    }
+	private fun updateNavigationView() {
+		val currentUser = Utils.getUser(this) ?: return
+
+		val navUserPictureView = findViewById<ImageView>(R.id.navUserPicture)
+		if (currentUser.picture != null) {
+			Glide.with(this).load(currentUser.picture).into(navUserPictureView)
+		} else {
+			currentUser.name?.let {
+				Glide.with(this).load(it.trim().lowercase().getImageUrlFromName())
+					.into(navUserPictureView)
+			}
+		}
+
+		val navUserNameView = findViewById<TextView>(R.id.navUserName)
+		navUserNameView.text = currentUser.name
+
+		val navOrgNameView = findViewById<TextView>(R.id.navOrgName)
+		navOrgNameView.text = currentUser.organization.name
+
+		val navGiveView = findViewById<TextView>(R.id.navGiveView)
+		navGiveView.text = "$${currentUser.give}"
+
+		val navSpendView = findViewById<TextView>(R.id.navSpendView)
+		navSpendView.text = "$${currentUser.spend}"
+	}
+
+	private fun handleLogout() {
+		Utils.saveData(this@DashboardActivity, Utils.TOKEN, null)
+		Utils.saveUser(this@DashboardActivity, null)
+
+		startActivity(LoginActivity::class.java)
+		finish()
+	}
 }

@@ -18,7 +18,7 @@ import org.lemonadestand.btb.R
 import org.lemonadestand.btb.components.base.BaseRecyclerViewAdapter
 import org.lemonadestand.btb.constants.ProgressDialogUtil
 import org.lemonadestand.btb.constants.handleCommonResponse
-import org.lemonadestand.btb.databinding.FragmentSelectTeamBinding
+import org.lemonadestand.btb.databinding.FragmentContactBinding
 import org.lemonadestand.btb.extensions.hide
 import org.lemonadestand.btb.extensions.setOnSingleClickListener
 import org.lemonadestand.btb.features.common.models.UserListModel
@@ -30,36 +30,40 @@ import org.lemonadestand.btb.mvvm.viewmodel.UserViewModel
 import org.lemonadestand.btb.singleton.Singleton
 import org.lemonadestand.btb.utils.Utils
 
-class SelectTeamFragment : Fragment() {
+class SelectContactFragment : Fragment() {
+	lateinit var mBinding: FragmentContactBinding
 
-	lateinit var mBinding: FragmentSelectTeamBinding
 	private var shortAnimationDuration: Int = 0
 	private var tag: String = "TeamFragment"
 	private lateinit var viewModel: UserViewModel
 	private var userList = ArrayList<UserListModel>()
 	private var userTemp = ArrayList<UserListModel>()
 	private lateinit var callback: OnItemClickListener
-	var tempUser: UserListModel? = null
-	var allUser: UserListModel? = null
+
+	private var isEvent: Boolean = false
 
 	var onSelect: ((value: UserListModel) -> Unit)? = null
 
-	private var isEvent: Boolean = false
 	override fun onCreateView(
 		inflater: LayoutInflater, container: ViewGroup?,
 		savedInstanceState: Bundle?
 	): View {
-		mBinding = FragmentSelectTeamBinding.inflate(
+		mBinding = FragmentContactBinding.inflate(
 			LayoutInflater.from(inflater.context),
 			container,
 			false
 		)
-
 		getData()
 		setAdapter()
 		setUpViewModel()
+
 		return mBinding.root
 
+	}
+
+	private fun getData() {
+		val args = arguments
+		isEvent = args!!.getBoolean("is_event", false)
 	}
 
 	private fun startLoading() {
@@ -75,84 +79,22 @@ class SelectTeamFragment : Fragment() {
 		val viewModelProviderFactory =
 			CommonViewModelFactory((requireActivity()).application, repository)
 		viewModel = ViewModelProvider(this, viewModelProviderFactory)[UserViewModel::class.java]
-		viewModel.getUserList(page = 0)
-		viewModel.userResponseModel.observe(viewLifecycleOwner) {
+		viewModel.getContactList(page = 0)
+		viewModel.contactResponseModel.observe(viewLifecycleOwner) {
 			if (!it.data.isNullOrEmpty()) {
 				userList.clear()
 				userTemp.clear()
-
 				userList.addAll(it.data)
-				val result =
-					userList.firstOrNull { its -> its.uniqueId == Utils.getData(context, Utils.UID) }
-				if (result != null) {
-					tempUser = UserListModel(
-						id = result.id, uniqueId = result.uniqueId, org_id = result.org_id,
-						active = result.active,
-						name = "Me",
-						handles = result.handles,
-						public = result.public,
-						give = result.give,
-						address = result.address,
-						addressShipping = result.addressShipping,
-						phone = result.phone,
-						spend = result.spend,
-						picture = result.picture,
-						username = result.username
-					)
-				}
-
-				if (isEvent) {
-
-					allUser = UserListModel(
-						id = "", uniqueId = "", org_id = "",
-						active = "",
-						name = "All Users",
-						public = null,
-						give = "",
-						phone = "",
-						spend = "",
-						picture = Utils.getUser(context).organization.picture,
-						username = "",
-						isSelected = true
-					)
-				}
-
-				if (allUser != null) {
-					userList.add(0, allUser!!)
-					tempUser!!.isSelected = false
-					userList.add(1, tempUser!!)
-
-				} else {
-					userList.add(0, tempUser!!)
-				}
-				userList.remove(result)
-
+				userTemp.addAll(it.data)
 				val selection: UserListModel? = if (isEvent) {
-					Log.e("event_id==>1", Utils.getUserIdEvent(context) + "<-")
 					userList.firstOrNull { its -> its.uniqueId == Utils.getUserIdEvent(context) }
 				} else {
-					Log.e("event_id==>", Utils.getUserIdInterest(context) + "<-")
 					userList.firstOrNull { its -> its.uniqueId == Utils.getUserIdInterest(context) }
 				}
-
 				if (selection != null) {
 					selection.isSelected = true
-					allUser?.isSelected = false
-
-				} else {
-					if (isEvent) {
-						if (Utils.getUserIdEvent(context) == null) {
-							allUser!!.isSelected = true
-						}
-
-					} else {
-						if (Utils.getUserIdInterest(context) == null) {
-							tempUser!!.isSelected = true
-						}
-					}
 				}
-				userTemp.addAll(it.data)
-				(mBinding.rvUserList.adapter as TeamsRecyclerViewAdapter).values = userList
+				mBinding.rvUserList.adapter!!.notifyDataSetChanged()
 				stopLoading(true)
 			} else {
 				stopLoading(false)
@@ -189,10 +131,10 @@ class SelectTeamFragment : Fragment() {
 		mBinding.shimmerLayout.startShimmer()
 		shortAnimationDuration = resources.getInteger(android.R.integer.config_shortAnimTime)
 
-		val teamsRecyclerViewAdapter = TeamsRecyclerViewAdapter(isEvent)
-		mBinding.rvUserList.adapter = teamsRecyclerViewAdapter
-		teamsRecyclerViewAdapter.onItemClick = { onSelect?.invoke(it) }
-		teamsRecyclerViewAdapter.values = userList
+		val contactsRecyclerViewAdapter = ContactsRecyclerViewAdapter(isEvent)
+		mBinding.rvUserList.adapter = contactsRecyclerViewAdapter
+		contactsRecyclerViewAdapter.onItemClick = { onSelect?.invoke(it) }
+		contactsRecyclerViewAdapter.values = userList
 	}
 
 
@@ -218,11 +160,6 @@ class SelectTeamFragment : Fragment() {
 			})
 	}
 
-	private fun getData() {
-		val args = arguments
-		isEvent = args!!.getBoolean("is_event", false)
-	}
-
 
 	fun setCallback(callback: OnItemClickListener) {
 		Log.e("here=>", "done")
@@ -230,7 +167,7 @@ class SelectTeamFragment : Fragment() {
 
 	}
 
-	private class TeamsRecyclerViewAdapter(val isEvent: Boolean) : BaseRecyclerViewAdapter<UserListModel>(R.layout.row_team_list) {
+	private class ContactsRecyclerViewAdapter(val isEvent: Boolean) : BaseRecyclerViewAdapter<UserListModel>(R.layout.row_team_list) {
 		override fun bindView(holder: ViewHolder, item: UserListModel, position: Int) {
 			super.bindView(holder, item, position)
 
@@ -242,26 +179,19 @@ class SelectTeamFragment : Fragment() {
 				checkmarkView.visibility = if (item.isSelected) View.VISIBLE else View.GONE
 
 				setOnSingleClickListener {
-					if (position == 0) {
-						if (isEvent) {
-							Utils.saveUserIDEvent(context, null)
-							Utils.saveUserModelEvent(context, null)
-						} else {
-							Utils.saveUserIDInterest(context, null)
-							Utils.saveUserModelInterest(context, null)
-						}
+					if (isEvent) {
+						Utils.saveUserIDEvent(context, item.uniqueId)
+						Utils.saveUserModelEvent(context, item)
 					} else {
-						if (isEvent) {
-							Utils.saveUserIDEvent(context, item.uniqueId)
-							Utils.saveUserModelEvent(context, item)
-						} else {
-							Utils.saveUserIDInterest(context, item.uniqueId)
-							Utils.saveUserModelInterest(context, item)
-						}
+						Utils.saveUserIDInterest(context, item.uniqueId)
+						Utils.saveUserModelInterest(context, item)
 					}
+
 					onItemClick?.invoke(item)
 				}
 			}
 		}
 	}
+
+
 }

@@ -5,12 +5,40 @@
 	android:id="@+id/app_navigation"
 	app:startDestination="@id/homeFragment">
 
-
 	<fragment
 		android:id="@+id/homeFragment"
 		android:name="org.lemonadestand.btb.features.post.fragments.HomeFragment"
 		android:label="fragment_home"
-		tools:layout="@layout/fragment_home" />
+		tools:layout="@layout/fragment_home">
+
+		<action
+			android:id="@+id/toTeams"
+			app:destination="@id/teamsFragment"
+			app:enterAnim="@anim/nav_default_enter_anim"
+			app:exitAnim="@anim/nav_default_exit_anim"
+			app:popEnterAnim="@anim/nav_default_enter_anim"
+			app:popExitAnim="@anim/nav_default_exit_anim"
+			app:popUpTo="@id/homeFragment" />
+
+		<action
+			android:id="@+id/toCompanies"
+			app:destination="@id/companiesFragment"
+			app:enterAnim="@anim/nav_default_enter_anim"
+			app:exitAnim="@anim/nav_default_exit_anim"
+			app:popEnterAnim="@anim/nav_default_enter_anim"
+			app:popExitAnim="@anim/nav_default_exit_anim"
+			app:popUpTo="@id/homeFragment" />
+
+		<action
+			android:id="@+id/toContacts"
+			app:destination="@id/contactsFragment"
+			app:enterAnim="@anim/nav_default_enter_anim"
+			app:exitAnim="@anim/nav_default_exit_anim"
+			app:popEnterAnim="@anim/nav_default_enter_anim"
+			app:popExitAnim="@anim/nav_default_exit_anim"
+			app:popUpTo="@id/homeFragment" />
+
+	</fragment>
 
 	<fragment
 		android:id="@+id/teamsFragment"
@@ -39,10 +67,10 @@
 		<action
 			android:id="@+id/toDetail"
 			app:destination="@id/eventDetailFragment"
-			app:enterAnim="@anim/nav_default_pop_enter_anim"
-			app:exitAnim="@anim/nav_default_pop_exit_anim"
-			app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-			app:popExitAnim="@anim/nav_default_pop_exit_anim"
+			app:enterAnim="@anim/nav_default_enter_anim"
+			app:exitAnim="@anim/nav_default_exit_anim"
+			app:popEnterAnim="@anim/nav_default_enter_anim"
+			app:popExitAnim="@anim/nav_default_exit_anim"
 			app:popUpTo="@id/eventFragment">
 
 			<argument

@@ -23,6 +23,7 @@ import org.lemonadestand.btb.constants.getImageUrlFromName
 import org.lemonadestand.btb.constants.handleCommonResponse
 import org.lemonadestand.btb.databinding.FragmentInterestsBinding
 import org.lemonadestand.btb.extensions.hide
+import org.lemonadestand.btb.extensions.setOnSingleClickListener
 import org.lemonadestand.btb.features.common.fragments.CheckListFragment
 import org.lemonadestand.btb.features.common.fragments.OptionListFragment
 import org.lemonadestand.btb.features.common.fragments.TeamAndContactsFragment
@@ -46,7 +47,6 @@ import java.util.Locale
 class InterestsFragment : Fragment(), OnItemClickListener, ColorPickerDialogListener {
 
 	private lateinit var mBinding: FragmentInterestsBinding
-	private val bottomSheetFragmentMessage = TeamAndContactsFragment()
 	private var bottomSheetFragmentSingleLine = WriteTextFragment()
 	private var optionListFragment = OptionListFragment()
 	private var checkListFragment = CheckListFragment()
@@ -91,10 +91,7 @@ class InterestsFragment : Fragment(), OnItemClickListener, ColorPickerDialogList
 
 	private fun setClicks() {
 		shortAnimationDuration = resources.getInteger(android.R.integer.config_shortAnimTime)
-		mBinding.userCard.setOnClickListener {
-			currentType = InterestFieldType.UserSelect
-			showBottomSheetMessage()
-		}
+		mBinding.userCard.setOnSingleClickListener { handleSelectTeamOrContact() }
 	}
 
 
@@ -114,15 +111,25 @@ class InterestsFragment : Fragment(), OnItemClickListener, ColorPickerDialogList
 		}
 	}
 
-	private fun showBottomSheetMessage() {
+	private fun handleSelectTeamOrContact() {
+		val teamAndContactsFragment = TeamAndContactsFragment().apply {
+			arguments = Bundle().apply {
+				putString("title", "Show Interest For :")
+				putBoolean("is_event", false)
+			}
+			onSelect = {
+				dismiss()
 
-		val fragmentManager: FragmentManager = requireActivity().supportFragmentManager
-		bottomSheetFragmentMessage.setCallback(this)
-		val args = Bundle()
-		args.putString("title", "Show Interest For :")
-		args.putBoolean("is_event", false)
-		bottomSheetFragmentMessage.arguments = args
-		bottomSheetFragmentMessage.show(fragmentManager, bottomSheetFragmentMessage.tag)
+				setSelectUserData(image = it.picture, userName = it.name)
+
+				startLoading()
+				interestUiList.clear()
+				interestUiList.addAll(interestUiListMain)
+				interestUiAdapter.notifyDataSetChanged()
+				viewModel.getInterestDataList(resource = it.uniqueId)
+			}
+		}
+		teamAndContactsFragment.show(requireActivity().supportFragmentManager, tag)
 	}
 
 	override fun onItemClicked(`object`: Any?, index: Int, type: ClickType, superIndex: Int) {
@@ -130,18 +137,6 @@ class InterestsFragment : Fragment(), OnItemClickListener, ColorPickerDialogList
 		when (currentType) {
 			InterestFieldType.AdapterClicks -> {
 				handleAdapterClicks(data = `object` as InterestModel, type = type, index = index)
-			}
-
-			InterestFieldType.UserSelect -> {
-				val data = `object` as UserListModel
-//                Log.e("data=>", data.username)
-				bottomSheetFragmentMessage.dismiss()
-				setSelectUserData(data.picture, userName = data.name)
-				startLoading()
-				interestUiList.clear()
-				interestUiList.addAll(interestUiListMain)
-				interestUiAdapter.notifyDataSetChanged()
-				viewModel.getInterestDataList(resource = data.uniqueId)
 			}
 
 			InterestFieldType.SingleLine -> {
