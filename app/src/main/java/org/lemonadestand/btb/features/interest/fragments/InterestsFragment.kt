@@ -19,34 +19,33 @@ import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
 import org.lemonadestand.btb.constants.ClickType
 import org.lemonadestand.btb.constants.InterestFieldType
 import org.lemonadestand.btb.constants.ProgressDialogUtil
-import org.lemonadestand.btb.utils.Utils
-import org.lemonadestand.btb.databinding.FragmentInterestBinding
-import org.lemonadestand.btb.features.dashboard.activities.DashboardActivity
-import org.lemonadestand.btb.features.interest.adapter.InterestUiAdapter
 import org.lemonadestand.btb.constants.getImageUrlFromName
 import org.lemonadestand.btb.constants.handleCommonResponse
+import org.lemonadestand.btb.databinding.FragmentInterestsBinding
 import org.lemonadestand.btb.extensions.hide
-import org.lemonadestand.btb.interfaces.OnItemClickListener
-
-import org.lemonadestand.btb.features.common.models.UserListModel
-import org.lemonadestand.btb.features.common.models.body.Field
-import org.lemonadestand.btb.features.common.models.body.UpdateInterestBody
-import org.lemonadestand.btb.features.interest.models.InterestModel
-import org.lemonadestand.btb.features.interest.models.Option
-import org.lemonadestand.btb.mvvm.factory.CommonViewModelFactory
-import org.lemonadestand.btb.mvvm.repository.InterestRepository
-import org.lemonadestand.btb.mvvm.viewmodel.InterestViewModel
-import org.lemonadestand.btb.features.event.fragments.WriteTextFragment
 import org.lemonadestand.btb.features.common.fragments.CheckListFragment
 import org.lemonadestand.btb.features.common.fragments.OptionListFragment
 import org.lemonadestand.btb.features.common.fragments.TeamAndContactsFragment
+import org.lemonadestand.btb.features.common.models.UserListModel
+import org.lemonadestand.btb.features.common.models.body.Field
+import org.lemonadestand.btb.features.common.models.body.UpdateInterestBody
+import org.lemonadestand.btb.features.dashboard.activities.DashboardActivity
+import org.lemonadestand.btb.features.event.fragments.WriteTextFragment
+import org.lemonadestand.btb.features.interest.adapter.InterestUiAdapter
+import org.lemonadestand.btb.features.interest.models.InterestModel
+import org.lemonadestand.btb.features.interest.models.Option
+import org.lemonadestand.btb.interfaces.OnItemClickListener
+import org.lemonadestand.btb.mvvm.factory.CommonViewModelFactory
+import org.lemonadestand.btb.mvvm.repository.InterestRepository
+import org.lemonadestand.btb.mvvm.viewmodel.InterestViewModel
 import org.lemonadestand.btb.singleton.Singleton
+import org.lemonadestand.btb.utils.Utils
 import java.util.Locale
 
 
-class InterestFragment : Fragment(), OnItemClickListener, ColorPickerDialogListener {
+class InterestsFragment : Fragment(), OnItemClickListener, ColorPickerDialogListener {
 
-	private lateinit var mBinding: FragmentInterestBinding
+	private lateinit var mBinding: FragmentInterestsBinding
 	private val bottomSheetFragmentMessage = TeamAndContactsFragment()
 	private var bottomSheetFragmentSingleLine = WriteTextFragment()
 	private var optionListFragment = OptionListFragment()
@@ -60,7 +59,7 @@ class InterestFragment : Fragment(), OnItemClickListener, ColorPickerDialogListe
 	private var interestUiListMain: ArrayList<InterestModel> = ArrayList()
 	private lateinit var interestUiAdapter: InterestUiAdapter
 	var selectedIndex = 0
-	var currentColor= Color.parseColor("#4149b6")
+	var currentColor = Color.parseColor("#4149b6")
 
 	companion object {
 
@@ -72,7 +71,7 @@ class InterestFragment : Fragment(), OnItemClickListener, ColorPickerDialogListe
 		inflater: LayoutInflater, container: ViewGroup?,
 		savedInstanceState: Bundle?
 	): View {
-		mBinding = FragmentInterestBinding.inflate(
+		mBinding = FragmentInterestsBinding.inflate(
 			LayoutInflater.from(inflater.context),
 			container,
 			false
@@ -225,8 +224,8 @@ class InterestFragment : Fragment(), OnItemClickListener, ColorPickerDialogListe
 			if (!it.data.isNullOrEmpty()) {
 				interestUiList.clear()
 				Log.e("apiData=>", it.data.toString())
-				interestUiList.addAll(it.data ?: arrayListOf())
-				interestUiListMain.addAll(it.data ?: arrayListOf())
+				interestUiList.addAll(it.data)
+				interestUiListMain.addAll(it.data)
 				interestUiAdapter.notifyDataSetChanged()
 				getInterestValues()
 			} else {
@@ -480,9 +479,8 @@ class InterestFragment : Fragment(), OnItemClickListener, ColorPickerDialogListe
 	}
 
 
-
 	override fun onColorSelected(dialogId: Int, color: Int) {
-		Log.e("color==>",color.toString())
+		Log.e("color==>", color.toString())
 	}
 
 	override fun onDialogDismissed(dialogId: Int) {

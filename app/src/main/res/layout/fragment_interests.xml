@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:background="@color/white"
+	android:backgroundTint="@color/white"
+	android:orientation="vertical"
+	tools:context=".features.interest.fragments.InterestsFragment">
+
+	<RelativeLayout
+		android:layout_width="match_parent"
+		android:layout_height="@dimen/_36sdp">
+
+		<androidx.appcompat.widget.AppCompatTextView
+			android:id="@+id/navName"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_centerInParent="true"
+			android:fontFamily="@font/urbanist_bold"
+			android:text="Interests"
+			android:textAlignment="center"
+			android:textColor="@color/accentColor"
+			android:textSize="18sp" />
+
+		<androidx.cardview.widget.CardView
+			android:id="@+id/user_card"
+			android:layout_width="@dimen/_24sdp"
+			android:layout_height="@dimen/_24sdp"
+			android:layout_alignParentEnd="true"
+			android:layout_centerVertical="true"
+			android:layout_marginEnd="10dp"
+			app:cardCornerRadius="7dp">
+
+			<ImageView
+				android:id="@+id/iv_image"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:scaleType="fitXY" />
+
+		</androidx.cardview.widget.CardView>
+
+	</RelativeLayout>
+
+	<androidx.recyclerview.widget.RecyclerView
+		android:id="@+id/rv_interest"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager">
+
+	</androidx.recyclerview.widget.RecyclerView>
+
+	<com.facebook.shimmer.ShimmerFrameLayout
+		android:id="@+id/shimmerLayout"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:animateLayoutChanges="true"
+		android:animationCache="true"
+		app:shimmer_repeat_mode="restart"
+		app:shimmer_shape="linear">
+
+
+		<include
+			layout="@layout/shimmer_layout_event"
+			android:visibility="visible" />
+
+	</com.facebook.shimmer.ShimmerFrameLayout>
+
+
+</LinearLayout>

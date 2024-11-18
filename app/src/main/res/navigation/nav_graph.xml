@@ -1,85 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/app_navigation"
-    app:startDestination="@id/homeFragment">
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:id="@+id/app_navigation"
+	app:startDestination="@id/homeFragment">
 
 
-    <fragment
-        android:id="@+id/homeFragment"
-        android:name="org.lemonadestand.btb.features.post.fragments.HomeFragment"
-        android:label="fragment_home"
-        tools:layout="@layout/fragment_home"/>
+	<fragment
+		android:id="@+id/homeFragment"
+		android:name="org.lemonadestand.btb.features.post.fragments.HomeFragment"
+		android:label="fragment_home"
+		tools:layout="@layout/fragment_home" />
 
-    <fragment
-        android:id="@+id/teamsFragment"
-        android:name="org.lemonadestand.btb.features.post.fragments.TeamsFragment"
-        android:label="fragment_teams"
-        tools:layout="@layout/fragment_teams" />
+	<fragment
+		android:id="@+id/teamsFragment"
+		android:name="org.lemonadestand.btb.features.post.fragments.TeamsFragment"
+		android:label="fragment_teams"
+		tools:layout="@layout/fragment_teams" />
 
-    <fragment
-        android:id="@+id/companiesFragment"
-        android:name="org.lemonadestand.btb.features.post.fragments.CompaniesFragment"
-        android:label="fragment_companies"
-        tools:layout="@layout/fragment_companies" />
+	<fragment
+		android:id="@+id/companiesFragment"
+		android:name="org.lemonadestand.btb.features.post.fragments.CompaniesFragment"
+		android:label="fragment_companies"
+		tools:layout="@layout/fragment_companies" />
 
-    <fragment
-        android:id="@+id/contactsFragment"
-        android:name="org.lemonadestand.btb.features.post.fragments.ContactsFragment"
-        android:label="fragment_contacts"
-        tools:layout="@layout/fragment_contacts" />
+	<fragment
+		android:id="@+id/contactsFragment"
+		android:name="org.lemonadestand.btb.features.post.fragments.ContactsFragment"
+		android:label="fragment_contacts"
+		tools:layout="@layout/fragment_contacts" />
 
-    <fragment
-        android:id="@+id/eventFragment"
-        android:name="org.lemonadestand.btb.features.event.fragments.EventsFragment"
-        android:label="fragment_event"
-        tools:layout="@layout/fragment_events">
+	<fragment
+		android:id="@+id/eventFragment"
+		android:name="org.lemonadestand.btb.features.event.fragments.EventsFragment"
+		android:label="fragment_event"
+		tools:layout="@layout/fragment_events">
 
-        <action
-            android:id="@+id/toDetail"
-            app:destination="@id/eventDetailFragment"
-            app:popUpTo="@id/eventFragment"
-            app:enterAnim="@anim/nav_default_pop_enter_anim"
-            app:exitAnim="@anim/nav_default_pop_exit_anim"
-            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-            app:popExitAnim="@anim/nav_default_pop_exit_anim">
+		<action
+			android:id="@+id/toDetail"
+			app:destination="@id/eventDetailFragment"
+			app:enterAnim="@anim/nav_default_pop_enter_anim"
+			app:exitAnim="@anim/nav_default_pop_exit_anim"
+			app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+			app:popExitAnim="@anim/nav_default_pop_exit_anim"
+			app:popUpTo="@id/eventFragment">
 
-            <argument
-                android:name="event"
-                app:argType="org.lemonadestand.btb.features.event.models.EventModel"
-                app:nullable="true"
-                android:defaultValue="@null"/>
+			<argument
+				android:name="event"
+				android:defaultValue="@null"
+				app:argType="org.lemonadestand.btb.features.event.models.EventModel"
+				app:nullable="true" />
 
-        </action>
+		</action>
 
-    </fragment>
+	</fragment>
 
-    <fragment
-        android:id="@+id/eventDetailFragment"
-        android:name="org.lemonadestand.btb.features.event.fragments.EditReminderFragment"
-        android:label="fragment_event_detail"
-        tools:layout="@layout/fragment_edit_reminder">
+	<fragment
+		android:id="@+id/eventDetailFragment"
+		android:name="org.lemonadestand.btb.features.event.fragments.EditReminderFragment"
+		android:label="fragment_event_detail"
+		tools:layout="@layout/fragment_edit_reminder">
 
-        <argument
-            android:name="event"
-            app:argType="org.lemonadestand.btb.features.event.models.EventModel"
-            app:nullable="true"
-            android:defaultValue="@null"/>
+		<argument
+			android:name="event"
+			android:defaultValue="@null"
+			app:argType="org.lemonadestand.btb.features.event.models.EventModel"
+			app:nullable="true" />
 
-    </fragment>
+	</fragment>
 
-    <fragment
-        android:id="@+id/interestFragment"
-        android:name="org.lemonadestand.btb.features.interest.fragments.InterestFragment"
-        android:label="fragment_interest"
-        tools:layout="@layout/fragment_nav_interests"/>
+	<fragment
+		android:id="@+id/interestFragment"
+		android:name="org.lemonadestand.btb.features.interest.fragments.InterestsFragment"
+		android:label="fragment_interest"
+		tools:layout="@layout/fragment_interests" />
 
 
-    <fragment
-        android:id="@+id/moreFragment"
-        android:name="org.lemonadestand.btb.features.more.fragment.MoreFragment"
-        android:label="fragment_more"
-        tools:layout="@layout/fragment_nav_more"/>
+	<fragment
+		android:id="@+id/moreFragment"
+		android:name="org.lemonadestand.btb.features.more.fragment.MoreFragment"
+		android:label="fragment_more"
+		tools:layout="@layout/fragment_nav_more" />
 
 </navigation>
