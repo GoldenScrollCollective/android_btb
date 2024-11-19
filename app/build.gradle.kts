@@ -71,32 +71,34 @@ dependencies {
 	androidTestImplementation("androidx.navigation:navigation-testing:2.8.4")
 	implementation("androidx.navigation:navigation-compose:2.8.4")
 
-	implementation ("com.github.bumptech.glide:glide:4.16.0")
+	implementation("com.github.bumptech.glide:glide:4.16.0")
 
-	implementation ("com.intuit.sdp:sdp-android:1.1.0")
+	implementation("com.intuit.sdp:sdp-android:1.1.0")
 	//implementation(project(":swipe-to-action"))
-	implementation ("com.github.ChanTsune:swipe-to-action:0.0.0-alpha4")
+	implementation("com.github.ChanTsune:swipe-to-action:0.0.0-alpha4")
 
 
 	// Coroutines
-	implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
-	implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
 
 	// Coroutine Lifecycle Scopes
-	implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.7")
-	implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.8.7")
-	implementation ("com.facebook.shimmer:shimmer:0.5.0")
-	implementation ("com.github.appsfeature:html-editor:1.1")
-	implementation ("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
-	implementation ("com.github.razaghimahdi:Android-Loading-Dots:1.3.1")
+	implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.7")
+	implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.7")
+	implementation("com.facebook.shimmer:shimmer:0.5.0")
+	implementation("com.github.appsfeature:html-editor:1.1")
+	implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
+	implementation("com.github.razaghimahdi:Android-Loading-Dots:1.3.1")
 
-	implementation ("com.jaredrummler:colorpicker:1.1.0")
-	implementation ("com.github.yukuku:ambilwarna:2.0.1")
+	implementation("com.jaredrummler:colorpicker:1.1.0")
+	implementation("com.github.yukuku:ambilwarna:2.0.1")
 
 
-	implementation ("com.google.firebase:firebase-messaging:24.0.3")
+	implementation("com.google.firebase:firebase-messaging:24.0.3")
 
-	implementation ("com.amazonaws:aws-android-sdk-s3:2.22.1")
+	implementation("com.amazonaws:aws-android-sdk-s3:2.22.1")
+
+	implementation("androidx.webkit:webkit:1.12.1")
 }
 
 apply(plugin = "androidx.navigation.safeargs.kotlin")

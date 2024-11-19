@@ -3,14 +3,11 @@ package org.lemonadestand.btb.features.post.activities
 import android.util.Log
 import android.view.View
 import android.webkit.JavascriptInterface
-import android.webkit.WebChromeClient
-import android.webkit.WebSettings
-import android.webkit.WebView
-import android.webkit.WebViewClient
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import org.lemonadestand.btb.R
 import org.lemonadestand.btb.components.MediaPreviewView
+import org.lemonadestand.btb.components.QuillEditText
 import org.lemonadestand.btb.components.UploadButton
 import org.lemonadestand.btb.components.base.BaseActivity
 import org.lemonadestand.btb.constants.ProgressDialogUtil
@@ -29,7 +26,7 @@ import org.lemonadestand.btb.utils.Utils
 
 class ShareStoryActivity : BaseActivity(R.layout.activity_share_story) {
 
-	private lateinit var webView: WebView
+	private lateinit var webView: QuillEditText
 
 	private lateinit var mBinding: ActivityShareStoryBinding
 
@@ -62,26 +59,8 @@ class ShareStoryActivity : BaseActivity(R.layout.activity_share_story) {
 		getData()
 		setUpViewModel()
 
-		webView = mBinding.webView
-
-		// Enable JavaScript and other settings for the WebView
-		val webSettings: WebSettings = webView.settings
-		webSettings.javaScriptEnabled = true
-
-		// Load CKEditor page from assets folder into the WebView
-		webView.loadUrl("file:///android_asset/ckeditor_page.html")
-
-		// Set up WebViewClient to handle page loading events
-		webView.webViewClient = object : WebViewClient() {
-			override fun onPageFinished(view: WebView?, url: String?) {
-				super.onPageFinished(view, url)
-				// Inject JavaScript interface for communication with native Android code
-				webView.addJavascriptInterface(JavaScriptInterface(), "Android")
-			}
-		}
-
-		// Optional: Set up WebChromeClient for handling JavaScript alerts, dialogs, etc.
-		webView.webChromeClient = WebChromeClient()
+		webView = findViewById(R.id.webView)
+		webView.html = "TEST"
 
 		mediaPreviewView = findViewById(R.id.mediaPreviewView)
 		val uploadButton = findViewById<UploadButton>(R.id.uploadButton)

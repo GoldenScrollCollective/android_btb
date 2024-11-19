@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1" name="viewport"/>
+    <title></title>
+    <meta content="" name="author"/>
+    <meta content="" name="description"/>
+    <meta content="width=device-width, initial-scale=1" name="viewport"/>
+    <meta content="width=device-width" initial-scale="1.0" maximum-scale="1.0" minimum-scale="1.0" name="viewport" user-scalable="no">
+
+    <link href="quill-snow.css" rel="stylesheet" type="text/css">
+    <link href="quill-mention.css" rel="stylesheet" type="text/css">
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+<body>
+
+<style>
+    .ql-container.ql-snow, .ql-toolbar.ql-snow{
+        border: none;
+    }
+    .ql-toolbar.ql-snow .ql-formats {
+        margin-right: 15px;
+    }
+    input, select:focus, textarea, div[contenteditable] {
+        font-size: 16px !important;
+    }
+    .ql-editor p{
+        line-height: 30px;
+    }
+</style>
+<div id="toolbar">
+  <span class="ql-formats">
+      <button class="ql-bold"></button>
+      <button class="ql-italic"></button>
+      <button class="ql-underline"></button>
+  </span>
+    <span class="ql-formats">
+      <button class="ql-list" value="ordered"></button>
+      <button class="ql-list" value="bullet"></button>
+  </span>
+    <span class="ql-formats">
+      <button class="ql-link"></button>
+      <button class="ql-mention" id="insert-mention">
+          <svg height="14px" viewBox="0 0 512 512" width="14px" xmlns="http://www.w3.org/2000/svg"><path
+                  d="M256 48C141.1 48 48 141.1 48 256s93.1 208 208 208c13.3 0 24 10.7 24 24s-10.7 24-24 24C114.6 512 0 397.4 0 256S114.6 0 256 0S512 114.6 512 256v28c0 50.8-41.2 92-92 92c-31.1 0-58.7-15.5-75.3-39.2C322.7 360.9 291.1 376 256 376c-66.3 0-120-53.7-120-120s53.7-120 120-120c28.8 0 55.2 10.1 75.8 27c4.3-6.6 11.7-11 20.2-11c13.3 0 24 10.7 24 24v80 28c0 24.3 19.7 44 44 44s44-19.7 44-44V256c0-114.9-93.1-208-208-208zm72 208a72 72 0 1 0 -144 0 72 72 0 1 0 144 0z"/></svg>
+      </button>
+  </span>
+</div>
+<div id="editor"></div>
+
+<script src="quill.js"></script>
+<script src="quill-mention.js"></script>
+<script src="quill-script.js"></script>
+
+</body>
+</html>
