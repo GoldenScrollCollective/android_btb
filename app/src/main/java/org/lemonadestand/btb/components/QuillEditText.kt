@@ -6,13 +6,17 @@ import android.util.AttributeSet
 import android.util.Log
 import android.webkit.ConsoleMessage
 import android.webkit.JavascriptInterface
+import android.webkit.JsPromptResult
+import android.webkit.JsResult
 import android.webkit.WebChromeClient
 import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
+import android.webkit.WebResourceResponse
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Toast
-import org.lemonadestand.btb.utils.Utils
+import androidx.appcompat.widget.PopupMenu
+import org.lemonadestand.btb.utils.Storage
 
 @SuppressLint("SetJavaScriptEnabled")
 class QuillEditText @JvmOverloads constructor(
@@ -25,28 +29,33 @@ class QuillEditText @JvmOverloads constructor(
 		val TAG: String = QuillEditText::class.java.simpleName
 	}
 
-	var html = ""
-		get() = this.toString()
+	var onReceivedHtml: ((value: String) -> Unit)? = null
 
 	init {
+		isFocusable = true
+		isFocusableInTouchMode = true
 		settings.apply {
 			javaScriptEnabled = true
 			domStorageEnabled = true
 			loadWithOverviewMode = true
 			useWideViewPort = true
-			builtInZoomControls = true
+			builtInZoomControls = false
 			displayZoomControls = false
 			defaultTextEncodingName = "utf-8"
+			setSupportMultipleWindows(true)
 			setSupportZoom(false)
 		}
-		loadUrl("file:///android_asset/quill.html")
-		addJavascriptInterface(JavaScriptInterface(), "Android")
+		setOnLongClickListener {
+			val popupMenu = PopupMenu(context, this)
+			popupMenu.show()
+			popupMenu.dismiss()
+			true
+		}
 		webViewClient = object : WebViewClient() {
 			override fun onPageFinished(view: WebView?, url: String?) {
 				super.onPageFinished(view, url)
 
-				val accessToken = Utils.getData(context, Utils.TOKEN)
-				val script = "setQuillUsers('${accessToken}')"
+				val script = "setQuillUsers('${Storage.rawToken}')"
 				evaluateJavascript(script, null)
 			}
 
@@ -54,12 +63,44 @@ class QuillEditText @JvmOverloads constructor(
 				super.onReceivedError(view, request, error)
 				Log.e(TAG, "onReceivedError: $error")
 			}
+
+			override fun shouldInterceptRequest(view: WebView?, request: WebResourceRequest?): WebResourceResponse? {
+				request ?: return super.shouldInterceptRequest(view, request)
+				if (request.url.toString().startsWith("https://api.buildthenbless.app")) {
+					request.requestHeaders?.apply {
+						set("X-API-KEY", Storage.rawToken)
+					}
+				}
+				return super.shouldInterceptRequest(view, request)
+			}
 		}
 		webChromeClient = object : WebChromeClient() {
+			override fun onJsAlert(view: WebView?, url: String?, message: String?, result: JsResult?): Boolean {
+				result?.cancel()
+				return true
+			}
+
+			override fun onJsConfirm(view: WebView?, url: String?, message: String?, result: JsResult?): Boolean {
+				result?.cancel()
+				return true
+			}
+
+			override fun onJsPrompt(view: WebView?, url: String?, message: String?, defaultValue: String?, result: JsPromptResult?): Boolean {
+				result?.cancel()
+				return true
+			}
+
 			override fun onConsoleMessage(consoleMessage: ConsoleMessage?): Boolean {
 				return super.onConsoleMessage(consoleMessage)
 			}
 		}
+		loadUrl("file:///android_asset/quill.html")
+		addJavascriptInterface(JavaScriptInterface(), "Android")
+	}
+
+	fun requestHtml() {
+		val script = "sendContentToAndroid()"
+		evaluateJavascript(script, null)
 	}
 
 	private inner class JavaScriptInterface {
@@ -67,6 +108,11 @@ class QuillEditText @JvmOverloads constructor(
 		@JavascriptInterface
 		fun showToast(message: String) {
 			Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+		}
+
+		@JavascriptInterface
+		fun handleHtml(html: String) {
+			onReceivedHtml?.invoke(html)
 		}
 	}
 }

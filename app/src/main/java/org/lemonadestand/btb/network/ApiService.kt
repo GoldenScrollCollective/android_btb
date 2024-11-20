@@ -223,6 +223,9 @@ interface ApiService {
 
 	@POST(Singleton.LOGIN)
 	fun login(@Body dataCall: JsonObject?): Call<LoginResponse?>?
+	
+	@POST(Singleton.LOGIN)
+	fun getRawToken(@Body dataCall: JsonObject?, @Header("X-API-KEY") authorization: String = ""): Call<LoginResponse?>?
 
 	@POST(Singleton.MAGIC)
 	fun forget(@Body dataCall: JsonObject?): Call<LoginResponse?>?

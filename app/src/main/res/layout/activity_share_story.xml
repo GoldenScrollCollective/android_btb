@@ -29,9 +29,7 @@
 		<org.lemonadestand.btb.components.QuillEditText
 			android:id="@+id/webView"
 			android:layout_width="match_parent"
-			android:layout_height="match_parent"
-			android:focusable="true"
-			android:focusableInTouchMode="true" />
+			android:layout_height="match_parent" />
 
 	</LinearLayout>
 

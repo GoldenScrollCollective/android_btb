@@ -14,4 +14,13 @@ object Storage {
 			editor.putInt(eventsTabIndexKey, value)
 			editor.apply()
 		}
+
+	private const val rawTokenKey = "rawToken"
+	var rawToken: String
+		get() = sharedPreferences.getString(rawTokenKey, "").toString()
+		set(value) {
+			val editor = sharedPreferences.edit()
+			editor.putString(rawTokenKey, value)
+			editor.apply()
+		}
 }

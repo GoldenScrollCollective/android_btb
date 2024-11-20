@@ -60,7 +60,6 @@ class ShareStoryActivity : BaseActivity(R.layout.activity_share_story) {
 		setUpViewModel()
 
 		webView = findViewById(R.id.webView)
-		webView.html = "TEST"
 
 		mediaPreviewView = findViewById(R.id.mediaPreviewView)
 		val uploadButton = findViewById<UploadButton>(R.id.uploadButton)
@@ -117,16 +116,18 @@ class ShareStoryActivity : BaseActivity(R.layout.activity_share_story) {
 		}
 	}
 
-	private fun handleSave() {
-		if (mBinding.webView.toString().isEmpty() || mBinding.webView.toString() == "<p><br></p>") {
+	private fun save(html: String) {
+		if (html.isEmpty() || html == "<p><br></p>") {
 			Toast.makeText(this, "Please write a message.", Toast.LENGTH_SHORT).show()
 			return
 		}
 
+		val currentUser = Utils.getUser(this) ?: return
+
 		val requestBody = ShareStoryBody(
 			uniq_id = "",
-			resource = "user/${currentUser!!.uniqueId}",
-			html = mBinding.webView.toString(),
+			resource = "user/${currentUser.uniqueId}",
+			html = html,
 			media = uploadedFileUrl?.lastPathComponent(),
 			created = "",
 			parent_id = "",
@@ -137,6 +138,11 @@ class ShareStoryActivity : BaseActivity(R.layout.activity_share_story) {
 			anonymous = if (mBinding.shareAnonymouslySwitch.isChecked) "1" else "0"
 		)
 		viewModel.shareStory(requestBody)
+	}
+
+	private fun handleSave() {
+		mBinding.webView.onReceivedHtml = { save(it) }
+		mBinding.webView.requestHtml()
 	}
 
 	private fun handleCancel() {

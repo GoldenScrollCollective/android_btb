@@ -1,3 +1,6 @@
+document.documentElement.style.webkitUserSelect = 'none';
+document.documentElement.style.webkitTouchCallout = 'none';
+
 var apiKey = '';
 let values = [];
 
@@ -42,18 +45,18 @@ var quill = new Quill('#editor', {
               });
             console.log('url', url);
             try {
-              const response = await axios.get(url, {
+              const { data } = await axios.get(url, {
                 headers: { 'X-API-KEY': apiKey }
               });
-              for (const key of Object.keys(response)) {
-                console.log(key, response[key]);
+              for (const key of Object.keys(data)) {
+                console.log(key, data[key]);
               }
-              if (!response.status) {
-                Android.showToast(response.message);
+              if (!data.status) {
+                Android.showToast(data.message);
                 return;
               }
               values = [];
-              response.data.forEach((item) => {
+              data.data.forEach((item) => {
                 values.push({
                   id: item.uniq_id,
                   label: item.name,
@@ -61,7 +64,7 @@ var quill = new Quill('#editor', {
                 });
               });
             } catch (error) {
-              console.log(error);
+              console.log(error.message);
             }
           }
 
@@ -97,10 +100,10 @@ var quill = new Quill('#editor', {
 
 const mentionButton = document.querySelector('#insert-mention');
 mentionButton.addEventListener('click', function () {
-  const range = quill.getSelection();
-  quill.insertText(range.index, '@');
-  //const module = quill.getModule('mention');
-  //module.openMenu('@');
+  // const range = quill.getSelection();
+  // quill.insertText(range.index, '@');
+  const module = quill.getModule('mention');
+  module.openMenu('@');
 });
 
 function setQuillContent(htmlContent) {
@@ -114,6 +117,12 @@ function setQuillUsers(token) {
 function sendContentToiOS() {
   var content = quill.root.innerHTML;
   window.webkit.messageHandlers.content.postMessage(content);
+}
+
+function sendContentToAndroid() {
+  var content = quill.root.innerHTML;
+  Android.handleHtml(content);
+  return content;
 }
 
 function insertLink() {
@@ -131,3 +140,7 @@ function insertLink() {
     }
   }
 }
+
+window.alert = (params) => {
+  console.info(params);
+};
