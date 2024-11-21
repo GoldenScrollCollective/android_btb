@@ -15,10 +15,10 @@ import androidx.navigation.ui.setupWithNavController
 import com.bumptech.glide.Glide
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import org.lemonadestand.btb.R
+import org.lemonadestand.btb.activities.LoginActivity
 import org.lemonadestand.btb.components.base.BaseActivity
 import org.lemonadestand.btb.constants.getImageUrlFromName
 import org.lemonadestand.btb.extensions.setOnSingleClickListener
-import org.lemonadestand.btb.features.login.activities.LoginActivity
 import org.lemonadestand.btb.features.post.fragments.HomeFragmentDirections
 import org.lemonadestand.btb.utils.Utils
 

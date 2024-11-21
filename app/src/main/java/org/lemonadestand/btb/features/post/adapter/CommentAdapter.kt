@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import org.lemonadestand.btb.R
 import org.lemonadestand.btb.constants.getDate
 import org.lemonadestand.btb.core.models.CommentsByDate
-import org.lemonadestand.btb.features.post.models.Post
+import org.lemonadestand.btb.core.models.Post
 
 class CommentAdapter(private val list: ArrayList<CommentsByDate>, var context: Context) :
 	RecyclerView.Adapter<CommentAdapter.ViewHolder>() {

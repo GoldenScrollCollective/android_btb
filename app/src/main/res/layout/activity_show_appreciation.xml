@@ -7,7 +7,7 @@
 	android:background="@color/white"
 	android:backgroundTint="@color/white"
 	android:orientation="vertical"
-	tools:context=".features.post.activities.ShowAppreciationActivity">
+	tools:context=".activities.ShowAppreciationActivity">
 
 	<org.lemonadestand.btb.components.NavHeaderView
 		android:id="@+id/navHeaderView"

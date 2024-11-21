@@ -19,21 +19,21 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import org.lemonadestand.btb.R
+import org.lemonadestand.btb.activities.ShareStoryActivity
+import org.lemonadestand.btb.activities.ShowAppreciationActivity
 import org.lemonadestand.btb.constants.ClickType
 import org.lemonadestand.btb.constants.ProgressDialogUtil
 import org.lemonadestand.btb.constants.getDate
 import org.lemonadestand.btb.constants.handleCommonResponse
+import org.lemonadestand.btb.core.models.Bonus
+import org.lemonadestand.btb.core.models.Post
+import org.lemonadestand.btb.core.models.PostsByDate
 import org.lemonadestand.btb.core.models.User
 import org.lemonadestand.btb.databinding.FragmentMineBinding
 import org.lemonadestand.btb.extensions.hide
 import org.lemonadestand.btb.features.common.models.body.LikeBodyModel
 import org.lemonadestand.btb.features.dashboard.activities.DashboardActivity
-import org.lemonadestand.btb.features.post.activities.ShareStoryActivity
-import org.lemonadestand.btb.features.post.activities.ShowAppreciationActivity
 import org.lemonadestand.btb.features.post.adapter.PublicAdapter
-import org.lemonadestand.btb.features.post.models.Bonus
-import org.lemonadestand.btb.features.post.models.Post
-import org.lemonadestand.btb.features.post.models.PostModelDate
 import org.lemonadestand.btb.interfaces.OnItemClickListener
 import org.lemonadestand.btb.mvvm.factory.CommonViewModelFactory
 import org.lemonadestand.btb.mvvm.repository.HomeRepository
@@ -46,7 +46,7 @@ class MineFragment : Fragment(), OnItemClickListener {
 	private lateinit var publicAdapter: PublicAdapter
 	private lateinit var viewModel: HomeViewModel
 	private var shortAnimationDuration: Int = 0
-	private var postDateList: ArrayList<PostModelDate> = ArrayList()
+	private var postDateList: ArrayList<PostsByDate> = ArrayList()
 	private var tag = "MineFragment"
 	var clickType = ClickType.COMMON
 	var clickedPosition = 0
@@ -132,9 +132,9 @@ class MineFragment : Fragment(), OnItemClickListener {
 					if (!dateList.contains(getDate(it.data[i].created))) {
 						dateList.add(getDate(it.data[i].created))
 						postDateList.add(
-							PostModelDate(
+							PostsByDate(
 								date = it.data[i].created,
-								postList = it.data as ArrayList<Post>
+								posts = it.data as ArrayList<Post>
 							)
 						)
 					}
@@ -159,16 +159,16 @@ class MineFragment : Fragment(), OnItemClickListener {
 			ProgressDialogUtil.dismissProgressDialog()
 			if (it.status == Singleton.SUCCESS) {
 				if (clickType == ClickType.DELETE_POST) {
-					postDateList[clickedSuperPosition].postList.removeAt(clickedPosition)
+					postDateList[clickedSuperPosition].posts.removeAt(clickedPosition)
 					publicAdapter.updateData(postDateList)
 
 				}
 				if (clickType == ClickType.LIKE_POST) {
-					if (postDateList[clickedSuperPosition].postList[clickedPosition].meta.like?.size == 0) {
-						postDateList[clickedSuperPosition].postList[clickedPosition].meta.like?.add(
+					if (postDateList[clickedSuperPosition].posts[clickedPosition].meta.like?.size == 0) {
+						postDateList[clickedSuperPosition].posts[clickedPosition].meta.like?.add(
 							Bonus(by_user = User(), value = "")
 						)
-						Log.e("sizeLikes=>", postDateList[clickedSuperPosition].postList[clickedPosition].meta.like?.size.toString())
+						Log.e("sizeLikes=>", postDateList[clickedSuperPosition].posts[clickedPosition].meta.like?.size.toString())
 						publicAdapter.updateData(postDateList)
 					}
 

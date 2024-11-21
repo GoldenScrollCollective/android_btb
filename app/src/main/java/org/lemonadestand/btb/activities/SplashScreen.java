@@ -1,7 +1,5 @@
-package org.lemonadestand.btb.features.splash.activities;
+package org.lemonadestand.btb.activities;
 
-
-import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,11 +7,12 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.WindowManager;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import org.lemonadestand.btb.R;
-import org.lemonadestand.btb.utils.Utils;
 import org.lemonadestand.btb.features.dashboard.activities.DashboardActivity;
-import org.lemonadestand.btb.features.login.activities.LoginActivity;
 import org.lemonadestand.btb.singleton.Singleton;
+import org.lemonadestand.btb.utils.Utils;
 
 public class SplashScreen extends AppCompatActivity {
 
@@ -33,7 +32,7 @@ public class SplashScreen extends AppCompatActivity {
                 finish();
             } else {
                 if (Utils.getData(this, Utils.TOKEN).length() >= 5) {
-                    Log.e("token=>",Utils.getData(this, Utils.TOKEN));
+                    Log.e("token=>", Utils.getData(this, Utils.TOKEN));
                     Singleton.INSTANCE.setAuthToken(Utils.getData(this, Utils.TOKEN));
                     Intent i = new Intent(SplashScreen.this, DashboardActivity.class);
                     startActivity(i);

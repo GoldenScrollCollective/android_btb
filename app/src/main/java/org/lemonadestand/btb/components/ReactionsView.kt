@@ -1,25 +1,20 @@
 package org.lemonadestand.btb.components
 
 import android.content.Context
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.util.AttributeSet
 import android.view.LayoutInflater
-import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.LinearLayout
-import android.widget.PopupWindow
 import android.widget.TextView
-import androidx.core.content.ContextCompat
 import org.lemonadestand.btb.R
-import org.lemonadestand.btb.features.post.models.Post
+import org.lemonadestand.btb.core.models.Post
 
 class ReactionsView @JvmOverloads constructor(
 	context: Context,
 	attrs: AttributeSet? = null,
 	defStyle: Int = 0,
 	defStyleRes: Int = 0
-): LinearLayout(context, attrs, defStyle, defStyleRes) {
+) : LinearLayout(context, attrs, defStyle, defStyleRes) {
 	companion object {
 		val TAG: String = ReactionsView::class.java.simpleName
 	}

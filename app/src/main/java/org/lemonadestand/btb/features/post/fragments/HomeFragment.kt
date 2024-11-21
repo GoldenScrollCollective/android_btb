@@ -15,14 +15,14 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import org.lemonadestand.btb.R
+import org.lemonadestand.btb.activities.ShareStoryActivity
+import org.lemonadestand.btb.activities.ShowAppreciationActivity
 import org.lemonadestand.btb.components.base.BaseFragment
 import org.lemonadestand.btb.constants.getImageUrlFromName
 import org.lemonadestand.btb.databinding.FragmentHomeBinding
 import org.lemonadestand.btb.extensions.setOnSingleClickListener
 import org.lemonadestand.btb.features.dashboard.activities.DashboardActivity
 import org.lemonadestand.btb.features.dashboard.views.FilterView
-import org.lemonadestand.btb.features.post.activities.ShareStoryActivity
-import org.lemonadestand.btb.features.post.activities.ShowAppreciationActivity
 import org.lemonadestand.btb.singleton.Filter
 import org.lemonadestand.btb.singleton.Singleton.launchActivity
 import org.lemonadestand.btb.utils.Utils

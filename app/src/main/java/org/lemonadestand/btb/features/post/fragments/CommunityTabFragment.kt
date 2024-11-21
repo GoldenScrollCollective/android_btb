@@ -37,6 +37,7 @@ import com.bumptech.glide.Glide
 import com.github.chantsune.swipetoaction.views.SimpleSwipeLayout
 import com.google.gson.Gson
 import org.lemonadestand.btb.R
+import org.lemonadestand.btb.activities.AddBonusActivity
 import org.lemonadestand.btb.components.LikeMenuView
 import org.lemonadestand.btb.components.MediaPreviewView
 import org.lemonadestand.btb.components.ReactionsView
@@ -46,6 +47,9 @@ import org.lemonadestand.btb.constants.ClickType
 import org.lemonadestand.btb.constants.ProgressDialogUtil
 import org.lemonadestand.btb.constants.getDate
 import org.lemonadestand.btb.constants.handleCommonResponse
+import org.lemonadestand.btb.core.models.Bonus
+import org.lemonadestand.btb.core.models.Post
+import org.lemonadestand.btb.core.models.PostsByDate
 import org.lemonadestand.btb.core.models.User
 import org.lemonadestand.btb.databinding.FragmentCommunityTabBinding
 import org.lemonadestand.btb.extensions.hide
@@ -56,11 +60,7 @@ import org.lemonadestand.btb.features.common.models.body.LikeBodyModel
 import org.lemonadestand.btb.features.common.models.body.ShareStoryUser
 import org.lemonadestand.btb.features.dashboard.activities.DashboardActivity
 import org.lemonadestand.btb.features.dashboard.fragments.MediaPreviewBottomSheetDialog
-import org.lemonadestand.btb.features.post.activities.AddBonusActivity
 import org.lemonadestand.btb.features.post.adapter.PostCommentsRecyclerViewAdapter
-import org.lemonadestand.btb.features.post.models.Bonus
-import org.lemonadestand.btb.features.post.models.Post
-import org.lemonadestand.btb.features.post.models.PostModelDate
 import org.lemonadestand.btb.mvvm.factory.CommonViewModelFactory
 import org.lemonadestand.btb.mvvm.repository.HomeRepository
 import org.lemonadestand.btb.mvvm.viewmodel.HomeViewModel
@@ -74,7 +74,7 @@ class CommunityTabFragment : BaseFragment(R.layout.fragment_community_tab) {
 	private lateinit var postsByDateRecyclerViewAdapter: PostsByDateRecyclerViewAdapter
 	private lateinit var viewModel: HomeViewModel
 	private var shortAnimationDuration: Int = 0
-	private var postDateList: ArrayList<PostModelDate> = ArrayList()
+	private var postDateList: ArrayList<PostsByDate> = ArrayList()
 	private var tag = "PrivateFragment"
 	var clickType = ClickType.COMMON
 	var clickedPosition = 0
@@ -135,9 +135,9 @@ class CommunityTabFragment : BaseFragment(R.layout.fragment_community_tab) {
 					if (!dateList.contains(getDate(data[i].created!!))) {
 						dateList.add(getDate(data[i].created!!))
 						postDateList.add(
-							PostModelDate(
+							PostsByDate(
 								date = data[i].created,
-								postList = data as ArrayList<Post>
+								posts = data as ArrayList<Post>
 							)
 						)
 					}
@@ -158,18 +158,18 @@ class CommunityTabFragment : BaseFragment(R.layout.fragment_community_tab) {
 			ProgressDialogUtil.dismissProgressDialog()
 			if (it.status == Singleton.SUCCESS) {
 				if (clickType == ClickType.DELETE_POST) {
-					postDateList[clickedSuperPosition].postList.removeAt(clickedPosition)
+					postDateList[clickedSuperPosition].posts.removeAt(clickedPosition)
 					postsByDateRecyclerViewAdapter.values = postDateList
 
 				}
 				if (clickType == ClickType.LIKE_POST) {
-					if (postDateList[clickedSuperPosition].postList[clickedPosition].meta.like?.size == 0) {
-						postDateList[clickedSuperPosition].postList[clickedPosition].meta.like?.add(
+					if (postDateList[clickedSuperPosition].posts[clickedPosition].meta.like?.size == 0) {
+						postDateList[clickedSuperPosition].posts[clickedPosition].meta.like?.add(
 							Bonus(by_user = User(), value = "")
 						)
 						Log.e(
 							"sizeLikes=>",
-							postDateList[clickedSuperPosition].postList[clickedPosition].meta.like?.size.toString()
+							postDateList[clickedSuperPosition].posts[clickedPosition].meta.like?.size.toString()
 						)
 						postsByDateRecyclerViewAdapter.values = postDateList
 					}
@@ -251,12 +251,12 @@ class CommunityTabFragment : BaseFragment(R.layout.fragment_community_tab) {
 		viewModel.deletePost(post.uniqueId)
 	}
 
-	private class PostsByDateRecyclerViewAdapter : BaseRecyclerViewAdapter<PostModelDate>(R.layout.layout_company_posts_item) {
+	private class PostsByDateRecyclerViewAdapter : BaseRecyclerViewAdapter<PostsByDate>(R.layout.layout_company_posts_item) {
 		var onPreview: ((value: Post) -> Unit)? = null
 		var onLike: ((post: Post, value: String) -> Unit)? = null
 		var onDelete: ((value: Post) -> Unit)? = null
 
-		override fun bindView(holder: ViewHolder, item: PostModelDate, position: Int) {
+		override fun bindView(holder: ViewHolder, item: PostsByDate, position: Int) {
 			super.bindView(holder, item, position)
 
 			with(holder.itemView) {
@@ -265,9 +265,9 @@ class CommunityTabFragment : BaseFragment(R.layout.fragment_community_tab) {
 
 				val tempPostList: ArrayList<Post> = ArrayList()
 
-				for (i in 0 until item.postList.size) {
-					if (getDate(item.postList[i].created!!) == getDate(item.date!!)) {
-						tempPostList.add(item.postList[i])
+				for (i in 0 until item.posts.size) {
+					if (getDate(item.posts[i].created!!) == getDate(item.date!!)) {
+						tempPostList.add(item.posts[i])
 					}
 				}
 				val adapter = PostsRecyclerViewAdapter(position)

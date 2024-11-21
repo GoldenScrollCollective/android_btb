@@ -10,12 +10,12 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import org.lemonadestand.btb.App
+import org.lemonadestand.btb.core.response.PostResponseModel
 import org.lemonadestand.btb.features.common.models.CommonResponseModel
 import org.lemonadestand.btb.features.common.models.body.AddCommentBody
 import org.lemonadestand.btb.features.common.models.body.AppreciationRequestBody
 import org.lemonadestand.btb.features.common.models.body.LikeBodyModel
 import org.lemonadestand.btb.features.common.models.body.ShareStoryBody
-import org.lemonadestand.btb.features.post.models.PostResponseModel
 import org.lemonadestand.btb.mvvm.repository.HomeRepository
 import retrofit2.Response
 

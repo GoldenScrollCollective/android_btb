@@ -19,8 +19,8 @@
 		android:roundIcon="@mipmap/ic_launcher_round"
 		android:supportsRtl="true"
 		android:theme="@style/Theme.JavaFinal"
-		tools:targetApi="31"
-		android:usesCleartextTraffic="true">
+		android:usesCleartextTraffic="true"
+		tools:targetApi="31">
 
 		<service
 			android:name="com.amazonaws.mobileconnectors.s3.transferutility.TransferService"
@@ -34,27 +34,27 @@
 			android:exported="false" />
 
 		<activity
-			android:name=".features.post.activities.ShowAppreciationActivity"
+			android:name=".activities.ShowAppreciationActivity"
 			android:exported="false" />
 		<activity
-			android:name=".features.post.activities.ShareStoryActivity"
+			android:name=".activities.ShareStoryActivity"
 			android:exported="false" />
 		<activity
-			android:name=".features.post.activities.ReplyCommentActivity"
+			android:name=".activities.ReplyCommentActivity"
 			android:exported="false" />
 		<activity
-			android:name=".features.post.activities.AddBonusActivity"
+			android:name=".activities.AddBonusActivity"
 			android:exported="false" />
 		<activity
-			android:name=".features.login.activities.LoginActivity"
-			android:windowSoftInputMode="adjustPan"
-			android:exported="false" />
+			android:name=".activities.LoginActivity"
+			android:exported="false"
+			android:windowSoftInputMode="adjustPan" />
 		<activity
 			android:name=".features.dashboard.activities.DashboardActivity"
 			android:exported="false" />
 
 		<activity
-			android:name=".features.splash.activities.SplashScreen"
+			android:name=".activities.SplashScreen"
 			android:exported="true">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />

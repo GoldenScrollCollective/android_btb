@@ -1,4 +1,4 @@
-package org.lemonadestand.btb.features.post.activities
+package org.lemonadestand.btb.activities
 
 import android.util.Log
 import android.view.View

@@ -2,25 +2,24 @@ package org.lemonadestand.btb.features.more.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.fragment.app.Fragment;
+
 import org.lemonadestand.btb.R;
-import org.lemonadestand.btb.features.login.activities.LoginActivity;
+import org.lemonadestand.btb.activities.LoginActivity;
 import org.lemonadestand.btb.utils.Utils;
 
 
 public class NavMore extends Fragment {
+    TextView btnLogOut;
+
     public NavMore() {
 
     }
-
-    TextView btnLogOut;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

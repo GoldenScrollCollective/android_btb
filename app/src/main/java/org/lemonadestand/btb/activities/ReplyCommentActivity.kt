@@ -1,4 +1,4 @@
-package org.lemonadestand.btb.features.post.activities
+package org.lemonadestand.btb.activities
 
 import android.os.Bundle
 import android.util.Log
@@ -9,11 +9,11 @@ import com.google.gson.Gson
 import org.lemonadestand.btb.R
 import org.lemonadestand.btb.constants.ProgressDialogUtil
 import org.lemonadestand.btb.constants.handleCommonResponse
+import org.lemonadestand.btb.core.models.Post
 import org.lemonadestand.btb.core.models.User
 import org.lemonadestand.btb.databinding.ActivityReplyCommentBinding
 import org.lemonadestand.btb.features.common.models.body.AddCommentBody
 import org.lemonadestand.btb.features.common.models.body.ShareStoryUser
-import org.lemonadestand.btb.features.post.models.Post
 import org.lemonadestand.btb.mvvm.factory.CommonViewModelFactory
 import org.lemonadestand.btb.mvvm.repository.HomeRepository
 import org.lemonadestand.btb.mvvm.viewmodel.HomeViewModel

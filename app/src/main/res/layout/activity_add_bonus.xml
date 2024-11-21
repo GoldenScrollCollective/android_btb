@@ -7,7 +7,7 @@
 	android:background="@color/white"
 	android:backgroundTint="@color/white"
 	android:orientation="vertical"
-	tools:context=".features.post.activities.AddBonusActivity">
+	tools:context=".activities.AddBonusActivity">
 
 
 	<RelativeLayout

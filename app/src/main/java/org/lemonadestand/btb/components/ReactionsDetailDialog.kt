@@ -11,8 +11,8 @@ import com.bumptech.glide.Glide
 import org.lemonadestand.btb.R
 import org.lemonadestand.btb.components.base.BaseRecyclerViewAdapter
 import org.lemonadestand.btb.constants.getImageUrlFromName
+import org.lemonadestand.btb.core.models.Post
 import org.lemonadestand.btb.core.models.User
-import org.lemonadestand.btb.features.post.models.Post
 
 class ReactionsDetailDialog @JvmOverloads constructor(
 	context: Context,

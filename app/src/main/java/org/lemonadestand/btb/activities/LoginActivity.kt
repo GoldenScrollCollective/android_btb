@@ -1,4 +1,4 @@
-package org.lemonadestand.btb.features.login.activities
+package org.lemonadestand.btb.activities
 
 import android.content.Intent
 import android.graphics.Color

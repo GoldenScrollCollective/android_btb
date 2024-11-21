@@ -9,13 +9,13 @@ import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.lemonadestand.btb.constants.ProgressDialogUtil
+import org.lemonadestand.btb.core.response.PostResponseModel
 import org.lemonadestand.btb.features.common.models.CommonResponseModel
 import org.lemonadestand.btb.features.common.models.body.AddCommentBody
 import org.lemonadestand.btb.features.common.models.body.AppreciationRequestBody
 import org.lemonadestand.btb.features.common.models.body.LikeBodyModel
 import org.lemonadestand.btb.features.common.models.body.LikeRequestBodyModel
 import org.lemonadestand.btb.features.common.models.body.ShareStoryBody
-import org.lemonadestand.btb.features.post.models.PostResponseModel
 import org.lemonadestand.btb.network.RetrofitInstance
 import org.lemonadestand.btb.singleton.Singleton
 import retrofit2.Response
