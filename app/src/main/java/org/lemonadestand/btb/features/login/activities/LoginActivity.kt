@@ -12,7 +12,7 @@ import com.google.gson.JsonParser
 import org.json.JSONException
 import org.json.JSONObject
 import org.lemonadestand.btb.R
-import org.lemonadestand.btb.core.models.LoginResponse
+import org.lemonadestand.btb.core.response.LoginResponse
 import org.lemonadestand.btb.databinding.ActivityLoginBinding
 import org.lemonadestand.btb.extensions.hide
 import org.lemonadestand.btb.extensions.invisible

@@ -11,12 +11,12 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import org.lemonadestand.btb.App
+import org.lemonadestand.btb.core.response.EventResponseModel
 import org.lemonadestand.btb.features.common.models.CommonResponseModel
 import org.lemonadestand.btb.features.common.models.body.PastEventBody
 import org.lemonadestand.btb.features.common.models.body.RecordRequestBody
-import org.lemonadestand.btb.features.common.models.body.ScheduleBody
-import org.lemonadestand.btb.features.event.models.EventResponseModel
 import org.lemonadestand.btb.features.common.models.body.ReminderRequestBody
+import org.lemonadestand.btb.features.common.models.body.ScheduleBody
 import org.lemonadestand.btb.mvvm.repository.EventRepository
 import retrofit2.Response
 
@@ -92,7 +92,7 @@ class EventViewModel(
 		}
 	}
 
-	fun deleteEvent(uniqueId : String) = viewModelScope.launch {
+	fun deleteEvent(uniqueId: String) = viewModelScope.launch {
 		isLoading.postValue(true)
 		if (hasInternetConnection()) {
 			eventRepository.deleteEvent(uniqueId)
@@ -102,7 +102,7 @@ class EventViewModel(
 		}
 	}
 
-	fun addReminder(reminderBody : ReminderRequestBody) = viewModelScope.launch {
+	fun addReminder(reminderBody: ReminderRequestBody) = viewModelScope.launch {
 		isLoading.postValue(true)
 		if (hasInternetConnection()) {
 			eventRepository.addReminder(reminderBody)
@@ -111,7 +111,8 @@ class EventViewModel(
 
 		}
 	}
-	fun addRecord(reminderBody : RecordRequestBody) = viewModelScope.launch {
+
+	fun addRecord(reminderBody: RecordRequestBody) = viewModelScope.launch {
 		isLoading.postValue(true)
 		if (hasInternetConnection()) {
 			eventRepository.addRecord(reminderBody)
@@ -121,26 +122,25 @@ class EventViewModel(
 		}
 	}
 
-	fun editRecord(reminderBody : RecordRequestBody, eventId : String) = viewModelScope.launch {
+	fun editRecord(reminderBody: RecordRequestBody, eventId: String) = viewModelScope.launch {
 		isLoading.postValue(true)
 		if (hasInternetConnection()) {
-			eventRepository.editRecord(reminderBody,eventId)
+			eventRepository.editRecord(reminderBody, eventId)
 		} else {
 			noInternet.postValue("No Internet Connection")
 
 		}
 	}
 
-	fun editReminder(reminderBody : ReminderRequestBody, eventId : String) = viewModelScope.launch {
+	fun editReminder(reminderBody: ReminderRequestBody, eventId: String) = viewModelScope.launch {
 		isLoading.postValue(true)
 		if (hasInternetConnection()) {
-			eventRepository.editReminder(reminderBody,eventId)
+			eventRepository.editReminder(reminderBody, eventId)
 		} else {
 			noInternet.postValue("No Internet Connection")
 
 		}
 	}
-
 
 
 }

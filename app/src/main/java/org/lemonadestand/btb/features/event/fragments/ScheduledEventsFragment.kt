@@ -18,13 +18,13 @@ import org.lemonadestand.btb.constants.ClickType
 import org.lemonadestand.btb.constants.ProgressDialogUtil
 import org.lemonadestand.btb.constants.getDate
 import org.lemonadestand.btb.constants.handleCommonResponse
+import org.lemonadestand.btb.core.models.Event
+import org.lemonadestand.btb.core.models.EventsByDate
 import org.lemonadestand.btb.extensions.hide
 import org.lemonadestand.btb.features.common.models.UserListModel
 import org.lemonadestand.btb.features.common.models.body.ScheduleBody
 import org.lemonadestand.btb.features.dashboard.activities.DashboardActivity
 import org.lemonadestand.btb.features.event.adapter.EventAdapter
-import org.lemonadestand.btb.features.event.models.EventModel
-import org.lemonadestand.btb.features.event.models.EventModelDate
 import org.lemonadestand.btb.interfaces.OnItemClickListener
 import org.lemonadestand.btb.mvvm.factory.CommonViewModelFactory
 import org.lemonadestand.btb.mvvm.repository.EventRepository
@@ -38,7 +38,7 @@ class ScheduledEventsFragment : BaseFragment(R.layout.fragment_scheduled_events)
 	private lateinit var eventAdapter: EventAdapter
 	private lateinit var viewModel: EventViewModel
 	private var shortAnimationDuration: Int = 0
-	private var eventDateList: ArrayList<EventModelDate> = ArrayList()
+	private var eventDateList: ArrayList<EventsByDate> = ArrayList()
 	private var tag = "ScheduleEventFragment"
 	private var clickType = ClickType.COMMON
 	private var clickedPosition = 0
@@ -51,7 +51,7 @@ class ScheduledEventsFragment : BaseFragment(R.layout.fragment_scheduled_events)
 	private val resource: UserListModel?
 		get() = Utils.getResource(context)
 
-	var onSelect: ((value: EventModel?) -> Unit)? = null
+	var onSelect: ((value: Event?) -> Unit)? = null
 
 	override fun init() {
 		super.init()
@@ -107,13 +107,13 @@ class ScheduledEventsFragment : BaseFragment(R.layout.fragment_scheduled_events)
 
 				for (i in 0 until it.data.size) {
 
-					if (it.data[i].blessing_complete != null) {
-						if (!dateList.contains(getDate(it.data[i].blessing_complete!!))) {
-							dateList.add(getDate(it.data[i].blessing_complete!!))
+					if (it.data[i].blessingComplete != null) {
+						if (!dateList.contains(getDate(it.data[i].blessingComplete!!))) {
+							dateList.add(getDate(it.data[i].blessingComplete!!))
 							eventDateList.add(
-								EventModelDate(
-									date = it.data[i].blessing_complete!!,
-									eventList = it.data as ArrayList<EventModel>
+								EventsByDate(
+									date = getDate(it.data[i].blessingComplete!!),
+									events = it.data as ArrayList<Event>
 								)
 							)
 						}
@@ -121,9 +121,9 @@ class ScheduledEventsFragment : BaseFragment(R.layout.fragment_scheduled_events)
 						if (!dateList.contains(getDate(it.data[i].start))) {
 							dateList.add(getDate(it.data[i].start))
 							eventDateList.add(
-								EventModelDate(
+								EventsByDate(
 									date = it.data[i].startedAt,
-									eventList = it.data as ArrayList<EventModel>
+									events = it.data as ArrayList<Event>
 								)
 							)
 						}
@@ -210,18 +210,16 @@ class ScheduledEventsFragment : BaseFragment(R.layout.fragment_scheduled_events)
 			ClickType.DELETE_POST -> {
 
 			}
+
 			ClickType.LIKE_POST -> {
 
 
 			}
+
 			else -> {
-				val eventModel  = `object` as EventModel
+				val eventModel = `object` as Event
 				onSelect?.invoke(eventModel)
 			}
 		}
-
-
 	}
-
-
 }

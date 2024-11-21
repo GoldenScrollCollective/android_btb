@@ -17,6 +17,7 @@ import org.lemonadestand.btb.App
 import org.lemonadestand.btb.R
 import org.lemonadestand.btb.components.base.BaseFragment
 import org.lemonadestand.btb.constants.ClickType
+import org.lemonadestand.btb.core.models.Event
 import org.lemonadestand.btb.core.models.EventFor
 import org.lemonadestand.btb.extensions.setOnSingleClickListener
 import org.lemonadestand.btb.features.common.fragments.SelectContactListFragment
@@ -24,7 +25,6 @@ import org.lemonadestand.btb.features.common.fragments.SelectMultiUsersBottomShe
 import org.lemonadestand.btb.features.common.fragments.UserListFragment
 import org.lemonadestand.btb.features.common.models.UserListModel
 import org.lemonadestand.btb.features.common.models.body.ReminderRequestBody
-import org.lemonadestand.btb.features.event.models.EventModel
 import org.lemonadestand.btb.interfaces.OnItemClickListener
 import org.lemonadestand.btb.mvvm.factory.CommonViewModelFactory
 import org.lemonadestand.btb.mvvm.repository.EventRepository
@@ -68,7 +68,7 @@ class EditReminderFragment : BaseFragment(R.layout.fragment_edit_reminder) {
 	private lateinit var viewModel: EventViewModel
 	private val calendar by lazy { Calendar.getInstance() }
 
-	private var event: EventModel? = null
+	private var event: Event? = null
 		set(value) {
 			field = value
 			handleEvent()
@@ -89,13 +89,13 @@ class EditReminderFragment : BaseFragment(R.layout.fragment_edit_reminder) {
 			field = value ?: return
 			if (this::dateView.isInitialized) dateView.text = DateHelper.format(value, "EE, MMM d, yyyy")
 		}
-	private var frequency: EventModel.Frequency = EventModel.Frequency.once
+	private var frequency: Event.Frequency = Event.Frequency.once
 		set(value) {
 			field = value
 			if (!this::btnOnce.isInitialized || !this::btnYearly.isInitialized || !this::repeatingView.isInitialized) return
-			btnOnce.setBackgroundResource(if (value == EventModel.Frequency.once) R.drawable.back_for_all else 0)
-			btnYearly.setBackgroundResource(if (value == EventModel.Frequency.yearly) R.drawable.back_for_all else 0)
-			repeatingView.visibility = if (value == EventModel.Frequency.yearly) View.VISIBLE else View.GONE
+			btnOnce.setBackgroundResource(if (value == Event.Frequency.once) R.drawable.back_for_all else 0)
+			btnYearly.setBackgroundResource(if (value == Event.Frequency.yearly) R.drawable.back_for_all else 0)
+			repeatingView.visibility = if (value == Event.Frequency.yearly) View.VISIBLE else View.GONE
 		}
 	private var repeating: String = "0"
 		set(value) {
@@ -197,14 +197,14 @@ class EditReminderFragment : BaseFragment(R.layout.fragment_edit_reminder) {
 		dateOfEvent = Date()
 
 		btnOnce = rootView.findViewById(R.id.btnOnce)
-		btnOnce.setOnSingleClickListener { frequency = EventModel.Frequency.once }
+		btnOnce.setOnSingleClickListener { frequency = Event.Frequency.once }
 		btnYearly = rootView.findViewById(R.id.btnYearly)
-		btnYearly.setOnSingleClickListener { frequency = EventModel.Frequency.yearly }
+		btnYearly.setOnSingleClickListener { frequency = Event.Frequency.yearly }
 
 		repeatingView = rootView.findViewById(R.id.repeatingView)
 		repeatSwitch = rootView.findViewById(R.id.repeatSwitch)
 		repeatSwitch.setOnCheckedChangeListener { _, isChecked -> repeating = if (isChecked) "1" else "0" }
-		frequency = EventModel.Frequency.once
+		frequency = Event.Frequency.once
 
 		reminderView = rootView.findViewById(R.id.reminderView)
 		btnReminderMinus = rootView.findViewById(R.id.btnReminderMinus)
@@ -281,7 +281,7 @@ class EditReminderFragment : BaseFragment(R.layout.fragment_edit_reminder) {
 		title = event!!.title
 		description = event!!.description
 		dateOfEvent = event!!.start
-		frequency = EventModel.Frequency.valueOf(event!!.frequency)
+		frequency = Event.Frequency.valueOf(event!!.frequency)
 		repeating = event!!.repeating
 
 		val startTime = event?.start?.time
@@ -293,10 +293,14 @@ class EditReminderFragment : BaseFragment(R.layout.fragment_edit_reminder) {
 
 		notifyUsers = event!!.notify
 
-		eventFor = if (event!!.resource.id.contains(EventFor.team.value)) EventFor.team
-		else if (event!!.resource.id.contains(EventFor.contact.value)) EventFor.contact
-		else if (event!!.resource.id.contains(EventFor.company.value)) EventFor.company
-		else EventFor.team
+		event?.resource?.let {
+			eventFor = if (event!!.resource!!.id.contains(EventFor.team.value)) EventFor.team
+			else if (event!!.resource!!.id.contains(EventFor.contact.value)) EventFor.contact
+			else if (event!!.resource!!.id.contains(EventFor.company.value)) EventFor.company
+			else EventFor.team
+		} ?: {
+			eventFor = EventFor.team
+		}
 	}
 
 	private fun handleSelectDate() {
@@ -334,7 +338,7 @@ class EditReminderFragment : BaseFragment(R.layout.fragment_edit_reminder) {
 		if (eventFor == EventFor.team) {
 			if (selectedTeamMember == null) {
 				if (event!!.parent == null) {
-					resource = event!!.resource.id
+					resource = event!!.resource?.id ?: ""
 					resource = resource.replace("user/", "")
 				} else {
 					Toast.makeText(requireActivity(), "Please select user", Toast.LENGTH_SHORT).show()
@@ -346,7 +350,7 @@ class EditReminderFragment : BaseFragment(R.layout.fragment_edit_reminder) {
 		} else {
 			if (selectedContact == null) {
 				if (event!!.parent != null) {
-					resource = event!!.resource.id
+					resource = event!!.resource?.id ?: ""
 					resource = resource.replace("contact/", "")
 				} else {
 					Toast.makeText(requireActivity(), "Please select contact.", Toast.LENGTH_SHORT).show()
