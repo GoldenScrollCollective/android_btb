@@ -189,7 +189,7 @@ class DashboardActivity : BaseActivity(R.layout.activity_dashboard) {
 		if (currentUser.picture != null) {
 			Glide.with(this).load(currentUser.picture).into(navUserPictureView)
 		} else {
-			currentUser.name?.let {
+			currentUser.name.let {
 				Glide.with(this).load(it.trim().lowercase().getImageUrlFromName())
 					.into(navUserPictureView)
 			}
@@ -199,7 +199,7 @@ class DashboardActivity : BaseActivity(R.layout.activity_dashboard) {
 		navUserNameView.text = currentUser.name
 
 		val navOrgNameView = findViewById<TextView>(R.id.navOrgName)
-		navOrgNameView.text = currentUser.organization.name
+		navOrgNameView.text = currentUser.organization?.name
 
 		val navGiveView = findViewById<TextView>(R.id.navGiveView)
 		navGiveView.text = "$${currentUser.give}"

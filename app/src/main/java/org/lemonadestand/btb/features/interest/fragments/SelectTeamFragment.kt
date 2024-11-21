@@ -111,7 +111,7 @@ class SelectTeamFragment : Fragment() {
 						give = "",
 						phone = "",
 						spend = "",
-						picture = Utils.getUser(context).organization.picture,
+						picture = Utils.getUser(context).organization?.picture,
 						username = "",
 						isSelected = true
 					)

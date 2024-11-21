@@ -2,7 +2,6 @@ package org.lemonadestand.btb.features.post.activities
 
 import android.util.Log
 import android.view.View
-import android.webkit.JavascriptInterface
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import org.lemonadestand.btb.R
@@ -12,11 +11,11 @@ import org.lemonadestand.btb.components.UploadButton
 import org.lemonadestand.btb.components.base.BaseActivity
 import org.lemonadestand.btb.constants.ProgressDialogUtil
 import org.lemonadestand.btb.constants.handleCommonResponse
+import org.lemonadestand.btb.core.models.User
 import org.lemonadestand.btb.databinding.ActivityShareStoryBinding
 import org.lemonadestand.btb.extensions.lastPathComponent
 import org.lemonadestand.btb.features.common.models.body.ShareStoryBody
 import org.lemonadestand.btb.features.common.models.body.ShareStoryUser
-import org.lemonadestand.btb.features.login.models.User
 import org.lemonadestand.btb.mvvm.factory.CommonViewModelFactory
 import org.lemonadestand.btb.mvvm.repository.HomeRepository
 import org.lemonadestand.btb.mvvm.viewmodel.HomeViewModel
@@ -64,17 +63,6 @@ class ShareStoryActivity : BaseActivity(R.layout.activity_share_story) {
 		mediaPreviewView = findViewById(R.id.mediaPreviewView)
 		val uploadButton = findViewById<UploadButton>(R.id.uploadButton)
 		uploadButton.onUploaded = { uploadedFileUrl = it }
-	}
-
-	inner class JavaScriptInterface {
-
-		@JavascriptInterface
-		fun showToast(message: String) {
-			// Display a toast message with the received text from CKEditor
-			Toast.makeText(this@ShareStoryActivity, message, Toast.LENGTH_SHORT).show()
-		}
-
-		// Add more methods here to handle data exchange between WebView and native code
 	}
 
 	private fun getData() {

@@ -2,6 +2,7 @@ package org.lemonadestand.btb.components
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.os.Handler
 import android.util.AttributeSet
 import android.util.Log
 import android.webkit.ConsoleMessage
@@ -16,6 +17,10 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Toast
 import androidx.appcompat.widget.PopupMenu
+import androidx.core.text.HtmlCompat
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.lemonadestand.btb.utils.Storage
 
 @SuppressLint("SetJavaScriptEnabled")
@@ -29,6 +34,13 @@ class QuillEditText @JvmOverloads constructor(
 		val TAG: String = QuillEditText::class.java.simpleName
 	}
 
+	var value: String = ""
+		set(value) {
+			field = value
+			Handler().postDelayed({
+				evaluateJavascript("setQuillContent($value)", null)
+			}, 1000)
+		}
 	var onReceivedHtml: ((value: String) -> Unit)? = null
 
 	init {
@@ -55,8 +67,8 @@ class QuillEditText @JvmOverloads constructor(
 			override fun onPageFinished(view: WebView?, url: String?) {
 				super.onPageFinished(view, url)
 
-				val script = "setQuillUsers('${Storage.rawToken}')"
-				evaluateJavascript(script, null)
+				evaluateJavascript("setQuillContent('$value')", null)
+				evaluateJavascript("setQuillUsers('${Storage.rawToken}')", null)
 			}
 
 			override fun onReceivedError(view: WebView?, request: WebResourceRequest?, error: WebResourceError?) {
@@ -112,7 +124,8 @@ class QuillEditText @JvmOverloads constructor(
 
 		@JavascriptInterface
 		fun handleHtml(html: String) {
-			onReceivedHtml?.invoke(html)
+			val value = HtmlCompat.fromHtml(html, HtmlCompat.FROM_HTML_MODE_LEGACY)
+			CoroutineScope(Dispatchers.Main).launch { onReceivedHtml?.invoke(if (value.isBlank()) "" else html) }
 		}
 	}
 }

@@ -1,83 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/rounded_corner"
-    tools:context=".features.common.fragments.WriteMessageFragment">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:background="@drawable/rounded_corner"
+	android:orientation="vertical"
+	tools:context=".features.common.fragments.WriteMessageFragment">
+
+	<RelativeLayout
+		android:layout_width="match_parent"
+		android:layout_height="@dimen/_36sdp"
+		android:background="@color/white">
+
+		<androidx.appcompat.widget.AppCompatTextView
+			android:id="@+id/titleView"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_centerInParent="true"
+			android:fontFamily="@font/urbanist_bold"
+			android:text="Message"
+			android:textAlignment="center"
+			android:textColor="@color/accentColor"
+			android:textSize="18sp" />
+
+		<androidx.appcompat.widget.AppCompatTextView
+			android:id="@+id/btnDone"
+			android:layout_width="wrap_content"
+			android:layout_height="match_parent"
+			android:layout_alignParentEnd="true"
+			android:layout_marginEnd="@dimen/_10sdp"
+			android:fontFamily="@font/urbanist_medium"
+			android:gravity="center"
+			android:text="Done"
+			android:textColor="@color/accentColor"
+			android:textSize="18sp" />
+
+	</RelativeLayout>
+
+	<RelativeLayout
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
+		android:layout_weight="1"
+		android:background="@color/light_grey_100">
+
+		<org.lemonadestand.btb.components.QuillEditText
+			android:id="@+id/html_editor"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:layout_marginStart="10dp"
+			android:layout_marginTop="10dp"
+			android:layout_marginEnd="10dp"
+			android:layout_marginBottom="10dp"
+			android:background="@drawable/back_for_all"
+			android:padding="15dp" />
+
+	</RelativeLayout>
 
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/light_grey_100"
-        >
-        <RelativeLayout
-            android:id="@+id/rel_1"
-            android:layout_width="match_parent"
-            android:background="@color/white"
-            android:layout_height="wrap_content"
-
-            >
-
-            <TextView
-                android:id="@+id/tv_cancel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="15dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginEnd="15dp"
-                android:layout_marginBottom="15dp"
-                android:text="Cancel"
-                android:visibility="gone"
-                android:textColor="@color/accentColor"
-                android:textSize="18dp" />
-
-            <TextView
-                android:id="@+id/tvTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:layout_marginStart="15dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginEnd="15dp"
-                android:layout_marginBottom="15dp"
-                android:text="Message"
-                android:textSize="20dp"
-                android:textColor="@color/black"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/tvDone"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_marginStart="15dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginEnd="15dp"
-                android:layout_marginBottom="15dp"
-                android:text="Done"
-                android:textColor="@color/accentColor"
-                android:textSize="18dp" />
-
-        </RelativeLayout>
-
-
-        <com.htmleditor.HtmlTextEditor
-            android:id="@+id/html_editor"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@+id/rel_1"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="10dp"
-
-            android:layout_marginBottom="10dp"
-            android:background="@drawable/back_for_all"
-            android:padding="15dp" />
-
-    </RelativeLayout>
-
-
-
-</RelativeLayout>
+</LinearLayout>

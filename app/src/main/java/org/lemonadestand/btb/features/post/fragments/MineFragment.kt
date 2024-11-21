@@ -18,30 +18,30 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import org.lemonadestand.btb.R
 import org.lemonadestand.btb.constants.ClickType
 import org.lemonadestand.btb.constants.ProgressDialogUtil
-import org.lemonadestand.btb.R
+import org.lemonadestand.btb.constants.getDate
+import org.lemonadestand.btb.constants.handleCommonResponse
+import org.lemonadestand.btb.core.models.User
+import org.lemonadestand.btb.databinding.FragmentMineBinding
+import org.lemonadestand.btb.extensions.hide
+import org.lemonadestand.btb.features.common.models.body.LikeBodyModel
 import org.lemonadestand.btb.features.dashboard.activities.DashboardActivity
 import org.lemonadestand.btb.features.post.activities.ShareStoryActivity
 import org.lemonadestand.btb.features.post.activities.ShowAppreciationActivity
 import org.lemonadestand.btb.features.post.adapter.PublicAdapter
-import org.lemonadestand.btb.databinding.FragmentMineBinding
-import org.lemonadestand.btb.constants.getDate
-import org.lemonadestand.btb.constants.handleCommonResponse
-import org.lemonadestand.btb.features.post.models.PostModelDate
+import org.lemonadestand.btb.features.post.models.Bonus
 import org.lemonadestand.btb.features.post.models.Post
+import org.lemonadestand.btb.features.post.models.PostModelDate
+import org.lemonadestand.btb.interfaces.OnItemClickListener
 import org.lemonadestand.btb.mvvm.factory.CommonViewModelFactory
 import org.lemonadestand.btb.mvvm.repository.HomeRepository
 import org.lemonadestand.btb.mvvm.viewmodel.HomeViewModel
 import org.lemonadestand.btb.singleton.Singleton
-import org.lemonadestand.btb.extensions.hide
-import org.lemonadestand.btb.interfaces.OnItemClickListener
-import org.lemonadestand.btb.features.common.models.body.LikeBodyModel
-import org.lemonadestand.btb.features.post.models.Bonus
-import org.lemonadestand.btb.features.post.models.User
 import org.lemonadestand.btb.singleton.Singleton.launchActivity
 
-class MineFragment : Fragment(),OnItemClickListener {
+class MineFragment : Fragment(), OnItemClickListener {
 	private lateinit var mBinding: FragmentMineBinding
 	private lateinit var publicAdapter: PublicAdapter
 	private lateinit var viewModel: HomeViewModel
@@ -164,15 +164,13 @@ class MineFragment : Fragment(),OnItemClickListener {
 
 				}
 				if (clickType == ClickType.LIKE_POST) {
-					if(postDateList[clickedSuperPosition].postList[clickedPosition].meta.like?.size == 0)
-					{
+					if (postDateList[clickedSuperPosition].postList[clickedPosition].meta.like?.size == 0) {
 						postDateList[clickedSuperPosition].postList[clickedPosition].meta.like?.add(
 							Bonus(by_user = User(), value = "")
 						)
-						Log.e("sizeLikes=>",postDateList[clickedSuperPosition].postList[clickedPosition].meta.like?.size.toString())
+						Log.e("sizeLikes=>", postDateList[clickedSuperPosition].postList[clickedPosition].meta.like?.size.toString())
 						publicAdapter.updateData(postDateList)
 					}
-
 
 
 				}
@@ -254,6 +252,7 @@ class MineFragment : Fragment(),OnItemClickListener {
 
 
 	}
+
 	private fun setSwipeRefresh() {
 		mBinding.swipeRefreshLayout.setOnRefreshListener {
 			refreshData()
@@ -262,12 +261,10 @@ class MineFragment : Fragment(),OnItemClickListener {
 	}
 
 
-	private fun refreshData()
-	{
+	private fun refreshData() {
 		startLoading()
 		viewModel.getPostList(visibility = Singleton.MINE, page = 0)
 	}
-
 
 
 }

@@ -1,4 +1,4 @@
-package org.lemonadestand.btb.models
+package org.lemonadestand.btb.core.models
 
 import com.google.gson.annotations.SerializedName
 

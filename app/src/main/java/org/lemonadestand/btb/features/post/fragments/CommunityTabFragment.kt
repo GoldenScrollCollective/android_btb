@@ -46,6 +46,7 @@ import org.lemonadestand.btb.constants.ClickType
 import org.lemonadestand.btb.constants.ProgressDialogUtil
 import org.lemonadestand.btb.constants.getDate
 import org.lemonadestand.btb.constants.handleCommonResponse
+import org.lemonadestand.btb.core.models.User
 import org.lemonadestand.btb.databinding.FragmentCommunityTabBinding
 import org.lemonadestand.btb.extensions.hide
 import org.lemonadestand.btb.extensions.setImageUrl
@@ -56,13 +57,10 @@ import org.lemonadestand.btb.features.common.models.body.ShareStoryUser
 import org.lemonadestand.btb.features.dashboard.activities.DashboardActivity
 import org.lemonadestand.btb.features.dashboard.fragments.MediaPreviewBottomSheetDialog
 import org.lemonadestand.btb.features.post.activities.AddBonusActivity
-import org.lemonadestand.btb.features.post.activities.ShareStoryActivity
-import org.lemonadestand.btb.features.post.activities.ShowAppreciationActivity
 import org.lemonadestand.btb.features.post.adapter.PostCommentsRecyclerViewAdapter
 import org.lemonadestand.btb.features.post.models.Bonus
 import org.lemonadestand.btb.features.post.models.Post
 import org.lemonadestand.btb.features.post.models.PostModelDate
-import org.lemonadestand.btb.features.post.models.User
 import org.lemonadestand.btb.mvvm.factory.CommonViewModelFactory
 import org.lemonadestand.btb.mvvm.repository.HomeRepository
 import org.lemonadestand.btb.mvvm.viewmodel.HomeViewModel
@@ -70,371 +68,371 @@ import org.lemonadestand.btb.singleton.Singleton
 import org.lemonadestand.btb.singleton.Singleton.launchActivity
 import org.lemonadestand.btb.utils.Utils
 
-class CommunityTabFragment: BaseFragment(R.layout.fragment_community_tab) {
+class CommunityTabFragment : BaseFragment(R.layout.fragment_community_tab) {
 
-    private lateinit var mBinding: FragmentCommunityTabBinding
-    private lateinit var postsByDateRecyclerViewAdapter: PostsByDateRecyclerViewAdapter
-    private lateinit var viewModel: HomeViewModel
-    private var shortAnimationDuration: Int = 0
-    private var postDateList: ArrayList<PostModelDate> = ArrayList()
-    private var tag = "PrivateFragment"
-    var clickType = ClickType.COMMON
-    var clickedPosition = 0
-    var clickedSuperPosition = 0
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        mBinding = FragmentCommunityTabBinding.inflate(
-            LayoutInflater.from(inflater.context),
-            container,
-            false
-        )
+	private lateinit var mBinding: FragmentCommunityTabBinding
+	private lateinit var postsByDateRecyclerViewAdapter: PostsByDateRecyclerViewAdapter
+	private lateinit var viewModel: HomeViewModel
+	private var shortAnimationDuration: Int = 0
+	private var postDateList: ArrayList<PostModelDate> = ArrayList()
+	private var tag = "PrivateFragment"
+	var clickType = ClickType.COMMON
+	var clickedPosition = 0
+	var clickedSuperPosition = 0
+	override fun onCreateView(
+		inflater: LayoutInflater, container: ViewGroup?,
+		savedInstanceState: Bundle?
+	): View {
+		mBinding = FragmentCommunityTabBinding.inflate(
+			LayoutInflater.from(inflater.context),
+			container,
+			false
+		)
 
-        shortAnimationDuration = resources.getInteger(android.R.integer.config_shortAnimTime)
+		shortAnimationDuration = resources.getInteger(android.R.integer.config_shortAnimTime)
 
-        setUpPublicAdapter()
-        setUpViewModel()
-        setSwipeRefresh()
+		setUpPublicAdapter()
+		setUpViewModel()
+		setSwipeRefresh()
 
-        return mBinding.root
-    }
+		return mBinding.root
+	}
 
-    private fun setUpPublicAdapter() {
-        postsByDateRecyclerViewAdapter = PostsByDateRecyclerViewAdapter()
-        postsByDateRecyclerViewAdapter.onPreview = { post ->
-            val previewBottomSheetDialog = MediaPreviewBottomSheetDialog(post)
-            previewBottomSheetDialog.show(childFragmentManager)
-        }
-        postsByDateRecyclerViewAdapter.onLike = { post, value ->
-            handleLike(post, value)
-        }
-        postsByDateRecyclerViewAdapter.onDelete = { post ->
-            handleDelete(post)
-        }
-        mBinding.rvPublic.adapter = postsByDateRecyclerViewAdapter
+	private fun setUpPublicAdapter() {
+		postsByDateRecyclerViewAdapter = PostsByDateRecyclerViewAdapter()
+		postsByDateRecyclerViewAdapter.onPreview = { post ->
+			val previewBottomSheetDialog = MediaPreviewBottomSheetDialog(post)
+			previewBottomSheetDialog.show(childFragmentManager)
+		}
+		postsByDateRecyclerViewAdapter.onLike = { post, value ->
+			handleLike(post, value)
+		}
+		postsByDateRecyclerViewAdapter.onDelete = { post ->
+			handleDelete(post)
+		}
+		mBinding.rvPublic.adapter = postsByDateRecyclerViewAdapter
 
-    }
+	}
 
-    @SuppressLint("NotifyDataSetChanged")
-    private fun setUpViewModel() {
-        startLoading()
-        val repository = HomeRepository()
-        val viewModelProviderFactory = CommonViewModelFactory((context as DashboardActivity).application, repository)
-        viewModel = ViewModelProvider(this, viewModelProviderFactory)[HomeViewModel::class.java]
-        viewModel.getPosts(page = 0, resource = "", visibility = Singleton.PUBLIC, community = 1, type = "")
-        viewModel.postModel.observe(viewLifecycleOwner) {
-            stopLoading(true)
+	@SuppressLint("NotifyDataSetChanged")
+	private fun setUpViewModel() {
+		startLoading()
+		val repository = HomeRepository()
+		val viewModelProviderFactory = CommonViewModelFactory((context as DashboardActivity).application, repository)
+		viewModel = ViewModelProvider(this, viewModelProviderFactory)[HomeViewModel::class.java]
+		viewModel.getPosts(page = 0, resource = "", visibility = Singleton.PUBLIC, community = 1, type = "")
+		viewModel.postModel.observe(viewLifecycleOwner) {
+			stopLoading(true)
 
-            val data = it.data ?: return@observe
+			val data = it.data ?: return@observe
 
-            if (data.isNotEmpty()) {
-                postDateList.clear()
+			if (data.isNotEmpty()) {
+				postDateList.clear()
 
-                val dateList: ArrayList<String> = ArrayList()
+				val dateList: ArrayList<String> = ArrayList()
 
-                for (i in data.indices) {
-                    if (!dateList.contains(getDate(data[i].created!!))) {
-                        dateList.add(getDate(data[i].created!!))
-                        postDateList.add(
-                            PostModelDate(
-                                date = data[i].created,
-                                postList = data as ArrayList<Post>
-                            )
-                        )
-                    }
-                }
+				for (i in data.indices) {
+					if (!dateList.contains(getDate(data[i].created!!))) {
+						dateList.add(getDate(data[i].created!!))
+						postDateList.add(
+							PostModelDate(
+								date = data[i].created,
+								postList = data as ArrayList<Post>
+							)
+						)
+					}
+				}
 
-                postsByDateRecyclerViewAdapter.values = postDateList
-            }
-        }
-
-
-        viewModel.liveError.observe(viewLifecycleOwner) {
-            Singleton.handleResponse(response = it, context as Activity, tag)
-            ProgressDialogUtil.dismissProgressDialog()
-        }
-
-        viewModel.commonResponse.observe(viewLifecycleOwner) {
-            handleCommonResponse(context as DashboardActivity, it)
-            ProgressDialogUtil.dismissProgressDialog()
-            if (it.status == Singleton.SUCCESS) {
-                if (clickType == ClickType.DELETE_POST) {
-                    postDateList[clickedSuperPosition].postList.removeAt(clickedPosition)
-                    postsByDateRecyclerViewAdapter.values = postDateList
-
-                }
-                if (clickType == ClickType.LIKE_POST) {
-                    if (postDateList[clickedSuperPosition].postList[clickedPosition].meta.like?.size == 0) {
-                        postDateList[clickedSuperPosition].postList[clickedPosition].meta.like?.add(
-                            Bonus(by_user = User(), value = "")
-                        )
-                        Log.e(
-                            "sizeLikes=>",
-                            postDateList[clickedSuperPosition].postList[clickedPosition].meta.like?.size.toString()
-                        )
-                        postsByDateRecyclerViewAdapter.values = postDateList
-                    }
-                }
-            }
-        }
+				postsByDateRecyclerViewAdapter.values = postDateList
+			}
+		}
 
 
-        viewModel.isLoading.observe(viewLifecycleOwner) {
-            Log.e("value==>", it.toString())
-            if (it) {
-                ProgressDialogUtil.showProgressDialog(context as DashboardActivity)
-            } else {
-                ProgressDialogUtil.dismissProgressDialog()
-            }
-        }
+		viewModel.liveError.observe(viewLifecycleOwner) {
+			Singleton.handleResponse(response = it, context as Activity, tag)
+			ProgressDialogUtil.dismissProgressDialog()
+		}
 
-        viewModel.noInternet.observe(viewLifecycleOwner) {
-            Toast.makeText(context, " $it", Toast.LENGTH_SHORT).show()
-            ProgressDialogUtil.dismissProgressDialog()
-        }
-    }
+		viewModel.commonResponse.observe(viewLifecycleOwner) {
+			handleCommonResponse(context as DashboardActivity, it)
+			ProgressDialogUtil.dismissProgressDialog()
+			if (it.status == Singleton.SUCCESS) {
+				if (clickType == ClickType.DELETE_POST) {
+					postDateList[clickedSuperPosition].postList.removeAt(clickedPosition)
+					postsByDateRecyclerViewAdapter.values = postDateList
 
-
-    private fun startLoading() {
-        mBinding.shimmerLayout.startShimmer()
-        mBinding.rvPublic.hide()
-        mBinding.noDataView.root.hide()
-        mBinding.shimmerLayout.apply {
-            alpha = 0f
-            visibility = View.VISIBLE
-            animate()
-                .alpha(1f)
-                .setDuration(0)
-                .setListener(null)
-        }
-        mBinding.shimmerLayout.startShimmer()
-    }
-
-    private fun stopLoading(isDataAvailable: Boolean) {
-        val view = if (isDataAvailable) mBinding.rvPublic else mBinding.noDataView.root
-        view.apply {
-            alpha = 0f
-            visibility = View.VISIBLE
-
-            animate()
-                .alpha(1f)
-                .setDuration(shortAnimationDuration.toLong())
-                .setListener(null)
-        }
-
-        mBinding.shimmerLayout.animate()
-            .alpha(0f)
-            .setDuration(650)
-            .setListener(object : AnimatorListenerAdapter() {
-                override fun onAnimationEnd(animation: Animator) {
-                    mBinding.shimmerLayout.hide()
-                }
-            })
-    }
-
-    private fun setSwipeRefresh() {
-        mBinding.swipeRefreshLayout.setOnRefreshListener {
-            refreshData()
-            mBinding.swipeRefreshLayout.isRefreshing = false
-        }
-    }
-
-    private fun refreshData() {
-        startLoading()
-        viewModel.getPosts(visibility = Singleton.PUBLIC, page = 0, community = 1)
-    }
-
-    private fun handleLike(post: Post, like: String) {
-        viewModel.addLike(LikeBodyModel(metaName = "like", metaValue = like, byUserId = Utils.getData(context, Utils.UID), uniqueId = post.uniqueId))
-    }
-
-    private fun handleDelete(post: Post) {
-        viewModel.deletePost(post.uniqueId)
-    }
-
-    private class PostsByDateRecyclerViewAdapter: BaseRecyclerViewAdapter<PostModelDate>(R.layout.layout_company_posts_item) {
-        var onPreview: ((value: Post) -> Unit)? = null
-        var onLike: ((post: Post, value: String) -> Unit)? = null
-        var onDelete: ((value: Post) -> Unit)? = null
-
-        override fun bindView(holder: ViewHolder, item: PostModelDate, position: Int) {
-            super.bindView(holder, item, position)
-
-            with(holder.itemView) {
-                val tvDate = findViewById<TextView>(R.id.tv_date)
-                tvDate.text = getDate(item.date!!)
-
-                val tempPostList: ArrayList<Post> = ArrayList()
-
-                for (i in 0 until item.postList.size) {
-                    if (getDate(item.postList[i].created!!) == getDate(item.date!!)) {
-                        tempPostList.add(item.postList[i])
-                    }
-                }
-                val adapter = PostsRecyclerViewAdapter(position)
-                adapter.onPreview = { post -> onPreview?.invoke(post) }
-                adapter.onLike = { post, value -> onLike?.invoke(post, value) }
-                adapter.onDelete = { post -> onDelete?.invoke(post) }
-
-                val recyclerView = findViewById<RecyclerView>(R.id.rv_public_sub)
-                recyclerView.setHasFixedSize(false)
-                recyclerView.layoutManager = LinearLayoutManager(context)
-                recyclerView.adapter = adapter
-                adapter.values = tempPostList
-            }
-        }
-    }
-
-    private class PostsRecyclerViewAdapter(val superPosition: Int): BaseRecyclerViewAdapter<Post>(R.layout.layout_community_posts_item, fullHeight = true) {
-        var onPreview: ((value: Post) -> Unit)? = null
-        var onLike: ((post: Post, value: String) -> Unit)? = null
-        var onDelete: ((value: Post) -> Unit)? = null
-
-        override fun bindView(holder: ViewHolder, item: Post, position: Int) {
-            super.bindView(holder, item, position)
-            with(holder.itemView) {
-                val userImageView = findViewById<ImageView>(R.id.user_image)
-                userImageView.setImageUrl(item.user.pictureUrl)
-
-                val titleView = findViewById<TextView>(R.id.titleView)
-                titleView.setOnSingleClickListener {
-                    val cardView = CardView(context)
-                    cardView.setPadding(5, 5, 5, 5)
-
-                    val layout2 = LinearLayout(context)
-                    layout2.orientation = LinearLayout.VERTICAL
-
-                    for( i in 0 until item.users.size) {
-
-                        val layout = LinearLayout(context)
-                        layout.orientation = LinearLayout.HORIZONTAL
-                        layout.setPadding(5, 5, 5, 5)
-                        layout.elevation = 8f
-
-                        val image = ImageView(context)
-                        //            image.setPadding(30,0,30,0)
-                        val wrapContentParams = ViewGroup.LayoutParams(
-                            50, 50
-                        )
-                        image.layoutParams = wrapContentParams
-                        image.scaleType = ImageView.ScaleType.FIT_XY
-
-                        Glide.with(context).load(item.users[i].picture).into(image)
-
-                        val messagearea = TextView(context)
-                        messagearea.text = item.users[i].name
-                        messagearea.setTextSize(TypedValue.COMPLEX_UNIT_SP, 10f)
-                        messagearea.setPadding(20, 0, 10, 0)
+				}
+				if (clickType == ClickType.LIKE_POST) {
+					if (postDateList[clickedSuperPosition].postList[clickedPosition].meta.like?.size == 0) {
+						postDateList[clickedSuperPosition].postList[clickedPosition].meta.like?.add(
+							Bonus(by_user = User(), value = "")
+						)
+						Log.e(
+							"sizeLikes=>",
+							postDateList[clickedSuperPosition].postList[clickedPosition].meta.like?.size.toString()
+						)
+						postsByDateRecyclerViewAdapter.values = postDateList
+					}
+				}
+			}
+		}
 
 
-                        layout.addView(image)
-                        layout.addView(messagearea)
+		viewModel.isLoading.observe(viewLifecycleOwner) {
+			Log.e("value==>", it.toString())
+			if (it) {
+				ProgressDialogUtil.showProgressDialog(context as DashboardActivity)
+			} else {
+				ProgressDialogUtil.dismissProgressDialog()
+			}
+		}
 
-                        layout2.addView(layout)
+		viewModel.noInternet.observe(viewLifecycleOwner) {
+			Toast.makeText(context, " $it", Toast.LENGTH_SHORT).show()
+			ProgressDialogUtil.dismissProgressDialog()
+		}
+	}
 
-                    }
-                    cardView.addView(layout2)
 
-                    val popupWindow = PopupWindow(
-                        cardView,
-                        WindowManager.LayoutParams.WRAP_CONTENT,
-                        WindowManager.LayoutParams.WRAP_CONTENT
-                    )
+	private fun startLoading() {
+		mBinding.shimmerLayout.startShimmer()
+		mBinding.rvPublic.hide()
+		mBinding.noDataView.root.hide()
+		mBinding.shimmerLayout.apply {
+			alpha = 0f
+			visibility = View.VISIBLE
+			animate()
+				.alpha(1f)
+				.setDuration(0)
+				.setListener(null)
+		}
+		mBinding.shimmerLayout.startShimmer()
+	}
 
-                    popupWindow.setBackgroundDrawable(ColorDrawable(ContextCompat.getColor(context, android.R.color.darker_gray))) // Transparent color to remove default shadow
-                    popupWindow.elevation = 20f
+	private fun stopLoading(isDataAvailable: Boolean) {
+		val view = if (isDataAvailable) mBinding.rvPublic else mBinding.noDataView.root
+		view.apply {
+			alpha = 0f
+			visibility = View.VISIBLE
 
-                    popupWindow.isFocusable = true
-                    popupWindow.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+			animate()
+				.alpha(1f)
+				.setDuration(shortAnimationDuration.toLong())
+				.setListener(null)
+		}
 
-                    popupWindow.showAsDropDown(it, 100, 0, 0)
-                }
+		mBinding.shimmerLayout.animate()
+			.alpha(0f)
+			.setDuration(650)
+			.setListener(object : AnimatorListenerAdapter() {
+				override fun onAnimationEnd(animation: Animator) {
+					mBinding.shimmerLayout.hide()
+				}
+			})
+	}
 
-                val lnLike = findViewById<LinearLayout>(R.id.ln_like)
-                lnLike.setOnClickListener {
+	private fun setSwipeRefresh() {
+		mBinding.swipeRefreshLayout.setOnRefreshListener {
+			refreshData()
+			mBinding.swipeRefreshLayout.isRefreshing = false
+		}
+	}
 
-                    val likeMenuView = LikeMenuView(context)
-                    val popupWindow = PopupWindow(
-                        likeMenuView,
-                        WindowManager.LayoutParams.WRAP_CONTENT,
-                        WindowManager.LayoutParams.WRAP_CONTENT
-                    )
-                    likeMenuView.onLike = { value ->
-                        popupWindow.dismiss()
-                        onLike?.invoke(item, value)
-                    }
+	private fun refreshData() {
+		startLoading()
+		viewModel.getPosts(visibility = Singleton.PUBLIC, page = 0, community = 1)
+	}
 
-                    popupWindow.isFocusable = true
-                    popupWindow.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-                    popupWindow.showAsDropDown(it, 100, 0, 0)
-                }
+	private fun handleLike(post: Post, like: String) {
+		viewModel.addLike(LikeBodyModel(metaName = "like", metaValue = like, byUserId = Utils.getData(context, Utils.UID), uniqueId = post.uniqueId))
+	}
 
-                val lnComment = findViewById<LinearLayout>(R.id.ln_comment)
-                lnComment.setOnClickListener {
-                    // add to set alert dialog's styls
-                    val title = TextView(context) //custom title
-                    title.setText("Add Comment")
-                    title.setPadding(0, 50, 0, 0)
-                    title.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20f)
-                    title.gravity = Gravity.CENTER
+	private fun handleDelete(post: Post) {
+		viewModel.deletePost(post.uniqueId)
+	}
 
-                    val layout = LinearLayout(context)
-                    layout.orientation = LinearLayout.VERTICAL
-                    layout.setPadding(50, 0, 50, 0)
+	private class PostsByDateRecyclerViewAdapter : BaseRecyclerViewAdapter<PostModelDate>(R.layout.layout_company_posts_item) {
+		var onPreview: ((value: Post) -> Unit)? = null
+		var onLike: ((post: Post, value: String) -> Unit)? = null
+		var onDelete: ((value: Post) -> Unit)? = null
 
-                    val messageArea = TextView(context)
-                    messageArea.setText("What would you like to say...")
-                    messageArea.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f)
-                    messageArea.gravity = Gravity.CENTER
+		override fun bindView(holder: ViewHolder, item: PostModelDate, position: Int) {
+			super.bindView(holder, item, position)
 
-                    layout.addView(messageArea)
+			with(holder.itemView) {
+				val tvDate = findViewById<TextView>(R.id.tv_date)
+				tvDate.text = getDate(item.date!!)
 
-                    val input = EditText(context)
-                    input.hint = "Text"
-                    val layoutParams = LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.MATCH_PARENT,
-                        LinearLayout.LayoutParams.WRAP_CONTENT
-                    )
-                    layoutParams.setMargins(0, 20, 0, 0)
-                    input.layoutParams = layoutParams
+				val tempPostList: ArrayList<Post> = ArrayList()
 
-                    val textIndent = context.resources.getDimensionPixelOffset(R.dimen.fab_margin)
-                    input.setPadding(textIndent, 20, 0, 20)
+				for (i in 0 until item.postList.size) {
+					if (getDate(item.postList[i].created!!) == getDate(item.date!!)) {
+						tempPostList.add(item.postList[i])
+					}
+				}
+				val adapter = PostsRecyclerViewAdapter(position)
+				adapter.onPreview = { post -> onPreview?.invoke(post) }
+				adapter.onLike = { post, value -> onLike?.invoke(post, value) }
+				adapter.onDelete = { post -> onDelete?.invoke(post) }
 
-                    val shape = GradientDrawable()
-                    shape.setStroke(2, ContextCompat.getColor(context, R.color.text_grey))
-                    shape.cornerRadius = context.resources.getDimension(R.dimen.fab_margin)
-                    shape.setColor(ContextCompat.getColor(context, R.color.bottom_navigation_color))
-                    input.background = shape
+				val recyclerView = findViewById<RecyclerView>(R.id.rv_public_sub)
+				recyclerView.setHasFixedSize(false)
+				recyclerView.layoutManager = LinearLayoutManager(context)
+				recyclerView.adapter = adapter
+				adapter.values = tempPostList
+			}
+		}
+	}
 
-                    layout.addView(input)
+	private class PostsRecyclerViewAdapter(val superPosition: Int) : BaseRecyclerViewAdapter<Post>(R.layout.layout_community_posts_item, fullHeight = true) {
+		var onPreview: ((value: Post) -> Unit)? = null
+		var onLike: ((post: Post, value: String) -> Unit)? = null
+		var onDelete: ((value: Post) -> Unit)? = null
 
-                    AlertDialog.Builder(context)
-                        .setCustomTitle(title)
-                        .setView(layout) // Set the EditText as view in the dialog
-                        .setPositiveButton("OK") { _, _ ->
-                            val message = input.text.toString() // Get the input message
+		override fun bindView(holder: ViewHolder, item: Post, position: Int) {
+			super.bindView(holder, item, position)
+			with(holder.itemView) {
+				val userImageView = findViewById<ImageView>(R.id.user_image)
+				userImageView.setImageUrl(item.user.pictureUrl)
+
+				val titleView = findViewById<TextView>(R.id.titleView)
+				titleView.setOnSingleClickListener {
+					val cardView = CardView(context)
+					cardView.setPadding(5, 5, 5, 5)
+
+					val layout2 = LinearLayout(context)
+					layout2.orientation = LinearLayout.VERTICAL
+
+					for (i in 0 until item.users.size) {
+
+						val layout = LinearLayout(context)
+						layout.orientation = LinearLayout.HORIZONTAL
+						layout.setPadding(5, 5, 5, 5)
+						layout.elevation = 8f
+
+						val image = ImageView(context)
+						//            image.setPadding(30,0,30,0)
+						val wrapContentParams = ViewGroup.LayoutParams(
+							50, 50
+						)
+						image.layoutParams = wrapContentParams
+						image.scaleType = ImageView.ScaleType.FIT_XY
+
+						Glide.with(context).load(item.users[i].picture).into(image)
+
+						val messagearea = TextView(context)
+						messagearea.text = item.users[i].name
+						messagearea.setTextSize(TypedValue.COMPLEX_UNIT_SP, 10f)
+						messagearea.setPadding(20, 0, 10, 0)
+
+
+						layout.addView(image)
+						layout.addView(messagearea)
+
+						layout2.addView(layout)
+
+					}
+					cardView.addView(layout2)
+
+					val popupWindow = PopupWindow(
+						cardView,
+						WindowManager.LayoutParams.WRAP_CONTENT,
+						WindowManager.LayoutParams.WRAP_CONTENT
+					)
+
+					popupWindow.setBackgroundDrawable(ColorDrawable(ContextCompat.getColor(context, android.R.color.darker_gray))) // Transparent color to remove default shadow
+					popupWindow.elevation = 20f
+
+					popupWindow.isFocusable = true
+					popupWindow.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+					popupWindow.showAsDropDown(it, 100, 0, 0)
+				}
+
+				val lnLike = findViewById<LinearLayout>(R.id.ln_like)
+				lnLike.setOnClickListener {
+
+					val likeMenuView = LikeMenuView(context)
+					val popupWindow = PopupWindow(
+						likeMenuView,
+						WindowManager.LayoutParams.WRAP_CONTENT,
+						WindowManager.LayoutParams.WRAP_CONTENT
+					)
+					likeMenuView.onLike = { value ->
+						popupWindow.dismiss()
+						onLike?.invoke(item, value)
+					}
+
+					popupWindow.isFocusable = true
+					popupWindow.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+					popupWindow.showAsDropDown(it, 100, 0, 0)
+				}
+
+				val lnComment = findViewById<LinearLayout>(R.id.ln_comment)
+				lnComment.setOnClickListener {
+					// add to set alert dialog's styls
+					val title = TextView(context) //custom title
+					title.text = "Add Comment"
+					title.setPadding(0, 50, 0, 0)
+					title.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20f)
+					title.gravity = Gravity.CENTER
+
+					val layout = LinearLayout(context)
+					layout.orientation = LinearLayout.VERTICAL
+					layout.setPadding(50, 0, 50, 0)
+
+					val messageArea = TextView(context)
+					messageArea.text = "What would you like to say..."
+					messageArea.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f)
+					messageArea.gravity = Gravity.CENTER
+
+					layout.addView(messageArea)
+
+					val input = EditText(context)
+					input.hint = "Text"
+					val layoutParams = LinearLayout.LayoutParams(
+						LinearLayout.LayoutParams.MATCH_PARENT,
+						LinearLayout.LayoutParams.WRAP_CONTENT
+					)
+					layoutParams.setMargins(0, 20, 0, 0)
+					input.layoutParams = layoutParams
+
+					val textIndent = context.resources.getDimensionPixelOffset(R.dimen.fab_margin)
+					input.setPadding(textIndent, 20, 0, 20)
+
+					val shape = GradientDrawable()
+					shape.setStroke(2, ContextCompat.getColor(context, R.color.text_grey))
+					shape.cornerRadius = context.resources.getDimension(R.dimen.fab_margin)
+					shape.setColor(ContextCompat.getColor(context, R.color.bottom_navigation_color))
+					input.background = shape
+
+					layout.addView(input)
+
+					AlertDialog.Builder(context)
+						.setCustomTitle(title)
+						.setView(layout) // Set the EditText as view in the dialog
+						.setPositiveButton("OK") { _, _ ->
+							val message = input.text.toString() // Get the input message
 //                    // Handle the confirmation with the input message
 
-                            val requestBody = AddCommentBody(
-                                uniq_id = "",
-                                resource = "user/${CompanyTabFragment.currentUser!!.uniqueId}",
-                                html = message,
-                                created = "",
-                                parent_id = item.uniqueId,
-                                modified = "",
-                                by_user_id = "",
+							val requestBody = AddCommentBody(
+								uniq_id = "",
+								resource = "user/${CompanyTabFragment.currentUser!!.uniqueId}",
+								html = message,
+								created = "",
+								parent_id = item.uniqueId,
+								modified = "",
+								by_user_id = "",
 
-                                user = ShareStoryUser(id = "", name = "")
-                            )
+								user = ShareStoryUser(id = "", name = "")
+							)
 //                    viewModel.addComment(requestBody)
-                            CompanyTabFragment.viewModel.addComment(requestBody)
-                        }
-                        .setNegativeButton("Cancel") { dialog, _ ->
-                            dialog.dismiss() // Dismiss the dialog if canceled
-                        }
-                        .show() // Show the dialog
+							CompanyTabFragment.viewModel.addComment(requestBody)
+						}
+						.setNegativeButton("Cancel") { dialog, _ ->
+							dialog.dismiss() // Dismiss the dialog if canceled
+						}
+						.show() // Show the dialog
 
 //            val json = Gson().toJson(data)
 //            (context as Activity).launchActivity<ReplyCommentActivity> {
@@ -486,108 +484,108 @@ class CommunityTabFragment: BaseFragment(R.layout.fragment_community_tab) {
 //            }
 
 
-                }
+				}
 
-                val swipeLayout = findViewById<SimpleSwipeLayout>(R.id.swipe_layout)
-                swipeLayout.setOnSwipeItemClickListener { swipeItem ->
+				val swipeLayout = findViewById<SimpleSwipeLayout>(R.id.swipe_layout)
+				swipeLayout.setOnSwipeItemClickListener { swipeItem ->
 
-                    when (swipeItem.position) {
-                        0 -> {
-                            onDelete?.invoke(item)
-                        }
-                        1 -> {
-                            Toast.makeText(holder.itemView.context, "Settings", Toast.LENGTH_SHORT)
-                                .show()
-                        }
-                        2 -> {
-                            val pos = holder.absoluteAdapterPosition
+					when (swipeItem.position) {
+						0 -> {
+							onDelete?.invoke(item)
+						}
 
-                            notifyItemRemoved(pos)
-                            Toast.makeText(holder.itemView.context, "Trash", Toast.LENGTH_SHORT)
-                                .show()
-                        }
-                    }
+						1 -> {
+							Toast.makeText(holder.itemView.context, "Settings", Toast.LENGTH_SHORT)
+								.show()
+						}
 
-                }
+						2 -> {
+							val pos = holder.absoluteAdapterPosition
 
-                val lnBonus = findViewById<LinearLayout>(R.id.ln_bonus)
-                lnBonus.setOnClickListener {
-                    val json = Gson().toJson(item)
-                    (context as Activity).launchActivity<AddBonusActivity> {
-                        putExtra("reply_data", json)
-                    }
-                }
+							notifyItemRemoved(pos)
+							Toast.makeText(holder.itemView.context, "Trash", Toast.LENGTH_SHORT)
+								.show()
+						}
+					}
 
-                val tvComment = findViewById<TextView>(R.id.tv_comment)
+				}
 
-                val mediaPreviewView = findViewById<MediaPreviewView>(R.id.mediaPreviewView)
-                mediaPreviewView.url = item.media
-                mediaPreviewView.setOnClickListener {
-                    onPreview?.invoke(item)
-                }
+				val lnBonus = findViewById<LinearLayout>(R.id.ln_bonus)
+				lnBonus.setOnClickListener {
+					val json = Gson().toJson(item)
+					(context as Activity).launchActivity<AddBonusActivity> {
+						putExtra("reply_data", json)
+					}
+				}
 
-                val reactionsView = findViewById<ReactionsView>(R.id.reactionsView)
-                reactionsView.post = item
+				val tvComment = findViewById<TextView>(R.id.tv_comment)
 
-                val commentCountView = findViewById<TextView>(R.id.txt_comment)
-                val likeCountView = findViewById<TextView>(R.id.txt_like)
-                val imageLikeMain = findViewById<ImageView>(R.id.image_like_main)
+				val mediaPreviewView = findViewById<MediaPreviewView>(R.id.mediaPreviewView)
+				mediaPreviewView.url = item.media
+				mediaPreviewView.setOnClickListener {
+					onPreview?.invoke(item)
+				}
 
-                val bold = "${item.user.name} shared this story · "
-                val small = "${item.createdAgo ?: ""} @${item.organization?.name ?: ""}"
-                val total = bold + small
-                val spannableStringBuilder = SpannableStringBuilder(total)
-                spannableStringBuilder.setSpan(ForegroundColorSpan(ContextCompat.getColor(context, R.color.text_grey)), total.indexOf(small), total.indexOf(small) + small.length, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
-                spannableStringBuilder.setSpan(StyleSpan(Typeface.NORMAL), total.indexOf(small), total.indexOf(small) + small.length, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
-                titleView.text = spannableStringBuilder
+				val reactionsView = findViewById<ReactionsView>(R.id.reactionsView)
+				reactionsView.post = item
 
-                lnBonus.visibility = View.GONE
+				val commentCountView = findViewById<TextView>(R.id.txt_comment)
+				val likeCountView = findViewById<TextView>(R.id.txt_like)
+				val imageLikeMain = findViewById<ImageView>(R.id.image_like_main)
 
-                tvComment.text = HtmlCompat.fromHtml(item.html, HtmlCompat.FROM_HTML_MODE_LEGACY).trim()
+				val bold = "${item.user.name} shared this story · "
+				val small = "${item.createdAgo ?: ""} @${item.organization?.name ?: ""}"
+				val total = bold + small
+				val spannableStringBuilder = SpannableStringBuilder(total)
+				spannableStringBuilder.setSpan(ForegroundColorSpan(ContextCompat.getColor(context, R.color.text_grey)), total.indexOf(small), total.indexOf(small) + small.length, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
+				spannableStringBuilder.setSpan(StyleSpan(Typeface.NORMAL), total.indexOf(small), total.indexOf(small) + small.length, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
+				titleView.text = spannableStringBuilder
 
-                if (item.replies.isNotEmpty()) {
-                    commentCountView.text = buildString {
-                        append("Comment")
+				lnBonus.visibility = View.GONE
+
+				tvComment.text = HtmlCompat.fromHtml(item.html, HtmlCompat.FROM_HTML_MODE_LEGACY).trim()
+
+				if (item.replies.isNotEmpty()) {
+					commentCountView.text = buildString {
+						append("Comment")
 //                append("(")
 //                append(data.replies.size)
 //                append(")")
-                    }
+					}
 
-                    var commentStr = ""
-                    if (item.replies.size == 1) commentStr = "1 Comment"
-                    if (item.replies.size > 1) commentStr = "${item.replies.size} Comments"
-                }
+					var commentStr = ""
+					if (item.replies.size == 1) commentStr = "1 Comment"
+					if (item.replies.size > 1) commentStr = "${item.replies.size} Comments"
+				}
 
-                if (!item.meta.like.isNullOrEmpty()) {
-                    likeCountView.text = buildString {
-                        append("Like")
+				if (!item.meta.like.isNullOrEmpty()) {
+					likeCountView.text = buildString {
+						append("Like")
 //                append("(")
 //                append(data.meta.like.size)
 //                append(")")
-                    }
+					}
 
-                    if (item.meta.like.size != 0) {
-                        imageLikeMain.setImageResource(R.drawable.ic_like_up)
-                    }
-                }
-
-
+					if (item.meta.like.size != 0) {
+						imageLikeMain.setImageResource(R.drawable.ic_like_up)
+					}
+				}
 
 
-                /* holder.tv_title.setText(data.getName());
+				/* holder.tv_title.setText(data.getName());
 				holder.tv_desc.setText(data.getDesc());
 
 				Glide.with(context)
 						.load(data.getImage())
 						.into(holder.iv_image);*/
 
-                val commentsRecyclerView = findViewById<RecyclerView>(R.id.commentsRecyclerView)
-                val commentsRecyclerViewAdapter = PostCommentsRecyclerViewAdapter(position)   // fixed
-                commentsRecyclerViewAdapter.onLike = { post, value -> onLike?.invoke(post, value) }
-                commentsRecyclerView.adapter = commentsRecyclerViewAdapter
-                commentsRecyclerViewAdapter.values = item.replies
-            }
-        }
-    }
+				val commentsRecyclerView = findViewById<RecyclerView>(R.id.commentsRecyclerView)
+				val commentsRecyclerViewAdapter = PostCommentsRecyclerViewAdapter(position)   // fixed
+				commentsRecyclerViewAdapter.onLike = { post, value -> onLike?.invoke(post, value) }
+				commentsRecyclerView.adapter = commentsRecyclerViewAdapter
+				commentsRecyclerViewAdapter.values = item.replies
+			}
+		}
+	}
 
 }

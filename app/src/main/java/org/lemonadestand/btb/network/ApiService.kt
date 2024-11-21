@@ -4,13 +4,12 @@ import com.google.gson.JsonObject
 import okhttp3.RequestBody
 import org.lemonadestand.btb.core.models.CompanyListResponseModel
 import org.lemonadestand.btb.core.models.ContactsResponseModel
+import org.lemonadestand.btb.core.models.LoginResponse
 import org.lemonadestand.btb.core.models.MemberListResponseModel
 import org.lemonadestand.btb.features.common.models.CommonResponseModel
-
 import org.lemonadestand.btb.features.common.models.UserListResponseModel
 import org.lemonadestand.btb.features.event.models.EventResponseModel
 import org.lemonadestand.btb.features.interest.models.InterestResponseModel
-import org.lemonadestand.btb.features.login.models.LoginResponse
 import org.lemonadestand.btb.features.post.models.PostResponseModel
 import org.lemonadestand.btb.singleton.Singleton
 import org.lemonadestand.btb.singleton.Singleton.authToken
@@ -223,7 +222,7 @@ interface ApiService {
 
 	@POST(Singleton.LOGIN)
 	fun login(@Body dataCall: JsonObject?): Call<LoginResponse?>?
-	
+
 	@POST(Singleton.LOGIN)
 	fun getRawToken(@Body dataCall: JsonObject?, @Header("X-API-KEY") authorization: String = ""): Call<LoginResponse?>?
 

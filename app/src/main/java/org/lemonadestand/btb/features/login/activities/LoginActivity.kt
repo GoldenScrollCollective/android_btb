@@ -12,12 +12,12 @@ import com.google.gson.JsonParser
 import org.json.JSONException
 import org.json.JSONObject
 import org.lemonadestand.btb.R
+import org.lemonadestand.btb.core.models.LoginResponse
 import org.lemonadestand.btb.databinding.ActivityLoginBinding
 import org.lemonadestand.btb.extensions.hide
 import org.lemonadestand.btb.extensions.invisible
 import org.lemonadestand.btb.extensions.show
 import org.lemonadestand.btb.features.dashboard.activities.DashboardActivity
-import org.lemonadestand.btb.features.login.models.LoginResponse
 import org.lemonadestand.btb.network.RestClient
 import org.lemonadestand.btb.singleton.Singleton.authToken
 import org.lemonadestand.btb.utils.Storage
@@ -99,21 +99,21 @@ class LoginActivity : AppCompatActivity() {
 					showLoading(false)
 					if (response.isSuccessful) {
 
-						val datas = response.body()
+						val data = response.body()
 
-						if (datas!!.status && datas.user != null) {
-							Toast.makeText(this@LoginActivity, datas.message, Toast.LENGTH_SHORT).show()
+						if (data!!.status && data.user != null) {
+							Toast.makeText(this@LoginActivity, data.message, Toast.LENGTH_SHORT).show()
 
-							Utils.saveData(this@LoginActivity, Utils.TOKEN, datas.user.token.rawToken)
-							Utils.saveData(this@LoginActivity, Utils.UID, datas.user.uniqueId.toString())
-							Utils.saveData(this@LoginActivity, Utils.ORG_ID, datas.user.orgId.toString())
-							Utils.saveData(this@LoginActivity, Utils.USER_NAME, datas.user.name.toString())
-							Utils.saveData(this@LoginActivity, Utils.PICTURE, datas.user.picture)
-							Utils.saveData(this@LoginActivity, Utils.ORG_PICTURE, datas.user.organization.picture)
-							Utils.saveUser(this@LoginActivity, datas.user)
+							Utils.saveData(this@LoginActivity, Utils.TOKEN, data.user?.token?.rawToken)
+							Utils.saveData(this@LoginActivity, Utils.UID, data.user?.uniqueId.toString())
+							Utils.saveData(this@LoginActivity, Utils.ORG_ID, data.user?.orgId.toString())
+							Utils.saveData(this@LoginActivity, Utils.USER_NAME, data.user?.name.toString())
+							Utils.saveData(this@LoginActivity, Utils.PICTURE, data.user?.picture)
+							Utils.saveData(this@LoginActivity, Utils.ORG_PICTURE, data.user?.organization?.picture)
+							Utils.saveUser(this@LoginActivity, data.user)
 
-							authToken = "Bearer " + datas.user.token.rawToken
-							if (datas.status) {
+							authToken = "Bearer " + data.user?.token?.rawToken
+							if (data.status) {
 								val i = Intent(this@LoginActivity, DashboardActivity::class.java)
 								startActivity(i)
 								finish()
@@ -123,8 +123,8 @@ class LoginActivity : AppCompatActivity() {
 							request?.enqueue(object : Callback<LoginResponse?> {
 								override fun onResponse(call: Call<LoginResponse?>, response: Response<LoginResponse?>) {
 									if (response.isSuccessful) {
-										val datas = response.body() ?: return
-										Storage.rawToken = datas.user.token.rawToken
+										val data = response.body() ?: return
+										Storage.rawToken = data.user?.token?.rawToken ?: ""
 									}
 								}
 
@@ -137,7 +137,7 @@ class LoginActivity : AppCompatActivity() {
 						} else {
 							Toast.makeText(
 								this@LoginActivity,
-								datas.message,
+								data.message,
 								Toast.LENGTH_SHORT
 							).show()
 						}

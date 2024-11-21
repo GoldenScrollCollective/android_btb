@@ -17,6 +17,7 @@ import org.lemonadestand.btb.components.base.BaseActivity
 import org.lemonadestand.btb.constants.ClickType
 import org.lemonadestand.btb.constants.ProgressDialogUtil
 import org.lemonadestand.btb.constants.handleCommonResponse
+import org.lemonadestand.btb.core.models.User
 import org.lemonadestand.btb.databinding.ActivityShowAppreciationBinding
 import org.lemonadestand.btb.extensions.lastPathComponent
 import org.lemonadestand.btb.features.common.fragments.SelectMultiUsersBottomSheetFragment
@@ -25,7 +26,6 @@ import org.lemonadestand.btb.features.common.models.UserListModel
 import org.lemonadestand.btb.features.common.models.body.AppreciationMeta
 import org.lemonadestand.btb.features.common.models.body.AppreciationRequestBody
 import org.lemonadestand.btb.features.common.models.body.ShareStoryUser
-import org.lemonadestand.btb.features.login.models.User
 import org.lemonadestand.btb.interfaces.OnItemClickListener
 import org.lemonadestand.btb.mvvm.factory.CommonViewModelFactory
 import org.lemonadestand.btb.mvvm.repository.HomeRepository
@@ -45,7 +45,12 @@ class ShowAppreciationActivity : BaseActivity(R.layout.activity_show_appreciatio
 	private var bonusAmount = 0
 	private var amountSpend = 0
 	private var totalAmount = 0
-	var htmlMessage = ""
+	private var htmlMessage = ""
+		set(value) {
+			field = value
+			if (this::mBinding.isInitialized) mBinding.txtMessage.text = HtmlCompat.fromHtml(value, HtmlCompat.FROM_HTML_MODE_LEGACY)
+		}
+
 	private var isGivingSelected = true
 	var data = arrayListOf<String>()
 	var currentUser: User? = null
@@ -175,7 +180,13 @@ class ShowAppreciationActivity : BaseActivity(R.layout.activity_show_appreciatio
 
 	private fun setClickEvents() {
 		mBinding.btnMessage.setOnClickListener {
-			showBottomSheetMessage()
+			WriteMessageFragment().apply {
+				arguments = Bundle().apply { putString("message", htmlMessage) }
+				onDone = {
+					htmlMessage = it
+				}
+				show(supportFragmentManager, tag)
+			}
 		}
 
 		mBinding.selectUser.setOnClickListener {
@@ -275,22 +286,7 @@ class ShowAppreciationActivity : BaseActivity(R.layout.activity_show_appreciatio
 		}
 	}
 
-
-	private fun showBottomSheetMessage() {
-		WriteMessageFragment().apply {
-			setCallback(this@ShowAppreciationActivity)
-			arguments = Bundle().apply { putString("message", htmlMessage) }
-			show(supportFragmentManager, tag)
-		}
-	}
-
 	override fun onItemClicked(`object`: Any?, index: Int, type: ClickType, superIndex: Int) {
-		if (index == -1) {
-			val message = `object`.toString()
-			htmlMessage = message
-			mBinding.txtMessage.text = HtmlCompat.fromHtml(message, HtmlCompat.FROM_HTML_MODE_LEGACY)
-			return
-		}
 		bottomSheetFragment?.dismiss()
 
 		val list = `object` as ArrayList<UserListModel>?

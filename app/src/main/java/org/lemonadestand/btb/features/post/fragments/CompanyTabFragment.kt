@@ -42,6 +42,7 @@ import org.lemonadestand.btb.constants.ClickType
 import org.lemonadestand.btb.constants.ProgressDialogUtil
 import org.lemonadestand.btb.constants.getDate
 import org.lemonadestand.btb.constants.handleCommonResponse
+import org.lemonadestand.btb.core.models.User
 import org.lemonadestand.btb.databinding.FragmentCompanyTabBinding
 import org.lemonadestand.btb.extensions.hide
 import org.lemonadestand.btb.features.common.models.body.AddCommentBody
@@ -50,13 +51,10 @@ import org.lemonadestand.btb.features.common.models.body.ShareStoryUser
 import org.lemonadestand.btb.features.dashboard.activities.DashboardActivity
 import org.lemonadestand.btb.features.dashboard.fragments.MediaPreviewBottomSheetDialog
 import org.lemonadestand.btb.features.post.activities.AddBonusActivity
-import org.lemonadestand.btb.features.post.activities.ShareStoryActivity
-import org.lemonadestand.btb.features.post.activities.ShowAppreciationActivity
 import org.lemonadestand.btb.features.post.adapter.PostCommentsRecyclerViewAdapter
 import org.lemonadestand.btb.features.post.models.Bonus
 import org.lemonadestand.btb.features.post.models.Post
 import org.lemonadestand.btb.features.post.models.PostModelDate
-import org.lemonadestand.btb.features.post.models.User
 import org.lemonadestand.btb.mvvm.factory.CommonViewModelFactory
 import org.lemonadestand.btb.mvvm.repository.HomeRepository
 import org.lemonadestand.btb.mvvm.viewmodel.HomeViewModel
@@ -66,7 +64,7 @@ import org.lemonadestand.btb.singleton.Singleton.launchActivity
 import org.lemonadestand.btb.utils.Utils
 
 
-class CompanyTabFragment: BaseFragment(R.layout.fragment_company_tab) {
+class CompanyTabFragment : BaseFragment(R.layout.fragment_company_tab) {
 	private lateinit var mBinding: FragmentCompanyTabBinding
 	private lateinit var postsByDateRecyclerViewAdapter: PostsByDateRecyclerViewAdapter
 	private var shortAnimationDuration: Int = 0
@@ -78,7 +76,7 @@ class CompanyTabFragment: BaseFragment(R.layout.fragment_company_tab) {
 
 	companion object {
 		lateinit var viewModel: HomeViewModel
-		var currentUser: org.lemonadestand.btb.features.login.models.User? = null
+		var currentUser: User? = null
 	}
 
 	override fun onCreateView(
@@ -168,12 +166,11 @@ class CompanyTabFragment: BaseFragment(R.layout.fragment_company_tab) {
 					postsByDateRecyclerViewAdapter.notifyDataSetChanged()
 				}
 				if (clickType == ClickType.LIKE_POST) {
-					if(postDateList[clickedSuperPosition].postList[clickedPosition].meta.like?.size == 0)
-					{
+					if (postDateList[clickedSuperPosition].postList[clickedPosition].meta.like?.size == 0) {
 						postDateList[clickedSuperPosition].postList[clickedPosition].meta.like?.add(
 							Bonus(by_user = User(), value = "")
 						)
-						Log.e("sizeLikes=>",postDateList[clickedSuperPosition].postList[clickedPosition].meta.like?.size.toString())
+						Log.e("sizeLikes=>", postDateList[clickedSuperPosition].postList[clickedPosition].meta.like?.size.toString())
 						postsByDateRecyclerViewAdapter.values = postDateList
 					}
 				}
@@ -263,7 +260,7 @@ class CompanyTabFragment: BaseFragment(R.layout.fragment_company_tab) {
 		viewModel.deletePost(post.uniqueId)
 	}
 
-	private class PostsByDateRecyclerViewAdapter: BaseRecyclerViewAdapter<PostModelDate>(R.layout.layout_company_posts_item) {
+	private class PostsByDateRecyclerViewAdapter : BaseRecyclerViewAdapter<PostModelDate>(R.layout.layout_company_posts_item) {
 		var onPreview: ((value: Post) -> Unit)? = null
 		var onLike: ((post: Post, value: String) -> Unit)? = null
 		var onDelete: ((value: Post) -> Unit)? = null
@@ -296,7 +293,7 @@ class CompanyTabFragment: BaseFragment(R.layout.fragment_company_tab) {
 		}
 	}
 
-	private class PostsRecyclerViewAdapter(val superPosition: Int): BaseRecyclerViewAdapter<Post>(R.layout.row_public_sub, fullHeight = true) {
+	private class PostsRecyclerViewAdapter(val superPosition: Int) : BaseRecyclerViewAdapter<Post>(R.layout.row_public_sub, fullHeight = true) {
 		var onPreview: ((value: Post) -> Unit)? = null
 		var onLike: ((post: Post, value: String) -> Unit)? = null
 		var onDelete: ((value: Post) -> Unit)? = null
@@ -323,7 +320,7 @@ class CompanyTabFragment: BaseFragment(R.layout.fragment_company_tab) {
 					val layout2 = LinearLayout(context)
 					layout2.orientation = LinearLayout.VERTICAL
 
-					for( i in 0 until item.users.size) {
+					for (i in 0 until item.users.size) {
 
 						val layout = LinearLayout(context)
 						layout.orientation = LinearLayout.HORIZONTAL
@@ -394,7 +391,7 @@ class CompanyTabFragment: BaseFragment(R.layout.fragment_company_tab) {
 				lnComment.setOnClickListener {
 					// add to set alert dialog's styls
 					val title = TextView(context) //custom title
-					title.setText("Add Comment")
+					title.text = "Add Comment"
 					title.setPadding(0, 50, 0, 0)
 					title.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20f)
 					title.gravity = Gravity.CENTER
@@ -404,7 +401,7 @@ class CompanyTabFragment: BaseFragment(R.layout.fragment_company_tab) {
 					layout.setPadding(50, 0, 50, 0)
 
 					val messageArea = TextView(context)
-					messageArea.setText("What would you like to say...")
+					messageArea.text = "What would you like to say..."
 					messageArea.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f)
 					messageArea.gravity = Gravity.CENTER
 
@@ -439,7 +436,7 @@ class CompanyTabFragment: BaseFragment(R.layout.fragment_company_tab) {
 
 							val requestBody = AddCommentBody(
 								uniq_id = "",
-								resource = "user/${CompanyTabFragment.currentUser!!.uniqueId}",
+								resource = "user/${currentUser!!.uniqueId}",
 								html = message,
 								created = "",
 								parent_id = item.uniqueId,
@@ -449,7 +446,7 @@ class CompanyTabFragment: BaseFragment(R.layout.fragment_company_tab) {
 								user = ShareStoryUser(id = "", name = "")
 							)
 //                    viewModel.addComment(requestBody)
-							CompanyTabFragment.viewModel.addComment(requestBody)
+							viewModel.addComment(requestBody)
 						}
 						.setNegativeButton("Cancel") { dialog, _ ->
 							dialog.dismiss() // Dismiss the dialog if canceled
@@ -560,7 +557,7 @@ class CompanyTabFragment: BaseFragment(R.layout.fragment_company_tab) {
 					}
 					tvDesc.text = buildString {
 						append("")
-					};
+					}
 
 					lnBonus.visibility = View.GONE
 				}
@@ -594,8 +591,6 @@ class CompanyTabFragment: BaseFragment(R.layout.fragment_company_tab) {
 				}
 
 
-
-
 				/* holder.tv_title.setText(data.getName());
 				holder.tv_desc.setText(data.getDesc());
 
@@ -610,10 +605,12 @@ class CompanyTabFragment: BaseFragment(R.layout.fragment_company_tab) {
 							onDelete?.invoke(item)
 							swipeLayout.setItemState(SwipeLayout.ITEM_STATE_COLLAPSED, true)
 						}
+
 						1 -> {
 							Toast.makeText(holder.itemView.context, "Settings", Toast.LENGTH_SHORT)
 								.show()
 						}
+
 						2 -> {
 							val pos = holder.absoluteAdapterPosition
 
