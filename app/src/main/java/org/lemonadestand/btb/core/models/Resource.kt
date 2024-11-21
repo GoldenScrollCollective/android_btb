@@ -1,6 +1,7 @@
 package org.lemonadestand.btb.core.models
 
 import kotlinx.parcelize.Parcelize
+import org.lemonadestand.btb.core.BasePictureModel
 
 @Parcelize
 data class Resource(

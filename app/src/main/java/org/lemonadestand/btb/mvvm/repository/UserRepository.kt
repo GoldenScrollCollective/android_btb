@@ -6,7 +6,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.lemonadestand.btb.constants.ProgressDialogUtil
-import org.lemonadestand.btb.features.common.models.CommonResponseModel
+import org.lemonadestand.btb.core.BaseResponse
 import org.lemonadestand.btb.features.common.models.UserListResponseModel
 import org.lemonadestand.btb.network.RetrofitInstance
 import org.lemonadestand.btb.singleton.Singleton
@@ -16,14 +16,14 @@ import retrofit2.Response
 class UserRepository {
 	private var userModelResponseLive = MutableLiveData<UserListResponseModel>()
 	private var contactModelResponseLive = MutableLiveData<UserListResponseModel>()
-	private var commonResponseLive = MutableLiveData<CommonResponseModel>()
+	private var commonResponseLive = MutableLiveData<BaseResponse>()
 	private var errorLive = MutableLiveData<Response<*>>()
 
 	val userModelResponse: LiveData<UserListResponseModel>
 		get() = userModelResponseLive
 	val contactModelResponse: LiveData<UserListResponseModel>
 		get() = contactModelResponseLive
-	val commonResponseModel: LiveData<CommonResponseModel>
+	val commonResponseModel: LiveData<BaseResponse>
 		get() = commonResponseLive
 	val error: LiveData<Response<*>>
 		get() = errorLive

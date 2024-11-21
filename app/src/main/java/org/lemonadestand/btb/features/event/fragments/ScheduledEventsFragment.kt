@@ -16,29 +16,27 @@ import org.lemonadestand.btb.R
 import org.lemonadestand.btb.components.base.BaseFragment
 import org.lemonadestand.btb.constants.ClickType
 import org.lemonadestand.btb.constants.ProgressDialogUtil
-import org.lemonadestand.btb.constants.getDate
 import org.lemonadestand.btb.constants.handleCommonResponse
 import org.lemonadestand.btb.core.models.Event
 import org.lemonadestand.btb.core.models.EventsByDate
+import org.lemonadestand.btb.core.repositories.EventRepository
+import org.lemonadestand.btb.core.viewModels.EventViewModel
 import org.lemonadestand.btb.extensions.hide
 import org.lemonadestand.btb.features.common.models.UserListModel
 import org.lemonadestand.btb.features.common.models.body.ScheduleBody
 import org.lemonadestand.btb.features.dashboard.activities.DashboardActivity
-import org.lemonadestand.btb.features.event.adapter.EventAdapter
+import org.lemonadestand.btb.features.event.adapter.EventsByDateRecyclerViewAdapter
 import org.lemonadestand.btb.interfaces.OnItemClickListener
 import org.lemonadestand.btb.mvvm.factory.CommonViewModelFactory
-import org.lemonadestand.btb.mvvm.repository.EventRepository
-import org.lemonadestand.btb.mvvm.viewmodel.EventViewModel
 import org.lemonadestand.btb.singleton.Singleton
 import org.lemonadestand.btb.utils.Utils
 
 
 class ScheduledEventsFragment : BaseFragment(R.layout.fragment_scheduled_events), OnItemClickListener {
 
-	private lateinit var eventAdapter: EventAdapter
 	private lateinit var viewModel: EventViewModel
 	private var shortAnimationDuration: Int = 0
-	private var eventDateList: ArrayList<EventsByDate> = ArrayList()
+
 	private var tag = "ScheduleEventFragment"
 	private var clickType = ClickType.COMMON
 	private var clickedPosition = 0
@@ -64,10 +62,10 @@ class ScheduledEventsFragment : BaseFragment(R.layout.fragment_scheduled_events)
 			swipeRefreshLayout.isRefreshing = false
 		}
 
-		eventAdapter = EventAdapter(eventDateList, requireContext())
-		eventAdapter.setOnItemClick(this)
 		eventsRecyclerView = rootView.findViewById(R.id.eventsRecyclerView)
-		eventsRecyclerView.adapter = eventAdapter
+		eventsRecyclerView.adapter = EventsByDateRecyclerViewAdapter().apply {
+			onSelect = { this@ScheduledEventsFragment.onSelect?.invoke(it) }
+		}
 
 		noDataView = rootView.findViewById(R.id.noDataView)
 		shimmerLayout = rootView.findViewById(R.id.shimmerLayout)
@@ -79,7 +77,7 @@ class ScheduledEventsFragment : BaseFragment(R.layout.fragment_scheduled_events)
 
 	fun refreshData() {
 		startLoading()
-		viewModel.getScheduleEventList(
+		viewModel.getScheduledEvents(
 			ScheduleBody(
 				limit = Singleton.API_LIST_LIMIT,
 				page = "0",
@@ -99,45 +97,35 @@ class ScheduledEventsFragment : BaseFragment(R.layout.fragment_scheduled_events)
 			CommonViewModelFactory((context as DashboardActivity).application, repository)
 		viewModel = ViewModelProvider(this, viewModelProviderFactory)[EventViewModel::class.java]
 
-		viewModel.scheduleEventModel.observe(viewLifecycleOwner) {
-			if (!it.data.isNullOrEmpty()) {
-				eventDateList.clear()
-
-				val dateList: ArrayList<String> = ArrayList()
-
-				for (i in 0 until it.data.size) {
-
-					if (it.data[i].blessingComplete != null) {
-						if (!dateList.contains(getDate(it.data[i].blessingComplete!!))) {
-							dateList.add(getDate(it.data[i].blessingComplete!!))
-							eventDateList.add(
-								EventsByDate(
-									date = getDate(it.data[i].blessingComplete!!),
-									events = it.data as ArrayList<Event>
-								)
-							)
-						}
-					} else {
-						if (!dateList.contains(getDate(it.data[i].start))) {
-							dateList.add(getDate(it.data[i].start))
-							eventDateList.add(
-								EventsByDate(
-									date = it.data[i].startedAt,
-									events = it.data as ArrayList<Event>
-								)
-							)
-						}
-					}
-
-				}
-				eventAdapter.notifyDataSetChanged()
-				stopLoading(true)
-			} else {
+		viewModel.scheduledEventsResponse.observe(viewLifecycleOwner) {
+			if (it.data.isEmpty()) {
+				(eventsRecyclerView.adapter as EventsByDateRecyclerViewAdapter).values = arrayListOf()
 				stopLoading(false)
+				return@observe
 			}
+
+			val eventsByDates = arrayListOf<EventsByDate>()
+			val dateList: ArrayList<String> = ArrayList()
+
+			for (i in 0 until it.data.size) {
+				val event = it.data[i]
+				val day = event.blessingCompletedDay ?: event.startedDay ?: continue
+				if (!dateList.contains(day)) {
+					dateList.add(day)
+					eventsByDates.add(
+						EventsByDate(
+							date = event.blessingCompletedAt,
+							events = ArrayList(it.data.filter { x -> x.blessingCompletedDay == day || x.startedDay == day })
+						)
+					)
+				}
+			}
+
+			(eventsRecyclerView.adapter as EventsByDateRecyclerViewAdapter).values = eventsByDates
+			stopLoading(true)
 		}
 
-		viewModel.liveError.observe(viewLifecycleOwner) {
+		viewModel.error.observe(viewLifecycleOwner) {
 			Singleton.handleResponse(response = it, context as Activity, tag)
 			ProgressDialogUtil.dismissProgressDialog()
 		}

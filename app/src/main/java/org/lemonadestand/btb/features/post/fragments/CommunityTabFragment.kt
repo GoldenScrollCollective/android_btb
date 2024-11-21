@@ -156,7 +156,7 @@ class CommunityTabFragment : BaseFragment(R.layout.fragment_community_tab) {
 		viewModel.commonResponse.observe(viewLifecycleOwner) {
 			handleCommonResponse(context as DashboardActivity, it)
 			ProgressDialogUtil.dismissProgressDialog()
-			if (it.status == Singleton.SUCCESS) {
+			if (it.status) {
 				if (clickType == ClickType.DELETE_POST) {
 					postDateList[clickedSuperPosition].posts.removeAt(clickedPosition)
 					postsByDateRecyclerViewAdapter.values = postDateList

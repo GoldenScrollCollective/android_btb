@@ -9,8 +9,8 @@ import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.lemonadestand.btb.constants.ProgressDialogUtil
+import org.lemonadestand.btb.core.BaseResponse
 import org.lemonadestand.btb.core.response.PostResponseModel
-import org.lemonadestand.btb.features.common.models.CommonResponseModel
 import org.lemonadestand.btb.features.common.models.body.AddCommentBody
 import org.lemonadestand.btb.features.common.models.body.AppreciationRequestBody
 import org.lemonadestand.btb.features.common.models.body.LikeBodyModel
@@ -22,12 +22,12 @@ import retrofit2.Response
 
 class HomeRepository {
 	private var postModelLive = MutableLiveData<PostResponseModel>()
-	private var commonResponseLive = MutableLiveData<CommonResponseModel>()
+	private var commonResponseLive = MutableLiveData<BaseResponse>()
 	private var errorLive = MutableLiveData<Response<*>>()
 
 	val postModel: LiveData<PostResponseModel>
 		get() = postModelLive
-	val commonResponseModel: LiveData<CommonResponseModel>
+	val commonResponseModel: LiveData<BaseResponse>
 		get() = commonResponseLive
 	val error: LiveData<Response<*>>
 		get() = errorLive
@@ -90,9 +90,7 @@ class HomeRepository {
 				uniqueId = likeModel.uniqueId,
 			)
 			if (response.isSuccessful) {
-				var body = response.body()
-				body?.message = "Like Saved"
-				commonResponseLive.postValue(response.body())
+				commonResponseLive.postValue(BaseResponse(status = true, message = "Like Saved"))
 				ProgressDialogUtil.dismissProgressDialog()
 
 				getPostList("public", 0)
@@ -153,9 +151,7 @@ class HomeRepository {
 				requestBody = requestBody,
 			)
 			if (response.isSuccessful) {
-				var body = response.body()
-				body?.message = "Comment Saved"
-				commonResponseLive.postValue(response.body())
+				commonResponseLive.postValue(BaseResponse(true, "Comment Saved"))
 				ProgressDialogUtil.dismissProgressDialog()
 
 				getPostList("public", 0)

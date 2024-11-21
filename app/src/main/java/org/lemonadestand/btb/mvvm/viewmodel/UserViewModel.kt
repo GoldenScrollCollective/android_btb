@@ -10,7 +10,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import org.lemonadestand.btb.App
-import org.lemonadestand.btb.features.common.models.CommonResponseModel
+import org.lemonadestand.btb.core.BaseResponse
 import org.lemonadestand.btb.features.common.models.UserListResponseModel
 import org.lemonadestand.btb.mvvm.repository.UserRepository
 import org.lemonadestand.btb.singleton.Sort
@@ -28,7 +28,7 @@ class UserViewModel(
 
 	val liveError: LiveData<Response<*>>
 		get() = userRepository.error
-	val commonResponse: LiveData<CommonResponseModel>
+	val commonResponse: LiveData<BaseResponse>
 		get() = userRepository.commonResponseModel
 	val userResponseModel: LiveData<UserListResponseModel>
 		get() = userRepository.userModelResponse

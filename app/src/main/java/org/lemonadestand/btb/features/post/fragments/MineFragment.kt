@@ -157,7 +157,7 @@ class MineFragment : Fragment(), OnItemClickListener {
 		viewModel.commonResponse.observe(viewLifecycleOwner) {
 			handleCommonResponse(context as DashboardActivity, it)
 			ProgressDialogUtil.dismissProgressDialog()
-			if (it.status == Singleton.SUCCESS) {
+			if (it.status) {
 				if (clickType == ClickType.DELETE_POST) {
 					postDateList[clickedSuperPosition].posts.removeAt(clickedPosition)
 					publicAdapter.updateData(postDateList)

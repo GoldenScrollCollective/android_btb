@@ -2,13 +2,13 @@ package org.lemonadestand.btb.network
 
 import com.google.gson.JsonObject
 import okhttp3.RequestBody
+import org.lemonadestand.btb.core.BaseResponse
 import org.lemonadestand.btb.core.models.CompanyListResponseModel
 import org.lemonadestand.btb.core.models.ContactsResponseModel
-import org.lemonadestand.btb.core.models.MemberListResponseModel
-import org.lemonadestand.btb.core.response.EventResponseModel
+import org.lemonadestand.btb.core.models.MembersResponse
+import org.lemonadestand.btb.core.response.EventsResponse
 import org.lemonadestand.btb.core.response.LoginResponse
 import org.lemonadestand.btb.core.response.PostResponseModel
-import org.lemonadestand.btb.features.common.models.CommonResponseModel
 import org.lemonadestand.btb.features.common.models.UserListResponseModel
 import org.lemonadestand.btb.features.interest.models.InterestResponseModel
 import org.lemonadestand.btb.singleton.Singleton
@@ -63,7 +63,7 @@ interface ApiService {
 		@Query("sort") sort: String = "asc",
 		@Query("order_by") orderVy: String = "name",
 		@Header("Authorization") authorization: String = authToken
-	): Response<MemberListResponseModel>
+	): Response<MembersResponse>
 
 	@GET(Singleton.COMPANY_LIST)
 	suspend fun getCompanies(
@@ -97,21 +97,21 @@ interface ApiService {
 		@Body requestBody: RequestBody,
 		@Header("Authorization")
 		authorization: String = authToken
-	): Response<CommonResponseModel>
+	): Response<BaseResponse>
 
 	@POST(Singleton.REST_POST)
 	suspend fun shareStory(
 		@Body requestBody: RequestBody,
 		@Header("Authorization")
 		authorization: String = authToken
-	): Response<CommonResponseModel>
+	): Response<BaseResponse>
 
 	@POST(Singleton.REST_POST)
 	suspend fun addAppreciation(
 		@Body requestBody: RequestBody,
 		@Header("Authorization")
 		authorization: String = authToken
-	): Response<CommonResponseModel>
+	): Response<BaseResponse>
 
 
 	@POST(Singleton.REST_POST)
@@ -119,21 +119,21 @@ interface ApiService {
 		@Body requestBody: RequestBody,
 		@Header("Authorization")
 		authorization: String = authToken
-	): Response<CommonResponseModel>
+	): Response<BaseResponse>
 
 	@POST(Singleton.REST_EVENT)
 	suspend fun addReminder(
 		@Body requestBody: RequestBody,
 		@Header("Authorization")
 		authorization: String = authToken
-	): Response<CommonResponseModel>
+	): Response<BaseResponse>
 
 	@POST(Singleton.REST_EVENT)
 	suspend fun addRecord(
 		@Body requestBody: RequestBody,
 		@Header("Authorization")
 		authorization: String = authToken
-	): Response<CommonResponseModel>
+	): Response<BaseResponse>
 
 	@PUT(Singleton.REST_EVENT + "/" + "{event_id}")
 	suspend fun editRecord(
@@ -141,7 +141,7 @@ interface ApiService {
 		@Body requestBody: RequestBody,
 		@Header("Authorization")
 		authorization: String = authToken
-	): Response<CommonResponseModel>
+	): Response<BaseResponse>
 
 
 	@GET(Singleton.REST_FIELD)
@@ -173,7 +173,7 @@ interface ApiService {
 		@Body requestBody: RequestBody,
 		@Header("Authorization")
 		authorization: String = authToken
-	): Response<CommonResponseModel>
+	): Response<BaseResponse>
 
 	@PUT(Singleton.REST_FIELD + "/" + "{field_id}")
 	suspend fun updateField(
@@ -181,21 +181,21 @@ interface ApiService {
 		@Body requestBody: RequestBody,
 		@Header("Authorization")
 		authorization: String = authToken
-	): Response<CommonResponseModel>
+	): Response<BaseResponse>
 
 	@DELETE(Singleton.REST_POST + "/" + "{post_id}")
 	suspend fun deletePost(
 		@Path("post_id") uniqueId: String,
 		@Header("Authorization")
 		authorization: String = authToken
-	): Response<CommonResponseModel>
+	): Response<BaseResponse>
 
 	@DELETE(Singleton.REST_EVENT + "/" + "{event_id}")
 	suspend fun deleteEvent(
 		@Path("event_id") uniqueId: String,
 		@Header("Authorization")
 		authorization: String = authToken
-	): Response<CommonResponseModel>
+	): Response<BaseResponse>
 
 	@GET(Singleton.REST_EVENT)
 	suspend fun getScheduleEventList(
@@ -206,7 +206,7 @@ interface ApiService {
 		@Query("resource") resource: String?,
 		@Query("completed") completed: String?,
 		@Header("Authorization") authorization: String = authToken
-	): Response<EventResponseModel>
+	): Response<EventsResponse>
 
 	@GET(Singleton.REST_EVENT)
 	suspend fun getPastEventList(
@@ -218,7 +218,7 @@ interface ApiService {
 		@Query("completed") completed: String?,
 		@Query("archive") archive: String?,
 		@Header("Authorization") authorization: String = authToken
-	): Response<EventResponseModel>
+	): Response<EventsResponse>
 
 	@POST(Singleton.LOGIN)
 	fun login(@Body dataCall: JsonObject?): Call<LoginResponse?>?

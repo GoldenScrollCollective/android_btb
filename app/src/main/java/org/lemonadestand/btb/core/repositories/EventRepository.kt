@@ -1,47 +1,30 @@
-package org.lemonadestand.btb.mvvm.repository
+package org.lemonadestand.btb.core.repositories
 
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.lemonadestand.btb.constants.ProgressDialogUtil
-import org.lemonadestand.btb.core.response.EventResponseModel
-import org.lemonadestand.btb.features.common.models.CommonResponseModel
+import org.lemonadestand.btb.core.BaseRepository
+import org.lemonadestand.btb.core.BaseResponse
+import org.lemonadestand.btb.core.response.EventsResponse
 import org.lemonadestand.btb.features.common.models.body.PastEventBody
 import org.lemonadestand.btb.features.common.models.body.RecordRequestBody
 import org.lemonadestand.btb.features.common.models.body.ReminderRequestBody
 import org.lemonadestand.btb.features.common.models.body.ScheduleBody
 import org.lemonadestand.btb.network.RetrofitInstance
-import retrofit2.Response
 
-class EventRepository {
-	private var pastEventModelLive = MutableLiveData<EventResponseModel>()
-	private var scheduleEventModelLive = MutableLiveData<EventResponseModel>()
-	private var recordEventModelLive = MutableLiveData<EventResponseModel>()
-	private var commonResponseLive = MutableLiveData<CommonResponseModel>()
-	private var errorLive = MutableLiveData<Response<*>>()
+class EventRepository : BaseRepository<EventsResponse>() {
+	var commonResponse = MutableLiveData<BaseResponse>()
+	var pastEventsResponse = MutableLiveData<EventsResponse>()
+	var scheduledEventsResponse = MutableLiveData<EventsResponse>()
+	var completedEventsResponse = MutableLiveData<EventsResponse>()
 
-	val pastEventModel: LiveData<EventResponseModel>
-		get() = pastEventModelLive
-
-	val scheduleEventModel: LiveData<EventResponseModel>
-		get() = scheduleEventModelLive
-
-	val recordEventModel: LiveData<EventResponseModel>
-		get() = recordEventModelLive
-
-	val commonResponseModel: LiveData<CommonResponseModel>
-		get() = commonResponseLive
-	val error: LiveData<Response<*>>
-		get() = errorLive
-
-	suspend fun getPastEventList(model: PastEventBody) {
+	suspend fun getPastEvents(model: PastEventBody) {
 		CoroutineScope(Dispatchers.IO).launch {
 			val response = RetrofitInstance.api.getPastEventList(
 				limit = model.limit,
@@ -53,16 +36,16 @@ class EventRepository {
 				sort = model.sort
 			)
 			if (response.isSuccessful) {
-				pastEventModelLive.postValue(response.body())
+				pastEventsResponse.postValue(response.body())
 				ProgressDialogUtil.dismissProgressDialog()
 			} else {
-				errorLive.postValue(response)
+				error.postValue(response)
 				ProgressDialogUtil.dismissProgressDialog()
 			}
 		}
 	}
 
-	suspend fun getScheduleEventList(model: ScheduleBody) {
+	suspend fun getScheduledEvents(model: ScheduleBody) {
 		CoroutineScope(Dispatchers.IO).launch {
 			val response = RetrofitInstance.api.getScheduleEventList(
 				limit = model.limit,
@@ -73,16 +56,16 @@ class EventRepository {
 				sort = model.sort
 			)
 			if (response.isSuccessful) {
-				scheduleEventModelLive.postValue(response.body())
+				scheduledEventsResponse.postValue(response.body())
 				ProgressDialogUtil.dismissProgressDialog()
 			} else {
-				errorLive.postValue(response)
+				error.postValue(response)
 				ProgressDialogUtil.dismissProgressDialog()
 			}
 		}
 	}
 
-	suspend fun getRecordEventList(model: ScheduleBody) {
+	suspend fun getCompletedEvents(model: ScheduleBody) {
 		CoroutineScope(Dispatchers.IO).launch {
 			val response = RetrofitInstance.api.getScheduleEventList(
 				limit = model.limit,
@@ -93,10 +76,10 @@ class EventRepository {
 				sort = model.sort
 			)
 			if (response.isSuccessful) {
-				recordEventModelLive.postValue(response.body())
+				completedEventsResponse.postValue(response.body())
 				ProgressDialogUtil.dismissProgressDialog()
 			} else {
-				errorLive.postValue(response)
+				error.postValue(response)
 				ProgressDialogUtil.dismissProgressDialog()
 			}
 		}
@@ -108,10 +91,10 @@ class EventRepository {
 				uniqueId = uniqueID,
 			)
 			if (response.isSuccessful) {
-				commonResponseLive.postValue(response.body())
+				commonResponse.postValue(response.body())
 				ProgressDialogUtil.dismissProgressDialog()
 			} else {
-				errorLive.postValue(response)
+				error.postValue(response)
 				ProgressDialogUtil.dismissProgressDialog()
 			}
 		}
@@ -126,10 +109,10 @@ class EventRepository {
 				requestBody = requestBody,
 			)
 			if (response.isSuccessful) {
-				commonResponseLive.postValue(response.body())
+				commonResponse.postValue(response.body())
 				ProgressDialogUtil.dismissProgressDialog()
 			} else {
-				errorLive.postValue(response)
+				error.postValue(response)
 				ProgressDialogUtil.dismissProgressDialog()
 			}
 		}
@@ -145,10 +128,10 @@ class EventRepository {
 				requestBody = requestBody,
 			)
 			if (response.isSuccessful) {
-				commonResponseLive.postValue(response.body())
+				commonResponse.postValue(response.body())
 				ProgressDialogUtil.dismissProgressDialog()
 			} else {
-				errorLive.postValue(response)
+				error.postValue(response)
 				ProgressDialogUtil.dismissProgressDialog()
 			}
 		}
@@ -166,10 +149,10 @@ class EventRepository {
 
 			)
 			if (response.isSuccessful) {
-				commonResponseLive.postValue(response.body())
+				commonResponse.postValue(response.body())
 				ProgressDialogUtil.dismissProgressDialog()
 			} else {
-				errorLive.postValue(response)
+				error.postValue(response)
 				ProgressDialogUtil.dismissProgressDialog()
 			}
 		}
@@ -186,10 +169,10 @@ class EventRepository {
 				eventID = eventId
 			)
 			if (response.isSuccessful) {
-				commonResponseLive.postValue(response.body())
+				commonResponse.postValue(response.body())
 				ProgressDialogUtil.dismissProgressDialog()
 			} else {
-				errorLive.postValue(response)
+				error.postValue(response)
 				ProgressDialogUtil.dismissProgressDialog()
 			}
 		}

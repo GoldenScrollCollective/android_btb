@@ -15,6 +15,8 @@ import org.lemonadestand.btb.constants.SelectedRecord
 import org.lemonadestand.btb.constants.getDate
 import org.lemonadestand.btb.constants.handleCommonResponse
 import org.lemonadestand.btb.core.models.Event
+import org.lemonadestand.btb.core.repositories.EventRepository
+import org.lemonadestand.btb.core.viewModels.EventViewModel
 import org.lemonadestand.btb.databinding.ActivityEditRecordBinding
 import org.lemonadestand.btb.features.common.fragments.UserListFragment
 import org.lemonadestand.btb.features.common.models.UserListModel
@@ -22,8 +24,6 @@ import org.lemonadestand.btb.features.common.models.body.RecordRequestBody
 import org.lemonadestand.btb.features.event.fragments.WriteTextFragment
 import org.lemonadestand.btb.interfaces.OnItemClickListener
 import org.lemonadestand.btb.mvvm.factory.CommonViewModelFactory
-import org.lemonadestand.btb.mvvm.repository.EventRepository
-import org.lemonadestand.btb.mvvm.viewmodel.EventViewModel
 import org.lemonadestand.btb.singleton.Singleton
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -235,7 +235,7 @@ class EditRecordActivity : AppCompatActivity(), OnItemClickListener {
 		viewModel = ViewModelProvider(this, viewModelProviderFactory)[EventViewModel::class.java]
 
 
-		viewModel.liveError.observe(this) {
+		viewModel.error.observe(this) {
 			Singleton.handleResponse(response = it, this, tag)
 			ProgressDialogUtil.dismissProgressDialog()
 		}

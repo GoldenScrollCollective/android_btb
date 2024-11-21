@@ -3,6 +3,7 @@ package org.lemonadestand.btb.core.models
 import com.aisynchronized.helper.DateHelper
 import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
+import org.lemonadestand.btb.core.BaseModel
 import java.util.Date
 
 @Parcelize
@@ -37,8 +38,14 @@ data class Event(
 	val blessingCompletedAt: String
 		get() = DateHelper.format(blessingComplete, "MMM d, yyyy") ?: "Never"
 
+	val blessingCompletedDay: String?
+		get() = DateHelper.format(blessingComplete, "EEE, MMM dd, yyyy")
+
 	val startedAt: String?
 		get() = DateHelper.format(start, "yyyy-MM-dd HH:mm:ss")
+
+	val startedDay: String?
+		get() = DateHelper.format(start, "EEE, MMM dd, yyyy")
 }
 
 data class EventsByDate(

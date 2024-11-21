@@ -5,7 +5,7 @@ import kotlinx.parcelize.Parcelize
 import org.lemonadestand.btb.core.models.Event
 
 @Parcelize
-data class EventResponseModel(
+data class EventsResponse(
 	val status: Boolean,
 	val message: String,
 	val data: List<Event>

@@ -3,6 +3,7 @@ package org.lemonadestand.btb.core.models
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
+import org.lemonadestand.btb.core.BaseModel
 import java.util.Date
 
 data class PostsByDate(
@@ -26,7 +27,7 @@ data class Post(
 	val modified: String,
 	val depth: String,
 	val meta: DatumMeta,
-	val replies: List<Post>,
+	val replies: ArrayList<Post>,
 	val html: String,
 	@SerializedName("by_user") val byUser: User,
 	val user: User,

@@ -14,20 +14,19 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import org.lemonadestand.btb.constants.ClickType
 import org.lemonadestand.btb.constants.ProgressDialogUtil
-import org.lemonadestand.btb.constants.getDate
 import org.lemonadestand.btb.constants.handleCommonResponse
 import org.lemonadestand.btb.core.models.Event
 import org.lemonadestand.btb.core.models.EventsByDate
+import org.lemonadestand.btb.core.repositories.EventRepository
+import org.lemonadestand.btb.core.viewModels.EventViewModel
 import org.lemonadestand.btb.databinding.FragmentPastEventBinding
 import org.lemonadestand.btb.extensions.hide
 import org.lemonadestand.btb.features.common.models.UserListModel
 import org.lemonadestand.btb.features.common.models.body.PastEventBody
 import org.lemonadestand.btb.features.dashboard.activities.DashboardActivity
-import org.lemonadestand.btb.features.event.adapter.EventAdapter
+import org.lemonadestand.btb.features.event.adapter.EventsByDateRecyclerViewAdapter
 import org.lemonadestand.btb.interfaces.OnItemClickListener
 import org.lemonadestand.btb.mvvm.factory.CommonViewModelFactory
-import org.lemonadestand.btb.mvvm.repository.EventRepository
-import org.lemonadestand.btb.mvvm.viewmodel.EventViewModel
 import org.lemonadestand.btb.singleton.Singleton
 import org.lemonadestand.btb.singleton.Sort
 import org.lemonadestand.btb.utils.Utils
@@ -39,10 +38,9 @@ class PastEventFragment : Fragment(), OnItemClickListener {
 	private val resource: UserListModel?
 		get() = Utils.getResource(context)
 
-	private lateinit var eventAdapter: EventAdapter
 	private lateinit var viewModel: EventViewModel
 	private var shortAnimationDuration: Int = 0
-	private var eventDateList: ArrayList<EventsByDate> = ArrayList()
+
 	private var tag = "PastEventFragment"
 	private var clickType = ClickType.COMMON
 	private var clickedPosition = 0
@@ -71,11 +69,12 @@ class PastEventFragment : Fragment(), OnItemClickListener {
 	}
 
 	private fun setUpPublicAdapter() {
-
-		eventAdapter = EventAdapter(eventDateList, requireContext())
-		eventAdapter.setOnItemClick(this)
-		mBinding.eventsRecyclerView.adapter = eventAdapter
-
+		mBinding.eventsRecyclerView.adapter = EventsByDateRecyclerViewAdapter().apply {
+			onSelect = { onSelect?.invoke(it) }
+			onDelete = { it ->
+				viewModel.deleteEvent(it.uniqueId)
+			}
+		}
 	}
 
 	@SuppressLint("NotifyDataSetChanged")
@@ -84,45 +83,35 @@ class PastEventFragment : Fragment(), OnItemClickListener {
 		val viewModelProviderFactory = CommonViewModelFactory((context as DashboardActivity).application, repository)
 		viewModel = ViewModelProvider(this, viewModelProviderFactory)[EventViewModel::class.java]
 
-		viewModel.pastEventModel.observe(viewLifecycleOwner) {
-			if (!it.data.isNullOrEmpty()) {
-				eventDateList.clear()
-
-				val dateList: ArrayList<String> = ArrayList()
-
-				for (i in 0 until it.data.size) {
-
-					if (it.data[i].blessingComplete != null) {
-						if (!dateList.contains(getDate(it.data[i].blessingComplete!!))) {
-							dateList.add(getDate(it.data[i].blessingComplete!!))
-							eventDateList.add(
-								EventsByDate(
-									date = getDate(it.data[i].blessingComplete!!),
-									events = it.data as ArrayList<Event>
-								)
-							)
-						}
-					} else {
-						if (!dateList.contains(getDate(it.data[i].start))) {
-							dateList.add(getDate(it.data[i].start))
-							eventDateList.add(
-								EventsByDate(
-									date = it.data[i].startedAt,
-									events = it.data as ArrayList<Event>
-								)
-							)
-						}
-					}
-
-				}
-				eventAdapter.notifyDataSetChanged()
-				stopLoading(true)
-			} else {
+		viewModel.pastEventsResponse.observe(viewLifecycleOwner) {
+			if (it.data.isEmpty()) {
+				(mBinding.eventsRecyclerView.adapter as EventsByDateRecyclerViewAdapter).values = arrayListOf()
 				stopLoading(false)
+				return@observe
 			}
+
+			val eventsByDates = arrayListOf<EventsByDate>()
+			val dateList: ArrayList<String> = ArrayList()
+
+			for (i in 0 until it.data.size) {
+				val event = it.data[i]
+				val day = event.blessingCompletedDay ?: event.startedDay ?: continue
+				if (!dateList.contains(day)) {
+					dateList.add(day)
+					eventsByDates.add(
+						EventsByDate(
+							date = event.blessingCompletedAt,
+							events = ArrayList(it.data.filter { x -> x.blessingCompletedDay == day || x.startedDay == day })
+						)
+					)
+				}
+			}
+
+			(mBinding.eventsRecyclerView.adapter as EventsByDateRecyclerViewAdapter).values = eventsByDates
+			stopLoading(true)
 		}
 
-		viewModel.liveError.observe(viewLifecycleOwner) {
+		viewModel.error.observe(viewLifecycleOwner) {
 			Singleton.handleResponse(response = it, context as Activity, tag)
 			ProgressDialogUtil.dismissProgressDialog()
 		}
@@ -130,13 +119,6 @@ class PastEventFragment : Fragment(), OnItemClickListener {
 		viewModel.commonResponse.observe(viewLifecycleOwner) {
 			handleCommonResponse(context as DashboardActivity, it)
 			ProgressDialogUtil.dismissProgressDialog()
-			if (it.status == Singleton.SUCCESS) {
-				if (clickType == ClickType.DELETE_EVENT) {
-					eventDateList[clickedSuperPosition].events.removeAt(clickedPosition)
-					eventAdapter.updateData(eventDateList)
-				}
-			}
-
 		}
 
 		viewModel.isLoading.observe(viewLifecycleOwner) {
@@ -177,7 +159,7 @@ class PastEventFragment : Fragment(), OnItemClickListener {
 
 	fun refreshData() {
 		startLoading()
-		viewModel.getPastEventList(
+		viewModel.getPastEvents(
 			PastEventBody(
 				limit = Singleton.API_LIST_LIMIT,
 				page = "0",

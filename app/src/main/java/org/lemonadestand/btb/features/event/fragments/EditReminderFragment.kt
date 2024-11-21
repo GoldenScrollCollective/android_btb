@@ -19,6 +19,8 @@ import org.lemonadestand.btb.components.base.BaseFragment
 import org.lemonadestand.btb.constants.ClickType
 import org.lemonadestand.btb.core.models.Event
 import org.lemonadestand.btb.core.models.EventFor
+import org.lemonadestand.btb.core.repositories.EventRepository
+import org.lemonadestand.btb.core.viewModels.EventViewModel
 import org.lemonadestand.btb.extensions.setOnSingleClickListener
 import org.lemonadestand.btb.features.common.fragments.SelectContactListFragment
 import org.lemonadestand.btb.features.common.fragments.SelectMultiUsersBottomSheetFragment
@@ -27,8 +29,6 @@ import org.lemonadestand.btb.features.common.models.UserListModel
 import org.lemonadestand.btb.features.common.models.body.ReminderRequestBody
 import org.lemonadestand.btb.interfaces.OnItemClickListener
 import org.lemonadestand.btb.mvvm.factory.CommonViewModelFactory
-import org.lemonadestand.btb.mvvm.repository.EventRepository
-import org.lemonadestand.btb.mvvm.viewmodel.EventViewModel
 import org.lemonadestand.btb.utils.Utils
 import java.util.Calendar
 import java.util.Date
