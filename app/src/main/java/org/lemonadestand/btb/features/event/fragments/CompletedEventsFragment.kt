@@ -12,7 +12,6 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import org.lemonadestand.btb.constants.ClickType
 import org.lemonadestand.btb.constants.ProgressDialogUtil
 import org.lemonadestand.btb.constants.handleCommonResponse
 import org.lemonadestand.btb.core.models.EventsPerDate
@@ -43,9 +42,6 @@ class CompletedEventsFragment : Fragment() {
 	private var shortAnimationDuration: Int = 0
 
 	private var tag = "CompletedEventsFragment"
-	private var clickType = ClickType.COMMON
-	private var clickedPosition = 0
-	private var clickedSuperPosition = 0
 
 	override fun onCreateView(
 		inflater: LayoutInflater, container: ViewGroup?,
@@ -85,7 +81,7 @@ class CompletedEventsFragment : Fragment() {
 		viewModel = ViewModelProvider(this, viewModelProviderFactory)[EventViewModel::class.java]
 
 		viewModel.completedEventsResponse.observe(viewLifecycleOwner) {
-			if (it.data.isEmpty()) {
+			if (it.data.isNullOrEmpty()) {
 				(mBinding.eventsRecyclerView.adapter as EventsByDateRecyclerViewAdapter).values = arrayListOf()
 				stopLoading(false)
 				return@observe

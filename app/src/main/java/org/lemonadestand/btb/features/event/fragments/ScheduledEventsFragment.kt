@@ -14,7 +14,6 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.facebook.shimmer.ShimmerFrameLayout
 import org.lemonadestand.btb.R
 import org.lemonadestand.btb.components.base.BaseFragment
-import org.lemonadestand.btb.constants.ClickType
 import org.lemonadestand.btb.constants.ProgressDialogUtil
 import org.lemonadestand.btb.constants.handleCommonResponse
 import org.lemonadestand.btb.core.models.Event
@@ -26,21 +25,17 @@ import org.lemonadestand.btb.features.common.models.UserListModel
 import org.lemonadestand.btb.features.common.models.body.ScheduleBody
 import org.lemonadestand.btb.features.dashboard.activities.DashboardActivity
 import org.lemonadestand.btb.features.event.adapter.EventsByDateRecyclerViewAdapter
-import org.lemonadestand.btb.interfaces.OnItemClickListener
 import org.lemonadestand.btb.mvvm.factory.CommonViewModelFactory
 import org.lemonadestand.btb.singleton.Singleton
 import org.lemonadestand.btb.utils.Utils
 
 
-class ScheduledEventsFragment : BaseFragment(R.layout.fragment_scheduled_events), OnItemClickListener {
+class ScheduledEventsFragment : BaseFragment(R.layout.fragment_scheduled_events) {
 
 	private lateinit var viewModel: EventViewModel
 	private var shortAnimationDuration: Int = 0
 
 	private var tag = "ScheduleEventFragment"
-	private var clickType = ClickType.COMMON
-	private var clickedPosition = 0
-	private var clickedSuperPosition = 0
 
 	private lateinit var eventsRecyclerView: RecyclerView
 	private lateinit var noDataView: RelativeLayout
@@ -99,7 +94,7 @@ class ScheduledEventsFragment : BaseFragment(R.layout.fragment_scheduled_events)
 		viewModel = ViewModelProvider(this, viewModelProviderFactory)[EventViewModel::class.java]
 
 		viewModel.scheduledEventsResponse.observe(viewLifecycleOwner) {
-			if (it.data.isEmpty()) {
+			if (it.data.isNullOrEmpty()) {
 				(eventsRecyclerView.adapter as EventsByDateRecyclerViewAdapter).values = arrayListOf()
 				stopLoading(false)
 				return@observe
@@ -171,27 +166,5 @@ class ScheduledEventsFragment : BaseFragment(R.layout.fragment_scheduled_events)
 					shimmerLayout.hide()
 				}
 			})
-	}
-
-	override fun onItemClicked(`object`: Any?, index: Int, type: ClickType, superIndex: Int) {
-
-		clickedPosition = index
-		clickedSuperPosition = superIndex
-		clickType = type
-		when (type) {
-			ClickType.DELETE_POST -> {
-
-			}
-
-			ClickType.LIKE_POST -> {
-
-
-			}
-
-			else -> {
-				val eventModel = `object` as Event
-				onSelect?.invoke(eventModel)
-			}
-		}
 	}
 }

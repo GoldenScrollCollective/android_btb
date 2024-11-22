@@ -66,7 +66,7 @@ class EventViewModel(
 			EventsResponse(
 				status = response.status,
 				message = response.message,
-				data = ArrayList(response.data.filter { x -> x.uniqueId != uniqueId })
+				data = ArrayList(response.data?.filter { x -> x.uniqueId != uniqueId } ?: listOf())
 			)
 		)
 	}
@@ -84,7 +84,7 @@ class EventViewModel(
 			EventsResponse(
 				status = response.status,
 				message = response.message,
-				data = ArrayList(response.data.filter { x -> x.uniqueId != uniqueId })
+				data = ArrayList(response.data?.filter { x -> x.uniqueId != uniqueId } ?: listOf())
 			)
 		)
 	}
@@ -102,7 +102,7 @@ class EventViewModel(
 			EventsResponse(
 				status = response.status,
 				message = response.message,
-				data = ArrayList(response.data.filter { x -> x.uniqueId != uniqueId })
+				data = ArrayList(response.data?.filter { x -> x.uniqueId != uniqueId } ?: listOf())
 			)
 		)
 	}
