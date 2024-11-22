@@ -56,7 +56,7 @@ class EventViewModel(
 
 	fun deleteEvent(uniqueId: String) = viewModelScope.launch {
 		isLoading.postValue(true)
-		if (hasInternetConnection()) {
+		if (!hasInternetConnection()) {
 			noInternet.postValue("No Internet Connection")
 			return@launch
 		}

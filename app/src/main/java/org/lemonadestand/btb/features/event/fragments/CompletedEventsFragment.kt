@@ -76,9 +76,7 @@ class CompletedEventsFragment : Fragment(), OnItemClickListener {
 					putExtra("event_data", it)
 				}
 			}
-			onDelete = {
-
-			}
+			onDelete = { viewModel.deleteEvent(it.uniqueId) }
 		}
 	}
 

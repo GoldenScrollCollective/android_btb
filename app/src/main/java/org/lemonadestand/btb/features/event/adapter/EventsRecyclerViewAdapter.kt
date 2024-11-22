@@ -6,6 +6,7 @@ import android.widget.TextView
 import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.github.chantsune.swipetoaction.views.SimpleSwipeLayout
+import com.github.chantsune.swipetoaction.views.SwipeLayout
 import org.lemonadestand.btb.R
 import org.lemonadestand.btb.components.base.BaseRecyclerViewAdapter
 import org.lemonadestand.btb.core.models.Event
@@ -47,11 +48,12 @@ class EventsRecyclerViewAdapter : BaseRecyclerViewAdapter<Event>(R.layout.layout
 
 			val swipeLayout = findViewById<SimpleSwipeLayout>(R.id.swipeLayout)
 			swipeLayout.setOnSwipeItemClickListener { swipeItem ->
-
+				swipeLayout.setItemState(SwipeLayout.ITEM_STATE_COLLAPSED, true)
 				when (swipeItem.position) {
 					0 -> {
 						values?.removeAt(position)
 						notifyItemRemoved(position)
+						notifyDataSetChanged()
 						onDelete?.invoke(item)
 					}
 

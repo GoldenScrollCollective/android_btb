@@ -65,6 +65,7 @@ class ScheduledEventsFragment : BaseFragment(R.layout.fragment_scheduled_events)
 		eventsRecyclerView = rootView.findViewById(R.id.eventsRecyclerView)
 		eventsRecyclerView.adapter = EventsByDateRecyclerViewAdapter().apply {
 			onSelect = { this@ScheduledEventsFragment.onSelect?.invoke(it) }
+			onDelete = { viewModel.deleteEvent(it.uniqueId) }
 		}
 
 		noDataView = rootView.findViewById(R.id.noDataView)

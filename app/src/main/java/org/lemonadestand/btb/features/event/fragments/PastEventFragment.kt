@@ -70,10 +70,8 @@ class PastEventFragment : Fragment(), OnItemClickListener {
 
 	private fun setUpPublicAdapter() {
 		mBinding.eventsRecyclerView.adapter = EventsByDateRecyclerViewAdapter().apply {
-			onSelect = { onSelect?.invoke(it) }
-			onDelete = { it ->
-				viewModel.deleteEvent(it.uniqueId)
-			}
+			onSelect = { this@PastEventFragment.onSelect?.invoke(it) }
+			onDelete = { viewModel.deleteEvent(it.uniqueId) }
 		}
 	}
 
