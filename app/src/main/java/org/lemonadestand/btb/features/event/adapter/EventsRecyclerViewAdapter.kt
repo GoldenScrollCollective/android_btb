@@ -51,9 +51,6 @@ class EventsRecyclerViewAdapter : BaseRecyclerViewAdapter<Event>(R.layout.layout
 				swipeLayout.setItemState(SwipeLayout.ITEM_STATE_COLLAPSED, true)
 				when (swipeItem.position) {
 					0 -> {
-						values?.removeAt(position)
-						notifyItemRemoved(position)
-						notifyDataSetChanged()
 						onDelete?.invoke(item)
 					}
 

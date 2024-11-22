@@ -96,6 +96,8 @@ object ProgressDialogUtil {
 }
 
 fun handleCommonResponse(context: Context, model: BaseResponse) {
+	if (model.message.isNullOrEmpty()) return
+
 	try {
 		val layoutInflater = LayoutInflater.from(context)
 		val view = layoutInflater.inflate(R.layout.custom_toast, null)

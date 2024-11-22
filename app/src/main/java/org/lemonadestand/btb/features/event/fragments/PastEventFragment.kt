@@ -16,7 +16,7 @@ import org.lemonadestand.btb.constants.ClickType
 import org.lemonadestand.btb.constants.ProgressDialogUtil
 import org.lemonadestand.btb.constants.handleCommonResponse
 import org.lemonadestand.btb.core.models.Event
-import org.lemonadestand.btb.core.models.EventsByDate
+import org.lemonadestand.btb.core.models.EventsPerDate
 import org.lemonadestand.btb.core.repositories.EventRepository
 import org.lemonadestand.btb.core.viewModels.EventViewModel
 import org.lemonadestand.btb.databinding.FragmentPastEventBinding
@@ -25,14 +25,13 @@ import org.lemonadestand.btb.features.common.models.UserListModel
 import org.lemonadestand.btb.features.common.models.body.PastEventBody
 import org.lemonadestand.btb.features.dashboard.activities.DashboardActivity
 import org.lemonadestand.btb.features.event.adapter.EventsByDateRecyclerViewAdapter
-import org.lemonadestand.btb.interfaces.OnItemClickListener
 import org.lemonadestand.btb.mvvm.factory.CommonViewModelFactory
 import org.lemonadestand.btb.singleton.Singleton
 import org.lemonadestand.btb.singleton.Sort
 import org.lemonadestand.btb.utils.Utils
 
 
-class PastEventFragment : Fragment(), OnItemClickListener {
+class PastEventFragment : Fragment() {
 
 	lateinit var mBinding: FragmentPastEventBinding
 	private val resource: UserListModel?
@@ -71,7 +70,7 @@ class PastEventFragment : Fragment(), OnItemClickListener {
 	private fun setUpPublicAdapter() {
 		mBinding.eventsRecyclerView.adapter = EventsByDateRecyclerViewAdapter().apply {
 			onSelect = { this@PastEventFragment.onSelect?.invoke(it) }
-			onDelete = { viewModel.deleteEvent(it.uniqueId) }
+			onDelete = { viewModel.deletePastEvent(it.uniqueId) }
 		}
 	}
 
@@ -88,24 +87,7 @@ class PastEventFragment : Fragment(), OnItemClickListener {
 				return@observe
 			}
 
-			val eventsByDates = arrayListOf<EventsByDate>()
-			val dateList: ArrayList<String> = ArrayList()
-
-			for (i in 0 until it.data.size) {
-				val event = it.data[i]
-				val day = event.blessingCompletedDay ?: event.startedDay ?: continue
-				if (!dateList.contains(day)) {
-					dateList.add(day)
-					eventsByDates.add(
-						EventsByDate(
-							date = event.blessingCompletedAt,
-							events = ArrayList(it.data.filter { x -> x.blessingCompletedDay == day || x.startedDay == day })
-						)
-					)
-				}
-			}
-
-			(mBinding.eventsRecyclerView.adapter as EventsByDateRecyclerViewAdapter).values = eventsByDates
+			(mBinding.eventsRecyclerView.adapter as EventsByDateRecyclerViewAdapter).values = EventsPerDate.groupEvents(it.data)
 			stopLoading(true)
 		}
 
@@ -191,31 +173,4 @@ class PastEventFragment : Fragment(), OnItemClickListener {
 				}
 			})
 	}
-
-	override fun onItemClicked(`object`: Any?, index: Int, type: ClickType, superIndex: Int) {
-
-		clickedPosition = index
-		clickedSuperPosition = superIndex
-		clickType = type
-		when (type) {
-			ClickType.DELETE_EVENT -> {
-				val postModel = `object` as Event
-				viewModel.deleteEvent(postModel.uniqueId)
-			}
-
-			ClickType.EDIT_EVENT -> {
-				val eventModel = `object` as Event
-				onSelect?.invoke(eventModel)
-			}
-
-			else -> {
-
-
-			}
-		}
-
-
-	}
-
-
 }

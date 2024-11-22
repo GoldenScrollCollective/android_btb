@@ -3,6 +3,7 @@ package org.lemonadestand.btb.core.viewModels
 
 import android.app.Application
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import org.lemonadestand.btb.core.BaseResponse
@@ -20,13 +21,11 @@ class EventViewModel(
 
 	val commonResponse: LiveData<BaseResponse>
 		get() = repository.commonResponse
-	val pastEventsResponse: LiveData<EventsResponse>
-		get() = repository.pastEventsResponse
-
-	val scheduledEventsResponse: LiveData<EventsResponse>
+	val scheduledEventsResponse: MutableLiveData<EventsResponse>
 		get() = repository.scheduledEventsResponse
-
-	val completedEventsResponse: LiveData<EventsResponse>
+	val pastEventsResponse: MutableLiveData<EventsResponse>
+		get() = repository.pastEventsResponse
+	val completedEventsResponse: MutableLiveData<EventsResponse>
 		get() = repository.completedEventsResponse
 
 	fun getPastEvents(model: PastEventBody) = viewModelScope.launch {
@@ -54,13 +53,58 @@ class EventViewModel(
 		repository.getCompletedEvents(model)
 	}
 
-	fun deleteEvent(uniqueId: String) = viewModelScope.launch {
+	fun deleteScheduledEvent(uniqueId: String) = viewModelScope.launch {
 		isLoading.postValue(true)
 		if (!hasInternetConnection()) {
 			noInternet.postValue("No Internet Connection")
 			return@launch
 		}
 		repository.deleteEvent(uniqueId)
+
+		val response = scheduledEventsResponse.value ?: return@launch
+		scheduledEventsResponse.postValue(
+			EventsResponse(
+				status = response.status,
+				message = response.message,
+				data = ArrayList(response.data.filter { x -> x.uniqueId != uniqueId })
+			)
+		)
+	}
+
+	fun deletePastEvent(uniqueId: String) = viewModelScope.launch {
+		isLoading.postValue(true)
+		if (!hasInternetConnection()) {
+			noInternet.postValue("No Internet Connection")
+			return@launch
+		}
+		repository.deleteEvent(uniqueId)
+
+		val response = pastEventsResponse.value ?: return@launch
+		pastEventsResponse.postValue(
+			EventsResponse(
+				status = response.status,
+				message = response.message,
+				data = ArrayList(response.data.filter { x -> x.uniqueId != uniqueId })
+			)
+		)
+	}
+
+	fun deleteCompletedEvent(uniqueId: String) = viewModelScope.launch {
+		isLoading.postValue(true)
+		if (!hasInternetConnection()) {
+			noInternet.postValue("No Internet Connection")
+			return@launch
+		}
+		repository.deleteEvent(uniqueId)
+
+		val response = completedEventsResponse.value ?: return@launch
+		completedEventsResponse.postValue(
+			EventsResponse(
+				status = response.status,
+				message = response.message,
+				data = ArrayList(response.data.filter { x -> x.uniqueId != uniqueId })
+			)
+		)
 	}
 
 	fun addReminder(reminderBody: ReminderRequestBody) = viewModelScope.launch {

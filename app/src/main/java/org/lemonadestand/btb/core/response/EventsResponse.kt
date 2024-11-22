@@ -8,5 +8,5 @@ import org.lemonadestand.btb.core.models.Event
 data class EventsResponse(
 	val status: Boolean,
 	val message: String,
-	val data: List<Event>
+	val data: ArrayList<Event>
 ) : Parcelable

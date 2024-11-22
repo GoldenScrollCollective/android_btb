@@ -48,7 +48,30 @@ data class Event(
 		get() = DateHelper.format(start, "EEE, MMM dd, yyyy")
 }
 
-data class EventsByDate(
+data class EventsPerDate(
 	val events: ArrayList<Event> = arrayListOf(),
 	val date: String? = null
-)
+) {
+	companion object {
+		fun groupEvents(events: ArrayList<Event>): ArrayList<EventsPerDate> {
+			val eventsPerDates = arrayListOf<EventsPerDate>()
+			val dateList: ArrayList<String> = ArrayList()
+
+			for (i in 0 until events.size) {
+				val event = events[i]
+				val day = event.blessingCompletedDay ?: event.startedDay ?: continue
+				if (!dateList.contains(day)) {
+					dateList.add(day)
+					eventsPerDates.add(
+						EventsPerDate(
+							date = event.blessingCompletedDay ?: event.startedDay,
+							events = ArrayList(events.filter { x -> x.blessingCompletedDay == day || x.startedDay == day })
+						)
+					)
+				}
+			}
+
+			return eventsPerDates
+		}
+	}
+}

@@ -6,13 +6,13 @@ import org.lemonadestand.btb.R
 import org.lemonadestand.btb.components.base.BaseRecyclerViewAdapter
 import org.lemonadestand.btb.constants.getDate
 import org.lemonadestand.btb.core.models.Event
-import org.lemonadestand.btb.core.models.EventsByDate
+import org.lemonadestand.btb.core.models.EventsPerDate
 
-class EventsByDateRecyclerViewAdapter : BaseRecyclerViewAdapter<EventsByDate>(R.layout.layout_events_by_date_item) {
+class EventsByDateRecyclerViewAdapter : BaseRecyclerViewAdapter<EventsPerDate>(R.layout.layout_events_by_date_item) {
 	var onSelect: ((value: Event) -> Unit)? = null
 	var onDelete: ((value: Event) -> Unit)? = null
 
-	override fun bindView(holder: ViewHolder, item: EventsByDate, position: Int) {
+	override fun bindView(holder: ViewHolder, item: EventsPerDate, position: Int) {
 		super.bindView(holder, item, position)
 
 		with(holder.itemView) {

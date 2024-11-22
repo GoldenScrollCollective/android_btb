@@ -7,5 +7,5 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 open class BaseResponse(
 	@Transient open val status: Boolean,
-	@Transient open val message: String
+	@Transient open val message: String? = null
 ) : Parcelable

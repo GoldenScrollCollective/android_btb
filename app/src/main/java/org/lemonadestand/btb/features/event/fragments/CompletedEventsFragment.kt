@@ -15,8 +15,7 @@ import androidx.lifecycle.ViewModelProvider
 import org.lemonadestand.btb.constants.ClickType
 import org.lemonadestand.btb.constants.ProgressDialogUtil
 import org.lemonadestand.btb.constants.handleCommonResponse
-import org.lemonadestand.btb.core.models.Event
-import org.lemonadestand.btb.core.models.EventsByDate
+import org.lemonadestand.btb.core.models.EventsPerDate
 import org.lemonadestand.btb.core.repositories.EventRepository
 import org.lemonadestand.btb.core.viewModels.EventViewModel
 import org.lemonadestand.btb.databinding.FragmentCompletedEventsBinding
@@ -26,7 +25,6 @@ import org.lemonadestand.btb.features.common.models.body.ScheduleBody
 import org.lemonadestand.btb.features.dashboard.activities.DashboardActivity
 import org.lemonadestand.btb.features.event.activities.EditRecordActivity
 import org.lemonadestand.btb.features.event.adapter.EventsByDateRecyclerViewAdapter
-import org.lemonadestand.btb.interfaces.OnItemClickListener
 import org.lemonadestand.btb.mvvm.factory.CommonViewModelFactory
 import org.lemonadestand.btb.singleton.Singleton
 import org.lemonadestand.btb.singleton.Singleton.launchActivity
@@ -34,7 +32,7 @@ import org.lemonadestand.btb.singleton.Sort
 import org.lemonadestand.btb.utils.Utils
 
 
-class CompletedEventsFragment : Fragment(), OnItemClickListener {
+class CompletedEventsFragment : Fragment() {
 
 	lateinit var mBinding: FragmentCompletedEventsBinding
 	private val resource: UserListModel?
@@ -76,7 +74,7 @@ class CompletedEventsFragment : Fragment(), OnItemClickListener {
 					putExtra("event_data", it)
 				}
 			}
-			onDelete = { viewModel.deleteEvent(it.uniqueId) }
+			onDelete = { viewModel.deleteCompletedEvent(it.uniqueId) }
 		}
 	}
 
@@ -93,24 +91,7 @@ class CompletedEventsFragment : Fragment(), OnItemClickListener {
 				return@observe
 			}
 
-			val eventsByDates = arrayListOf<EventsByDate>()
-			val dateList: ArrayList<String> = ArrayList()
-
-			for (i in 0 until it.data.size) {
-				val event = it.data[i]
-				val day = event.blessingCompletedDay ?: event.startedDay ?: continue
-				if (!dateList.contains(day)) {
-					dateList.add(day)
-					eventsByDates.add(
-						EventsByDate(
-							date = event.blessingCompletedAt,
-							events = ArrayList(it.data.filter { x -> x.blessingCompletedDay == day || x.startedDay == day })
-						)
-					)
-				}
-			}
-
-			(mBinding.eventsRecyclerView.adapter as EventsByDateRecyclerViewAdapter).values = eventsByDates
+			(mBinding.eventsRecyclerView.adapter as EventsByDateRecyclerViewAdapter).values = EventsPerDate.groupEvents(it.data)
 			stopLoading(true)
 		}
 
@@ -194,25 +175,5 @@ class CompletedEventsFragment : Fragment(), OnItemClickListener {
 					mBinding.shimmerLayout.hide()
 				}
 			})
-	}
-
-	override fun onItemClicked(`object`: Any?, index: Int, type: ClickType, superIndex: Int) {
-		clickedPosition = index
-		clickedSuperPosition = superIndex
-		clickType = type
-		when (type) {
-			ClickType.DELETE_POST -> {}
-			ClickType.LIKE_POST -> {}
-			else -> {
-
-				val eventModel = `object` as Event
-				activity?.launchActivity<EditRecordActivity>()
-				{
-					putExtra("event_data", eventModel)
-				}
-
-			}
-		}
-
 	}
 }

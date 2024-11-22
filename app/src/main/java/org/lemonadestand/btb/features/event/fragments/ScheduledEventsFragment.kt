@@ -18,7 +18,7 @@ import org.lemonadestand.btb.constants.ClickType
 import org.lemonadestand.btb.constants.ProgressDialogUtil
 import org.lemonadestand.btb.constants.handleCommonResponse
 import org.lemonadestand.btb.core.models.Event
-import org.lemonadestand.btb.core.models.EventsByDate
+import org.lemonadestand.btb.core.models.EventsPerDate
 import org.lemonadestand.btb.core.repositories.EventRepository
 import org.lemonadestand.btb.core.viewModels.EventViewModel
 import org.lemonadestand.btb.extensions.hide
@@ -65,7 +65,7 @@ class ScheduledEventsFragment : BaseFragment(R.layout.fragment_scheduled_events)
 		eventsRecyclerView = rootView.findViewById(R.id.eventsRecyclerView)
 		eventsRecyclerView.adapter = EventsByDateRecyclerViewAdapter().apply {
 			onSelect = { this@ScheduledEventsFragment.onSelect?.invoke(it) }
-			onDelete = { viewModel.deleteEvent(it.uniqueId) }
+			onDelete = { viewModel.deleteScheduledEvent(it.uniqueId) }
 		}
 
 		noDataView = rootView.findViewById(R.id.noDataView)
@@ -105,24 +105,7 @@ class ScheduledEventsFragment : BaseFragment(R.layout.fragment_scheduled_events)
 				return@observe
 			}
 
-			val eventsByDates = arrayListOf<EventsByDate>()
-			val dateList: ArrayList<String> = ArrayList()
-
-			for (i in 0 until it.data.size) {
-				val event = it.data[i]
-				val day = event.blessingCompletedDay ?: event.startedDay ?: continue
-				if (!dateList.contains(day)) {
-					dateList.add(day)
-					eventsByDates.add(
-						EventsByDate(
-							date = event.blessingCompletedAt,
-							events = ArrayList(it.data.filter { x -> x.blessingCompletedDay == day || x.startedDay == day })
-						)
-					)
-				}
-			}
-
-			(eventsRecyclerView.adapter as EventsByDateRecyclerViewAdapter).values = eventsByDates
+			(eventsRecyclerView.adapter as EventsByDateRecyclerViewAdapter).values = EventsPerDate.groupEvents(it.data)
 			stopLoading(true)
 		}
 
