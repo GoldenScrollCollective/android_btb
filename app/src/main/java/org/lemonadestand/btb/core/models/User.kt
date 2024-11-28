@@ -1,16 +1,15 @@
 package org.lemonadestand.btb.core.models
 
-import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
-import org.lemonadestand.btb.constants.getImageUrlFromName
+import org.lemonadestand.btb.core.BasePictureModel
 import java.util.Locale
 import kotlin.math.min
 
 @Parcelize
 data class User(
 	@SerializedName("id")
-	var id: String = "",
+	override var id: String = "",
 
 	@SerializedName("uniq_id")
 	var uniqueId: String = "",
@@ -34,7 +33,7 @@ data class User(
 	var lastActive: DateModel? = null,
 
 	@SerializedName("created_at")
-	var createdAt: DateModel? = null,
+	var createdAtModel: DateModel? = null,
 
 	@SerializedName("updated_at")
 	var updatedAt: DateModel? = null,
@@ -43,10 +42,10 @@ data class User(
 	var deletedAt: String? = null,
 
 	@SerializedName("name")
-	var name: String = "",
+	override var name: String = "",
 
 	@SerializedName("picture")
-	var picture: String? = null,
+	override var picture: String? = null,
 
 	@SerializedName("phone")
 	var phone: String? = null,
@@ -89,7 +88,7 @@ data class User(
 
 	@SerializedName("token")
 	var token: Token? = null,
-) : Parcelable {
+) : BasePictureModel(id, name, picture) {
 
 
 	val shortName: String
@@ -101,12 +100,5 @@ data class User(
 				names.add(splitedNames[i].substring(0, 1).uppercase(Locale.getDefault()))
 			}
 			return java.lang.String.join("", names)
-		}
-
-	val pictureUrl: String?
-		get() {
-			if (picture != null) return picture
-			if (name == null) return ""
-			return name.trim().lowercase().getImageUrlFromName()
 		}
 }

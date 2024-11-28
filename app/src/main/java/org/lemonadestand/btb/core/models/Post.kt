@@ -33,7 +33,14 @@ data class Post(
 	val user: User,
 	val users: ArrayList<User> = arrayListOf(),
 	val organization: Resource? = null
-) : BaseModel(id, created)
+) : BaseModel(id, created) {
+	enum class Visibility(val value: String) {
+		PUBLIC("public"),
+		RESOURCE("resource"),
+		MINE("mine"),
+		ORGANIZATION("organization")
+	}
+}
 
 @Parcelize
 data class DatumBody(

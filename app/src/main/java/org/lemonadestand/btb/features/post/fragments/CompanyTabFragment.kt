@@ -58,7 +58,6 @@ import org.lemonadestand.btb.features.post.adapter.PostCommentsRecyclerViewAdapt
 import org.lemonadestand.btb.mvvm.factory.CommonViewModelFactory
 import org.lemonadestand.btb.mvvm.repository.HomeRepository
 import org.lemonadestand.btb.mvvm.viewmodel.HomeViewModel
-import org.lemonadestand.btb.singleton.Filter
 import org.lemonadestand.btb.singleton.Singleton
 import org.lemonadestand.btb.singleton.Singleton.launchActivity
 import org.lemonadestand.btb.utils.Utils
@@ -73,6 +72,12 @@ class CompanyTabFragment : BaseFragment(R.layout.fragment_company_tab) {
 	private var clickType = ClickType.COMMON
 	private var clickedPosition = 0
 	private var clickedSuperPosition = 0
+
+	var visibility: Post.Visibility = Post.Visibility.PUBLIC
+		set(value) {
+			field = value
+			refreshData()
+		}
 
 	companion object {
 		lateinit var viewModel: HomeViewModel
@@ -89,7 +94,6 @@ class CompanyTabFragment : BaseFragment(R.layout.fragment_company_tab) {
 			LayoutInflater.from(inflater.context),
 			container,
 			false
-
 		)
 
 		shortAnimationDuration = resources.getInteger(android.R.integer.config_shortAnimTime)
@@ -246,9 +250,9 @@ class CompanyTabFragment : BaseFragment(R.layout.fragment_company_tab) {
 		})
 	}
 
-	fun refreshData(visibility: String = Filter.PUBLIC) {
+	fun refreshData() {
 		startLoading()
-		viewModel.getPosts(page = 0, resource = "", visibility = visibility, community = 0)
+		viewModel.getPosts(page = 0, resource = "", visibility = visibility.value, community = 0)
 	}
 
 	private fun handleLike(post: Post, like: String) {
@@ -257,7 +261,9 @@ class CompanyTabFragment : BaseFragment(R.layout.fragment_company_tab) {
 
 	private fun handleDelete(post: Post) {
 		clickType = ClickType.DELETE_POST
-		viewModel.deletePost(post.uniqueId)
+		viewModel.deletePost(post.uniqueId) {
+			refreshData()
+		}
 	}
 
 	private class PostsByDateRecyclerViewAdapter : BaseRecyclerViewAdapter<PostsByDate>(R.layout.layout_company_posts_item) {

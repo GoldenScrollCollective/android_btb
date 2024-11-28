@@ -107,14 +107,14 @@ class HomeViewModel(
 		}
 	}
 
-	fun deletePost(uniqueId: String) = viewModelScope.launch {
+	fun deletePost(uniqueId: String, callback: (() -> Unit)?) = viewModelScope.launch {
 		isLoading.postValue(true)
 		if (!hasInternetConnection()) {
 			noInternet.postValue("No Internet Connection")
 			return@launch
 		}
 
-		homeRepository.deletePost(uniqueId)
+		homeRepository.deletePost(uniqueId, callback)
 	}
 
 

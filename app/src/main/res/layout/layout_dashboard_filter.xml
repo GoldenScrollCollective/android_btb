@@ -1,53 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/transparent"
-    android:paddingHorizontal="10sp"
-    android:paddingVertical="4sp"
-    android:elevation="8sp">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:background="@color/transparent"
+	android:elevation="8sp"
+	android:paddingHorizontal="10sp"
+	android:paddingVertical="4sp">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="35dp"
-        android:orientation="horizontal"
-        android:padding="2sp"
-        android:background="@drawable/filter_group_bg">
+	<org.lemonadestand.btb.components.radio.RadioGroup
+		android:id="@+id/visibilityRadioGroup"
+		android:layout_width="match_parent"
+		android:layout_height="35sp"
+		android:layout_centerInParent="true"
+		android:background="@drawable/tab_bg"
+		android:orientation="horizontal"
+		app:selection="0">
 
-        <org.lemonadestand.btb.components.FilterButton
-            android:id="@+id/btnOrganization"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="Stories"/>
+		<org.lemonadestand.btb.components.radio.RadioButton
+			android:layout_width="0dp"
+			android:layout_height="match_parent"
+			android:layout_margin="2dp"
+			android:layout_weight="1"
+			android:fontFamily="@font/urbanist_bold"
+			android:gravity="center"
+			android:text="Stories"
+			android:textColor="@color/black"
+			android:textSize="14sp" />
 
-        <org.lemonadestand.btb.components.FilterButton
-            android:id="@+id/btnMine"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="Mine"/>
+		<org.lemonadestand.btb.components.radio.RadioButton
+			android:layout_width="0dp"
+			android:layout_height="match_parent"
+			android:layout_margin="2dp"
+			android:layout_weight="1"
+			android:fontFamily="@font/urbanist_bold"
+			android:gravity="center"
+			android:text="Mine"
+			android:textColor="@color/black"
+			android:textSize="14sp" />
 
-        <org.lemonadestand.btb.components.FilterButton
-            android:id="@+id/btnResource"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="Recognized"/>
+		<org.lemonadestand.btb.components.radio.RadioButton
+			android:layout_width="0dp"
+			android:layout_height="match_parent"
+			android:layout_margin="2dp"
+			android:layout_weight="1"
+			android:fontFamily="@font/urbanist_bold"
+			android:gravity="center"
+			android:text="Recognized"
+			android:textColor="@color/black"
+			android:textSize="14sp" />
 
-        <org.lemonadestand.btb.components.FilterButton
-            android:id="@+id/btnPublic"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="Default"
-            app:selected="true"/>
+		<org.lemonadestand.btb.components.radio.RadioButton
+			android:layout_width="0dp"
+			android:layout_height="match_parent"
+			android:layout_margin="2dp"
+			android:layout_weight="1"
+			android:fontFamily="@font/urbanist_bold"
+			android:gravity="center"
+			android:text="Default"
+			android:textColor="@color/black"
+			android:textSize="14sp" />
 
-    </LinearLayout>
+	</org.lemonadestand.btb.components.radio.RadioGroup>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</RelativeLayout>

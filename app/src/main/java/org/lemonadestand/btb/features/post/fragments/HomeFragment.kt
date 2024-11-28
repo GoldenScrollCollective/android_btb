@@ -13,17 +13,15 @@ import android.widget.PopupWindow
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import com.bumptech.glide.Glide
 import org.lemonadestand.btb.R
 import org.lemonadestand.btb.activities.ShareStoryActivity
 import org.lemonadestand.btb.activities.ShowAppreciationActivity
 import org.lemonadestand.btb.components.base.BaseFragment
-import org.lemonadestand.btb.constants.getImageUrlFromName
 import org.lemonadestand.btb.databinding.FragmentHomeBinding
+import org.lemonadestand.btb.extensions.setImageUrl
 import org.lemonadestand.btb.extensions.setOnSingleClickListener
 import org.lemonadestand.btb.features.dashboard.activities.DashboardActivity
-import org.lemonadestand.btb.features.dashboard.views.FilterView
-import org.lemonadestand.btb.singleton.Filter
+import org.lemonadestand.btb.features.dashboard.views.SelectVisibilityView
 import org.lemonadestand.btb.singleton.Singleton.launchActivity
 import org.lemonadestand.btb.utils.Utils
 
@@ -31,14 +29,6 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
 	private lateinit var mBinding: FragmentHomeBinding
 
 	private var currentFragment: Fragment? = null
-
-	private var filter = Filter.PUBLIC
-		set(value) {
-			field = value
-			if (currentFragment is CompanyTabFragment) {
-				(currentFragment as CompanyTabFragment).refreshData(value)
-			}
-		}
 
 	private var tabIndex = 0
 		set(value) {
@@ -57,23 +47,19 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
 		)
 
 		val currentUser = Utils.getUser(requireActivity())
-		if (currentUser?.picture != null) {
-			context?.let { Glide.with(it).load(currentUser.picture).into(mBinding.userSortName) }
-		} else {
-			context?.let {
-				Glide.with(it).load(currentUser.name.trim().lowercase().getImageUrlFromName())
-					.into(mBinding.userSortName)
-			}
-		}
+		mBinding.userSortName.setImageUrl(currentUser?.pictureUrl)
 		mBinding.userSortName.setOnClickListener {
 			val dashboardActivity = requireActivity() as DashboardActivity
 			dashboardActivity.toggleDrawer()
 		}
 
 		mBinding.btnFilter.setOnClickListener { view ->
-			val filterView = FilterView(requireContext(), filter = filter)
+			if (currentFragment !is CompanyTabFragment) return@setOnClickListener
+
+			val companyTabFragment = (currentFragment as CompanyTabFragment)
+			val selectVisibilityView = SelectVisibilityView(requireContext(), filter = companyTabFragment.visibility)
 			val popupWindow = PopupWindow(
-				filterView,
+				selectVisibilityView,
 				WindowManager.LayoutParams.MATCH_PARENT,
 				WindowManager.LayoutParams.WRAP_CONTENT
 			)
@@ -92,9 +78,9 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
 
 			popupWindow.showAsDropDown(view, 0, 0, 0)
 
-			filterView.onSelect = { value ->
+			selectVisibilityView.onSelect = { value ->
 				popupWindow.dismiss()
-				filter = value
+				companyTabFragment.visibility = value
 			}
 		}
 

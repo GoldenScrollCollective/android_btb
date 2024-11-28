@@ -248,7 +248,9 @@ class CommunityTabFragment : BaseFragment(R.layout.fragment_community_tab) {
 	}
 
 	private fun handleDelete(post: Post) {
-		viewModel.deletePost(post.uniqueId)
+		viewModel.deletePost(post.uniqueId) {
+			refreshData()
+		}
 	}
 
 	private class PostsByDateRecyclerViewAdapter : BaseRecyclerViewAdapter<PostsByDate>(R.layout.layout_company_posts_item) {
