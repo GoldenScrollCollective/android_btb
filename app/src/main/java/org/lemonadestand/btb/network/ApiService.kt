@@ -112,7 +112,7 @@ interface ApiService {
 		@Body requestBody: RequestBody,
 		@Header("Authorization")
 		authorization: String = authToken
-	): Response<BaseResponse>
+	): Response<ShareStoryResponse>
 
 
 	@POST(Singleton.REST_POST)

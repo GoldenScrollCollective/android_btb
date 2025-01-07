@@ -123,36 +123,48 @@ object PostsManager {
 		getPosts(page = 0, visibility = Post.Visibility.PUBLIC)
 	}
 
-	fun shareStory(shareStoryModel: ShareStoryBody) = CoroutineScope(Dispatchers.IO).launch {
-		if (!hasInternetConnection()) {
-			noInternet.postValue("No Internet Connection")
-			return@launch
+	fun shareStory(
+		shareStoryModel: ShareStoryBody,
+		callback: ((response: Response<*>) -> Unit)?
+	) =
+		CoroutineScope(Dispatchers.IO).launch {
+			if (!hasInternetConnection()) {
+				noInternet.postValue("No Internet Connection")
+				return@launch
+			}
+
+			isLoading.postValue(true)
+			val gson = Gson()
+			val json = gson.toJson(shareStoryModel)
+			val requestBody = json.toRequestBody("application/json".toMediaTypeOrNull())
+			val response = RetrofitInstance.api.shareStory(
+				requestBody = requestBody,
+			)
+			isLoading.postValue(false)
+
+			CoroutineScope(Dispatchers.Main).launch { callback?.invoke(response) }
+
+			if (!response.isSuccessful) {
+				errorLiveData.postValue(response)
+				ProgressDialogUtil.dismissProgressDialog()
+				return@launch
+			}
+
+			val body = response.body()
+			if (body?.data != null) {
+				val stories = arrayListOf<Post>()
+				stories.addAll(sharedPostsLiveData.value ?: arrayListOf())
+				stories.add(body.data)
+				sharedPostsLiveData.postValue(stories)
+			}
 		}
 
-		isLoading.postValue(true)
-		val gson = Gson()
-		val json = gson.toJson(shareStoryModel)
-		val requestBody = json.toRequestBody("application/json".toMediaTypeOrNull())
-		val response = RetrofitInstance.api.shareStory(
-			requestBody = requestBody,
-		)
-		isLoading.postValue(false)
-		if (!response.isSuccessful) {
-			errorLiveData.postValue(response)
-			ProgressDialogUtil.dismissProgressDialog()
-			return@launch
-		}
+	fun resetSharedStories() = sharedPostsLiveData.postValue(arrayListOf())
 
-		val body = response.body()
-		if (body?.data != null) {
-			val stories = arrayListOf<Post>()
-			stories.addAll(sharedPostsLiveData.value ?: arrayListOf())
-			stories.add(body.data)
-			sharedPostsLiveData.postValue(stories)
-		}
-	}
-
-	fun addAppreciation(appreciationRequestBody: AppreciationRequestBody) =
+	fun addAppreciation(
+		appreciationRequestBody: AppreciationRequestBody,
+		callback: ((response: Response<*>) -> Unit)?
+	) =
 		CoroutineScope(Dispatchers.IO).launch {
 			if (!hasInternetConnection()) {
 				noInternet.postValue("No Internet Connection")
@@ -165,14 +177,22 @@ object PostsManager {
 			val requestBody = json.toRequestBody("application/json".toMediaTypeOrNull())
 			val response = RetrofitInstance.api.addAppreciation(requestBody = requestBody)
 			isLoading.postValue(false)
+
+			CoroutineScope(Dispatchers.Main).launch { callback?.invoke(response) }
+
 			if (!response.isSuccessful) {
 				errorLiveData.postValue(response)
 				ProgressDialogUtil.dismissProgressDialog()
 				return@launch
 			}
 
-			commonResponseLiveData.postValue(response.body())
-			ProgressDialogUtil.dismissProgressDialog()
+			val body = response.body()
+			if (body?.data != null) {
+				val stories = arrayListOf<Post>()
+				stories.addAll(sharedPostsLiveData.value ?: arrayListOf())
+				stories.add(body.data)
+				sharedPostsLiveData.postValue(stories)
+			}
 		}
 
 	fun addComment(addCommentModel: AddCommentBody) = CoroutineScope(Dispatchers.IO).launch {

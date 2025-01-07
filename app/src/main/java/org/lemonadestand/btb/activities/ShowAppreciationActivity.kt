@@ -7,7 +7,6 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.core.text.HtmlCompat
-import androidx.lifecycle.ViewModelProvider
 import com.google.gson.Gson
 import org.lemonadestand.btb.App
 import org.lemonadestand.btb.R
@@ -17,7 +16,9 @@ import org.lemonadestand.btb.components.base.BaseActivity
 import org.lemonadestand.btb.constants.ClickType
 import org.lemonadestand.btb.constants.ProgressDialogUtil
 import org.lemonadestand.btb.constants.handleCommonResponse
+import org.lemonadestand.btb.core.manager.PostsManager
 import org.lemonadestand.btb.core.models.User
+import org.lemonadestand.btb.core.response.ShareStoryResponse
 import org.lemonadestand.btb.databinding.ActivityShowAppreciationBinding
 import org.lemonadestand.btb.extensions.lastPathComponent
 import org.lemonadestand.btb.features.common.fragments.SelectMultiUsersBottomSheetFragment
@@ -27,9 +28,6 @@ import org.lemonadestand.btb.features.common.models.body.AppreciationMeta
 import org.lemonadestand.btb.features.common.models.body.AppreciationRequestBody
 import org.lemonadestand.btb.features.common.models.body.ShareStoryUser
 import org.lemonadestand.btb.interfaces.OnItemClickListener
-import org.lemonadestand.btb.mvvm.factory.CommonViewModelFactory
-import org.lemonadestand.btb.mvvm.repository.HomeRepository
-import org.lemonadestand.btb.mvvm.viewmodel.HomeViewModel
 import org.lemonadestand.btb.singleton.Singleton
 import org.lemonadestand.btb.utils.AWSUploadHelper
 import org.lemonadestand.btb.utils.Utils
@@ -37,7 +35,8 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 
 
-class ShowAppreciationActivity : BaseActivity(R.layout.activity_show_appreciation), OnItemClickListener {
+class ShowAppreciationActivity : BaseActivity(R.layout.activity_show_appreciation),
+	OnItemClickListener {
 	private lateinit var mBinding: ActivityShowAppreciationBinding
 	private var bottomSheetFragment: SelectMultiUsersBottomSheetFragment? = null
 
@@ -48,7 +47,8 @@ class ShowAppreciationActivity : BaseActivity(R.layout.activity_show_appreciatio
 	private var htmlMessage = ""
 		set(value) {
 			field = value
-			if (this::mBinding.isInitialized) mBinding.txtMessage.text = HtmlCompat.fromHtml(value, HtmlCompat.FROM_HTML_MODE_LEGACY)
+			if (this::mBinding.isInitialized) mBinding.txtMessage.text =
+				HtmlCompat.fromHtml(value, HtmlCompat.FROM_HTML_MODE_LEGACY)
 		}
 
 	private var isGivingSelected = true
@@ -59,7 +59,7 @@ class ShowAppreciationActivity : BaseActivity(R.layout.activity_show_appreciatio
 
 	var maxValue = 0.0
 	var maxValueSpend = 0.0
-	lateinit var viewModel: HomeViewModel
+
 	var calendar: Calendar? = null
 
 	var debit = "give"
@@ -141,7 +141,8 @@ class ShowAppreciationActivity : BaseActivity(R.layout.activity_show_appreciatio
 			"Generosity"
 		)
 
-		mBinding.spinner.adapter = ArrayAdapter(this, R.layout.row_dropdown_item, R.id.tv_item_name, data)
+		mBinding.spinner.adapter =
+			ArrayAdapter(this, R.layout.row_dropdown_item, R.id.tv_item_name, data)
 		mBinding.spinner.onItemSelectedListener = object :
 			AdapterView.OnItemSelectedListener {
 			override fun onItemSelected(
@@ -327,26 +328,11 @@ class ShowAppreciationActivity : BaseActivity(R.layout.activity_show_appreciatio
 	}
 
 	private fun setUpViewModel() {
-
-		val repository = HomeRepository()
-		val viewModelProviderFactory =
-			CommonViewModelFactory((this).application, repository)
-		viewModel = ViewModelProvider(this, viewModelProviderFactory)[HomeViewModel::class.java]
-
-
-		viewModel.liveError.observe(this) {
+		PostsManager.error.observe(this) {
 			Singleton.handleResponse(response = it, this, "ReplyCommentActivity")
 			ProgressDialogUtil.dismissProgressDialog()
 		}
-
-		viewModel.commonResponse.observe(this) {
-			handleCommonResponse(this, it)
-			ProgressDialogUtil.dismissProgressDialog()
-			finish()
-		}
-
-
-		viewModel.isLoading.observe(this) {
+		PostsManager.isLoading.observe(this) {
 			Log.e("value==>", it.toString())
 			if (it) {
 				ProgressDialogUtil.showProgressDialog(this)
@@ -354,8 +340,7 @@ class ShowAppreciationActivity : BaseActivity(R.layout.activity_show_appreciatio
 				ProgressDialogUtil.dismissProgressDialog()
 			}
 		}
-
-		viewModel.noInternet.observe(this) {
+		PostsManager.noInternet.observe(this) {
 			Toast.makeText(this, " $it", Toast.LENGTH_SHORT).show()
 			ProgressDialogUtil.dismissProgressDialog()
 		}
@@ -364,11 +349,13 @@ class ShowAppreciationActivity : BaseActivity(R.layout.activity_show_appreciatio
 	private fun handleSave() {
 		val currentUser = Utils.getUser(App.instance) ?: return
 		if (selectedUser == null) {
-			Toast.makeText(this, "Please select what would you like to thank!", Toast.LENGTH_SHORT).show()
+			Toast.makeText(this, "Please select what would you like to thank!", Toast.LENGTH_SHORT)
+				.show()
 			return
 		}
 		if (whyThank.isEmpty()) {
-			Toast.makeText(this, "Please select why you're saying thanks.", Toast.LENGTH_SHORT).show()
+			Toast.makeText(this, "Please select why you're saying thanks.", Toast.LENGTH_SHORT)
+				.show()
 			return
 		}
 
@@ -393,7 +380,16 @@ class ShowAppreciationActivity : BaseActivity(R.layout.activity_show_appreciatio
 			meta = AppreciationMeta(bonus = "$totalAmount", debit = debit),
 			users = reminderUerListJson
 		)
-		viewModel.addAppreciation(requestBody)
+		PostsManager.addAppreciation(requestBody) { response ->
+			handleCommonResponse(this, response.body() as ShareStoryResponse)
+			ProgressDialogUtil.dismissProgressDialog()
+
+			if (!response.isSuccessful) {
+				return@addAppreciation
+			}
+
+			finish()
+		}
 	}
 
 	private fun handleCancel() {

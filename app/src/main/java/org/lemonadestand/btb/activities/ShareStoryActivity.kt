@@ -11,6 +11,7 @@ import org.lemonadestand.btb.constants.ProgressDialogUtil
 import org.lemonadestand.btb.constants.handleCommonResponse
 import org.lemonadestand.btb.core.manager.PostsManager
 import org.lemonadestand.btb.core.models.User
+import org.lemonadestand.btb.core.response.ShareStoryResponse
 import org.lemonadestand.btb.databinding.ActivityShareStoryBinding
 import org.lemonadestand.btb.extensions.lastPathComponent
 import org.lemonadestand.btb.features.common.models.body.ShareStoryBody
@@ -101,7 +102,16 @@ class ShareStoryActivity : BaseActivity(R.layout.activity_share_story) {
 			user = ShareStoryUser(id = "", name = ""),
 			anonymous = if (mBinding.shareAnonymouslySwitch.isChecked) "1" else "0"
 		)
-		PostsManager.shareStory(requestBody)
+		PostsManager.shareStory(requestBody) { response ->
+			handleCommonResponse(this, response.body() as ShareStoryResponse)
+			ProgressDialogUtil.dismissProgressDialog()
+			
+			if (!response.isSuccessful) {
+				return@shareStory
+			}
+
+			finish()
+		}
 	}
 
 	private fun handleSave() {

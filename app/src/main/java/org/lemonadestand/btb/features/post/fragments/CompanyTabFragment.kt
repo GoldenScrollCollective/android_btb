@@ -107,6 +107,7 @@ class CompanyTabFragment : BaseFragment(R.layout.fragment_company_tab) {
 	override fun update() {
 		super.update()
 		startLoading()
+		PostsManager.getPosts(visibility = Post.Visibility.PUBLIC, page = 0)
 	}
 
 	private fun setUpPublicAdapter() {
@@ -127,27 +128,10 @@ class CompanyTabFragment : BaseFragment(R.layout.fragment_company_tab) {
 	@SuppressLint("NotifyDataSetChanged")
 	private fun setUpViewModel() {
 		PostsManager.posts.observe(viewLifecycleOwner) {
-			if (!it.data.isNullOrEmpty()) {
-				postDateList.clear()
-
-				val dateList: ArrayList<String> = ArrayList()
-
-				for (i in 0 until it.data.size) {
-					if (!dateList.contains(getDate(it.data[i].created))) {
-						dateList.add(getDate(it.data[i].created))
-						postDateList.add(
-							PostsByDate(
-								date = it.data[i].created,
-								posts = it.data as ArrayList<Post>
-							)
-						)
-					}
-				}
-				postsByDateRecyclerViewAdapter.values = postDateList
-				stopLoading(true)
-			} else {
-				stopLoading(false)
-			}
+			handlePosts()
+		}
+		PostsManager.sharedPosts.observe(viewLifecycleOwner) {
+			handlePosts()
 		}
 		PostsManager.error.observe(viewLifecycleOwner) {
 			Singleton.handleResponse(response = it, context as Activity, tag)
@@ -187,8 +171,33 @@ class CompanyTabFragment : BaseFragment(R.layout.fragment_company_tab) {
 				ProgressDialogUtil.dismissProgressDialog()
 			}
 		}
+	}
 
-		PostsManager.getPosts(visibility = Post.Visibility.PUBLIC, page = 0)
+	private fun handlePosts() {
+		val posts = arrayListOf<Post>()
+		posts.addAll(PostsManager.sharedPosts.value ?: arrayListOf())
+		posts.addAll(PostsManager.posts.value?.data ?: arrayListOf())
+
+		if (posts.isNotEmpty()) {
+			postDateList.clear()
+
+			val dateList: ArrayList<String> = ArrayList()
+
+			for (i in 0 until posts.size) {
+				if (!dateList.contains(getDate(posts[i].created))) {
+					dateList.add(getDate(posts[i].created))
+					postDateList.add(
+						PostsByDate(
+							date = posts[i].created,
+							posts = posts
+						)
+					)
+				}
+			}
+			postsByDateRecyclerViewAdapter.values = postDateList
+		}
+
+		stopLoading(posts.isNotEmpty())
 	}
 
 	private fun startLoading() {
@@ -231,6 +240,7 @@ class CompanyTabFragment : BaseFragment(R.layout.fragment_company_tab) {
 	private fun setSwipeRefresh() {
 		mBinding.swipeRefreshLayout.setOnRefreshListener {
 			refreshData()
+			PostsManager.resetSharedStories()
 			mBinding.swipeRefreshLayout.isRefreshing = false
 		}
 
