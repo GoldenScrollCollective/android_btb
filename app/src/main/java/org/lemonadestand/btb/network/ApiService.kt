@@ -9,6 +9,7 @@ import org.lemonadestand.btb.core.models.MembersResponse
 import org.lemonadestand.btb.core.response.EventsResponse
 import org.lemonadestand.btb.core.response.LoginResponse
 import org.lemonadestand.btb.core.response.PostResponseModel
+import org.lemonadestand.btb.core.response.ShareStoryResponse
 import org.lemonadestand.btb.features.common.models.UserListResponseModel
 import org.lemonadestand.btb.features.interest.models.InterestResponseModel
 import org.lemonadestand.btb.singleton.Singleton
@@ -104,7 +105,7 @@ interface ApiService {
 		@Body requestBody: RequestBody,
 		@Header("Authorization")
 		authorization: String = authToken
-	): Response<BaseResponse>
+	): Response<ShareStoryResponse>
 
 	@POST(Singleton.REST_POST)
 	suspend fun addAppreciation(
@@ -224,7 +225,10 @@ interface ApiService {
 	fun login(@Body dataCall: JsonObject?): Call<LoginResponse?>?
 
 	@POST(Singleton.LOGIN)
-	fun getRawToken(@Body dataCall: JsonObject?, @Header("X-API-KEY") authorization: String = ""): Call<LoginResponse?>?
+	fun getRawToken(
+		@Body dataCall: JsonObject?,
+		@Header("X-API-KEY") authorization: String = ""
+	): Call<LoginResponse?>?
 
 	@POST(Singleton.MAGIC)
 	fun forget(@Body dataCall: JsonObject?): Call<LoginResponse?>?

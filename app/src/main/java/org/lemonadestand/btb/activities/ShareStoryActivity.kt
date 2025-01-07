@@ -1,9 +1,7 @@
 package org.lemonadestand.btb.activities
 
-import android.util.Log
 import android.view.View
 import android.widget.Toast
-import androidx.lifecycle.ViewModelProvider
 import org.lemonadestand.btb.R
 import org.lemonadestand.btb.components.MediaPreviewView
 import org.lemonadestand.btb.components.QuillEditText
@@ -11,14 +9,12 @@ import org.lemonadestand.btb.components.UploadButton
 import org.lemonadestand.btb.components.base.BaseActivity
 import org.lemonadestand.btb.constants.ProgressDialogUtil
 import org.lemonadestand.btb.constants.handleCommonResponse
+import org.lemonadestand.btb.core.manager.PostsManager
 import org.lemonadestand.btb.core.models.User
 import org.lemonadestand.btb.databinding.ActivityShareStoryBinding
 import org.lemonadestand.btb.extensions.lastPathComponent
 import org.lemonadestand.btb.features.common.models.body.ShareStoryBody
 import org.lemonadestand.btb.features.common.models.body.ShareStoryUser
-import org.lemonadestand.btb.mvvm.factory.CommonViewModelFactory
-import org.lemonadestand.btb.mvvm.repository.HomeRepository
-import org.lemonadestand.btb.mvvm.viewmodel.HomeViewModel
 import org.lemonadestand.btb.singleton.Singleton
 import org.lemonadestand.btb.utils.AWSUploadHelper
 import org.lemonadestand.btb.utils.Utils
@@ -29,7 +25,6 @@ class ShareStoryActivity : BaseActivity(R.layout.activity_share_story) {
 
 	private lateinit var mBinding: ActivityShareStoryBinding
 
-	lateinit var viewModel: HomeViewModel
 	private var currentUser: User? = null
 
 	private lateinit var mediaPreviewView: MediaPreviewView
@@ -70,35 +65,16 @@ class ShareStoryActivity : BaseActivity(R.layout.activity_share_story) {
 	}
 
 	private fun setUpViewModel() {
-
-		val repository = HomeRepository()
-		val viewModelProviderFactory =
-			CommonViewModelFactory((this).application, repository)
-		viewModel = ViewModelProvider(this, viewModelProviderFactory)[HomeViewModel::class.java]
-
-
-		viewModel.liveError.observe(this) {
+		PostsManager.error.observe(this) {
 			Singleton.handleResponse(response = it, this, "ReplyCommentActivity")
 			ProgressDialogUtil.dismissProgressDialog()
 		}
-
-		viewModel.commonResponse.observe(this) {
+		PostsManager.commonResponse.observe(this) {
 			handleCommonResponse(this, it)
 			ProgressDialogUtil.dismissProgressDialog()
 			finish()
 		}
-
-
-		viewModel.isLoading.observe(this) {
-			Log.e("value==>", it.toString())
-			if (it) {
-				ProgressDialogUtil.showProgressDialog(this)
-			} else {
-				ProgressDialogUtil.dismissProgressDialog()
-			}
-		}
-
-		viewModel.noInternet.observe(this) {
+		PostsManager.noInternet.observe(this) {
 			Toast.makeText(this, " $it", Toast.LENGTH_SHORT).show()
 			ProgressDialogUtil.dismissProgressDialog()
 		}
@@ -125,7 +101,7 @@ class ShareStoryActivity : BaseActivity(R.layout.activity_share_story) {
 			user = ShareStoryUser(id = "", name = ""),
 			anonymous = if (mBinding.shareAnonymouslySwitch.isChecked) "1" else "0"
 		)
-		viewModel.shareStory(requestBody)
+		PostsManager.shareStory(requestBody)
 	}
 
 	private fun handleSave() {

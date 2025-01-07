@@ -25,7 +25,6 @@ import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -43,6 +42,7 @@ import org.lemonadestand.btb.constants.ClickType
 import org.lemonadestand.btb.constants.ProgressDialogUtil
 import org.lemonadestand.btb.constants.getDate
 import org.lemonadestand.btb.constants.handleCommonResponse
+import org.lemonadestand.btb.core.manager.PostsManager
 import org.lemonadestand.btb.core.models.Bonus
 import org.lemonadestand.btb.core.models.Post
 import org.lemonadestand.btb.core.models.PostsByDate
@@ -55,9 +55,6 @@ import org.lemonadestand.btb.features.common.models.body.ShareStoryUser
 import org.lemonadestand.btb.features.dashboard.activities.DashboardActivity
 import org.lemonadestand.btb.features.dashboard.fragments.MediaPreviewBottomSheetDialog
 import org.lemonadestand.btb.features.post.adapter.PostCommentsRecyclerViewAdapter
-import org.lemonadestand.btb.mvvm.factory.CommonViewModelFactory
-import org.lemonadestand.btb.mvvm.repository.HomeRepository
-import org.lemonadestand.btb.mvvm.viewmodel.HomeViewModel
 import org.lemonadestand.btb.singleton.Singleton
 import org.lemonadestand.btb.singleton.Singleton.launchActivity
 import org.lemonadestand.btb.utils.Utils
@@ -80,7 +77,6 @@ class CompanyTabFragment : BaseFragment(R.layout.fragment_company_tab) {
 		}
 
 	companion object {
-		lateinit var viewModel: HomeViewModel
 		var currentUser: User? = null
 	}
 
@@ -108,6 +104,11 @@ class CompanyTabFragment : BaseFragment(R.layout.fragment_company_tab) {
 		return mBinding.root
 	}
 
+	override fun update() {
+		super.update()
+		startLoading()
+	}
+
 	private fun setUpPublicAdapter() {
 		postsByDateRecyclerViewAdapter = PostsByDateRecyclerViewAdapter()
 		postsByDateRecyclerViewAdapter.onPreview = { post ->
@@ -125,12 +126,7 @@ class CompanyTabFragment : BaseFragment(R.layout.fragment_company_tab) {
 
 	@SuppressLint("NotifyDataSetChanged")
 	private fun setUpViewModel() {
-		startLoading()
-		val repository = HomeRepository()
-		val viewModelProviderFactory = CommonViewModelFactory((context as DashboardActivity).application, repository)
-		viewModel = ViewModelProvider(this, viewModelProviderFactory)[HomeViewModel::class.java]
-		viewModel.getPostList(visibility = Singleton.PUBLIC, page = 0)
-		viewModel.postModel.observe(viewLifecycleOwner) {
+		PostsManager.posts.observe(viewLifecycleOwner) {
 			if (!it.data.isNullOrEmpty()) {
 				postDateList.clear()
 
@@ -151,17 +147,13 @@ class CompanyTabFragment : BaseFragment(R.layout.fragment_company_tab) {
 				stopLoading(true)
 			} else {
 				stopLoading(false)
-
 			}
 		}
-
-
-		viewModel.liveError.observe(viewLifecycleOwner) {
+		PostsManager.error.observe(viewLifecycleOwner) {
 			Singleton.handleResponse(response = it, context as Activity, tag)
 			ProgressDialogUtil.dismissProgressDialog()
 		}
-
-		viewModel.commonResponse.observe(viewLifecycleOwner) {
+		PostsManager.commonResponse.observe(viewLifecycleOwner) {
 			handleCommonResponse(context as DashboardActivity, it)
 			ProgressDialogUtil.dismissProgressDialog()
 			if (it.status) {
@@ -174,14 +166,20 @@ class CompanyTabFragment : BaseFragment(R.layout.fragment_company_tab) {
 						postDateList[clickedSuperPosition].posts[clickedPosition].meta.like?.add(
 							Bonus(by_user = User(), value = "")
 						)
-						Log.e("sizeLikes=>", postDateList[clickedSuperPosition].posts[clickedPosition].meta.like?.size.toString())
+						Log.e(
+							"sizeLikes=>",
+							postDateList[clickedSuperPosition].posts[clickedPosition].meta.like?.size.toString()
+						)
 						postsByDateRecyclerViewAdapter.values = postDateList
 					}
 				}
 			}
 		}
-
-		viewModel.isLoading.observe(viewLifecycleOwner) {
+		PostsManager.noInternet.observe(viewLifecycleOwner) {
+			Toast.makeText(context, " $it", Toast.LENGTH_SHORT).show()
+			ProgressDialogUtil.dismissProgressDialog()
+		}
+		PostsManager.isLoading.observe(viewLifecycleOwner) {
 			Log.e("value==>", it.toString())
 			if (it) {
 				ProgressDialogUtil.showProgressDialog(context as DashboardActivity)
@@ -190,12 +188,8 @@ class CompanyTabFragment : BaseFragment(R.layout.fragment_company_tab) {
 			}
 		}
 
-		viewModel.noInternet.observe(viewLifecycleOwner) {
-			Toast.makeText(context, " $it", Toast.LENGTH_SHORT).show()
-			ProgressDialogUtil.dismissProgressDialog()
-		}
+		PostsManager.getPosts(visibility = Post.Visibility.PUBLIC, page = 0)
 	}
-
 
 	private fun startLoading() {
 		mBinding.shimmerLayout.startShimmer()
@@ -252,21 +246,29 @@ class CompanyTabFragment : BaseFragment(R.layout.fragment_company_tab) {
 
 	fun refreshData() {
 		startLoading()
-		viewModel.getPosts(page = 0, resource = "", visibility = visibility.value, community = 0)
+		PostsManager.getPosts(page = 0, resource = "", visibility = visibility, community = 0)
 	}
 
 	private fun handleLike(post: Post, like: String) {
-		viewModel.addLike(LikeBodyModel(metaName = "like", metaValue = like, byUserId = Utils.getData(context, Utils.UID), uniqueId = post.uniqueId))
+		PostsManager.addLike(
+			LikeBodyModel(
+				metaName = "like",
+				metaValue = like,
+				byUserId = Utils.getData(context, Utils.UID),
+				uniqueId = post.uniqueId
+			)
+		)
 	}
 
 	private fun handleDelete(post: Post) {
 		clickType = ClickType.DELETE_POST
-		viewModel.deletePost(post.uniqueId) {
+		PostsManager.deletePost(post.uniqueId) {
 			refreshData()
 		}
 	}
 
-	private class PostsByDateRecyclerViewAdapter : BaseRecyclerViewAdapter<PostsByDate>(R.layout.layout_company_posts_item) {
+	private class PostsByDateRecyclerViewAdapter :
+		BaseRecyclerViewAdapter<PostsByDate>(R.layout.layout_company_posts_item) {
 		var onPreview: ((value: Post) -> Unit)? = null
 		var onLike: ((post: Post, value: String) -> Unit)? = null
 		var onDelete: ((value: Post) -> Unit)? = null
@@ -299,7 +301,8 @@ class CompanyTabFragment : BaseFragment(R.layout.fragment_company_tab) {
 		}
 	}
 
-	private class PostsRecyclerViewAdapter(val superPosition: Int) : BaseRecyclerViewAdapter<Post>(R.layout.row_public_sub, fullHeight = true) {
+	private class PostsRecyclerViewAdapter(val superPosition: Int) :
+		BaseRecyclerViewAdapter<Post>(R.layout.row_public_sub, fullHeight = true) {
 		var onPreview: ((value: Post) -> Unit)? = null
 		var onLike: ((post: Post, value: String) -> Unit)? = null
 		var onDelete: ((value: Post) -> Unit)? = null
@@ -363,7 +366,14 @@ class CompanyTabFragment : BaseFragment(R.layout.fragment_company_tab) {
 						WindowManager.LayoutParams.WRAP_CONTENT
 					)
 
-					popupWindow.setBackgroundDrawable(ColorDrawable(ContextCompat.getColor(context, android.R.color.darker_gray))) // Transparent color to remove default shadow
+					popupWindow.setBackgroundDrawable(
+						ColorDrawable(
+							ContextCompat.getColor(
+								context,
+								android.R.color.darker_gray
+							)
+						)
+					) // Transparent color to remove default shadow
 					popupWindow.elevation = 20f
 
 					popupWindow.isFocusable = true
@@ -452,7 +462,7 @@ class CompanyTabFragment : BaseFragment(R.layout.fragment_company_tab) {
 								user = ShareStoryUser(id = "", name = "")
 							)
 //                    viewModel.addComment(requestBody)
-							viewModel.addComment(requestBody)
+							PostsManager.addComment(requestBody)
 						}
 						.setNegativeButton("Cancel") { dialog, _ ->
 							dialog.dismiss() // Dismiss the dialog if canceled
@@ -539,7 +549,8 @@ class CompanyTabFragment : BaseFragment(R.layout.fragment_company_tab) {
 
 				if (item.type != null) {
 					if (item.users.size > 1) {
-						tvTitle.text = item.user.name + " +" + (item.users.size - 1)            //Add Uses
+						tvTitle.text =
+							item.user.name + " +" + (item.users.size - 1)            //Add Uses
 					} else {
 						tvTitle.text = item.user.name
 					}
@@ -568,7 +579,8 @@ class CompanyTabFragment : BaseFragment(R.layout.fragment_company_tab) {
 					lnBonus.visibility = View.GONE
 				}
 
-				tvComment.text = HtmlCompat.fromHtml(item.html, HtmlCompat.FROM_HTML_MODE_LEGACY).trim()
+				tvComment.text =
+					HtmlCompat.fromHtml(item.html, HtmlCompat.FROM_HTML_MODE_LEGACY).trim()
 
 				if (item.replies.isNotEmpty()) {
 					txtCommentCount.text = buildString {
@@ -629,7 +641,8 @@ class CompanyTabFragment : BaseFragment(R.layout.fragment_company_tab) {
 				}
 
 				val commentsRecyclerView = findViewById<RecyclerView>(R.id.commentsRecyclerView)
-				val commentsRecyclerViewAdapter = PostCommentsRecyclerViewAdapter(position)   // fixed
+				val commentsRecyclerViewAdapter =
+					PostCommentsRecyclerViewAdapter(position)   // fixed
 				commentsRecyclerViewAdapter.onLike = { post, value -> onLike?.invoke(post, value) }
 				commentsRecyclerView.adapter = commentsRecyclerViewAdapter
 				commentsRecyclerViewAdapter.values = item.replies

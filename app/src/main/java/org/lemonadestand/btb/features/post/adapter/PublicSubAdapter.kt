@@ -34,6 +34,7 @@ import org.lemonadestand.btb.components.MediaPreviewView
 import org.lemonadestand.btb.components.ReactionsView
 import org.lemonadestand.btb.constants.ClickType
 import org.lemonadestand.btb.constants.getImageUrlFromName
+import org.lemonadestand.btb.core.manager.PostsManager
 import org.lemonadestand.btb.core.models.Post
 import org.lemonadestand.btb.features.common.models.body.AddCommentBody
 import org.lemonadestand.btb.features.common.models.body.LikeBodyModel
@@ -44,7 +45,11 @@ import org.lemonadestand.btb.singleton.Singleton.launchActivity
 import org.lemonadestand.btb.utils.Utils
 
 
-class PublicSubAdapter(private val list: ArrayList<Post>, var context: Context, private var superPosition: Int) :
+class PublicSubAdapter(
+	private val list: ArrayList<Post>,
+	var context: Context,
+	private var superPosition: Int
+) :
 	RecyclerView.Adapter<PublicSubAdapter.ViewHolder>() {
 	private var onItemClick: OnItemClickListener? = null
 
@@ -86,7 +91,8 @@ class PublicSubAdapter(private val list: ArrayList<Post>, var context: Context, 
 
 		if (post.type != null) {
 			if (post.users.size > 1) {
-				holder.tvTitle.text = post.user.name + " +" + (post.users.size - 1)            //Add Uses
+				holder.tvTitle.text =
+					post.user.name + " +" + (post.users.size - 1)            //Add Uses
 			} else {
 				holder.tvTitle.text = post.user.name
 			}
@@ -112,10 +118,11 @@ class PublicSubAdapter(private val list: ArrayList<Post>, var context: Context, 
 				append("")
 			}
 
-            holder.lnBonus.visibility = View.GONE
+			holder.lnBonus.visibility = View.GONE
 		}
 
-		holder.tvComment.text = HtmlCompat.fromHtml(post.html, HtmlCompat.FROM_HTML_MODE_LEGACY).trim()
+		holder.tvComment.text =
+			HtmlCompat.fromHtml(post.html, HtmlCompat.FROM_HTML_MODE_LEGACY).trim()
 		holder.mediaPreviewView.url = post.media
 		holder.mediaPreviewView.setOnClickListener {
 			onPreview?.invoke(post)
@@ -166,7 +173,7 @@ class PublicSubAdapter(private val list: ArrayList<Post>, var context: Context, 
 		holder.lnComment.setOnClickListener {
 			// add to set alert dialog's styls
 			val title = TextView(context) //custom title
-            title.text = "Add Comment"
+			title.text = "Add Comment"
 			title.setPadding(0, 50, 0, 0)
 			title.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20f)
 			title.gravity = Gravity.CENTER
@@ -176,7 +183,7 @@ class PublicSubAdapter(private val list: ArrayList<Post>, var context: Context, 
 			layout.setPadding(50, 0, 50, 0)
 
 			val messageArea = TextView(context)
-            messageArea.text = "What would you like to say..."
+			messageArea.text = "What would you like to say..."
 			messageArea.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f)
 			messageArea.gravity = Gravity.CENTER
 
@@ -221,7 +228,7 @@ class PublicSubAdapter(private val list: ArrayList<Post>, var context: Context, 
 						user = ShareStoryUser(id = "", name = "")
 					)
 //                    viewModel.addComment(requestBody)
-					CompanyTabFragment.viewModel.addComment(requestBody)
+					PostsManager.addComment(requestBody)
 				}
 				.setNegativeButton("Cancel") { dialog, _ ->
 					dialog.dismiss() // Dismiss the dialog if canceled
@@ -310,7 +317,7 @@ class PublicSubAdapter(private val list: ArrayList<Post>, var context: Context, 
 				Glide.with(context).load(post.users[i].picture).into(image)
 
 				val messagearea = TextView(context)
-                messagearea.text = post.users[i].name
+				messagearea.text = post.users[i].name
 				messagearea.setTextSize(TypedValue.COMPLEX_UNIT_SP, 10f)
 				messagearea.setPadding(20, 0, 10, 0)
 
@@ -330,7 +337,14 @@ class PublicSubAdapter(private val list: ArrayList<Post>, var context: Context, 
 				WindowManager.LayoutParams.WRAP_CONTENT
 			)
 
-			popupWindow.setBackgroundDrawable(ColorDrawable(ContextCompat.getColor(context, android.R.color.darker_gray))) // Transparent color to remove default shadow
+			popupWindow.setBackgroundDrawable(
+				ColorDrawable(
+					ContextCompat.getColor(
+						context,
+						android.R.color.darker_gray
+					)
+				)
+			) // Transparent color to remove default shadow
 			popupWindow.elevation = 20f
 
 			popupWindow.isFocusable = true
@@ -416,7 +430,8 @@ class PublicSubAdapter(private val list: ArrayList<Post>, var context: Context, 
 			}
 
 
-			val resourceId: Int = resources.getIdentifier("navigation_bar_height", "dimen", "android")
+			val resourceId: Int =
+				resources.getIdentifier("navigation_bar_height", "dimen", "android")
 			popupWindow.isFocusable = true
 			popupWindow.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 			popupWindow.showAsDropDown(it, 100, 0, 0)
@@ -435,7 +450,12 @@ class PublicSubAdapter(private val list: ArrayList<Post>, var context: Context, 
 
 			when (swipeItem.position) {
 				0 -> {
-					onItemClick!!.onItemClicked(post, position, ClickType.DELETE_POST, superIndex = superPosition)
+					onItemClick!!.onItemClicked(
+						post,
+						position,
+						ClickType.DELETE_POST,
+						superIndex = superPosition
+					)
 
 				}
 

@@ -21,6 +21,7 @@ import org.lemonadestand.btb.components.CommentReactionsView
 import org.lemonadestand.btb.components.LikeMenuView
 import org.lemonadestand.btb.components.base.BaseRecyclerViewAdapter
 import org.lemonadestand.btb.constants.getImageUrlFromName
+import org.lemonadestand.btb.core.manager.PostsManager
 import org.lemonadestand.btb.core.models.Post
 import org.lemonadestand.btb.extensions.setOnSingleClickListener
 import org.lemonadestand.btb.features.common.models.body.AddCommentBody
@@ -42,10 +43,10 @@ class PostCommentsRecyclerViewAdapter(
 			if (item.byUser.picture != null) {
 				Glide.with(context).load(item.user.picture).into(avatarView)
 			} else {
-                item.byUser.name.let {
-                    Glide.with(context).load(it.trim().lowercase().getImageUrlFromName())
-                        .into(avatarView)
-                }
+				item.byUser.name.let {
+					Glide.with(context).load(it.trim().lowercase().getImageUrlFromName())
+						.into(avatarView)
+				}
 			}
 
 			val userNameView = findViewById<TextView>(R.id.userNameView)
@@ -80,7 +81,7 @@ class PostCommentsRecyclerViewAdapter(
 			btnReply.setOnSingleClickListener {
 
 				val title = TextView(context) //custom title
-                title.text = "Add Reply"
+				title.text = "Add Reply"
 				title.setPadding(0, 50, 0, 0)
 				title.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20f)
 				title.gravity = Gravity.CENTER
@@ -90,7 +91,7 @@ class PostCommentsRecyclerViewAdapter(
 				layout.setPadding(50, 0, 50, 0)
 
 				val messageArea = TextView(context)
-                messageArea.text = "What would you like to say..."
+				messageArea.text = "What would you like to say..."
 				messageArea.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f)
 				messageArea.gravity = Gravity.CENTER
 
@@ -136,7 +137,7 @@ class PostCommentsRecyclerViewAdapter(
 						)
 
 //                    viewModel.addComment(requestBody)
-						CompanyTabFragment.viewModel.addComment(requestBody)
+						PostsManager.addComment(requestBody)
 					}
 					.setNegativeButton("Cancel") { dialog, _ ->
 						dialog.dismiss() // Dismiss the dialog if canceled

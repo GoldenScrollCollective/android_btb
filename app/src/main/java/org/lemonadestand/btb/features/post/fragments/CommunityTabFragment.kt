@@ -30,7 +30,6 @@ import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -47,6 +46,7 @@ import org.lemonadestand.btb.constants.ClickType
 import org.lemonadestand.btb.constants.ProgressDialogUtil
 import org.lemonadestand.btb.constants.getDate
 import org.lemonadestand.btb.constants.handleCommonResponse
+import org.lemonadestand.btb.core.manager.PostsManager
 import org.lemonadestand.btb.core.models.Bonus
 import org.lemonadestand.btb.core.models.Post
 import org.lemonadestand.btb.core.models.PostsByDate
@@ -61,9 +61,6 @@ import org.lemonadestand.btb.features.common.models.body.ShareStoryUser
 import org.lemonadestand.btb.features.dashboard.activities.DashboardActivity
 import org.lemonadestand.btb.features.dashboard.fragments.MediaPreviewBottomSheetDialog
 import org.lemonadestand.btb.features.post.adapter.PostCommentsRecyclerViewAdapter
-import org.lemonadestand.btb.mvvm.factory.CommonViewModelFactory
-import org.lemonadestand.btb.mvvm.repository.HomeRepository
-import org.lemonadestand.btb.mvvm.viewmodel.HomeViewModel
 import org.lemonadestand.btb.singleton.Singleton
 import org.lemonadestand.btb.singleton.Singleton.launchActivity
 import org.lemonadestand.btb.utils.Utils
@@ -72,7 +69,7 @@ class CommunityTabFragment : BaseFragment(R.layout.fragment_community_tab) {
 
 	private lateinit var mBinding: FragmentCommunityTabBinding
 	private lateinit var postsByDateRecyclerViewAdapter: PostsByDateRecyclerViewAdapter
-	private lateinit var viewModel: HomeViewModel
+
 	private var shortAnimationDuration: Int = 0
 	private var postDateList: ArrayList<PostsByDate> = ArrayList()
 	private var tag = "PrivateFragment"
@@ -98,6 +95,12 @@ class CommunityTabFragment : BaseFragment(R.layout.fragment_community_tab) {
 		return mBinding.root
 	}
 
+	override fun update() {
+		super.update()
+
+		startLoading()
+	}
+
 	private fun setUpPublicAdapter() {
 		postsByDateRecyclerViewAdapter = PostsByDateRecyclerViewAdapter()
 		postsByDateRecyclerViewAdapter.onPreview = { post ->
@@ -116,12 +119,7 @@ class CommunityTabFragment : BaseFragment(R.layout.fragment_community_tab) {
 
 	@SuppressLint("NotifyDataSetChanged")
 	private fun setUpViewModel() {
-		startLoading()
-		val repository = HomeRepository()
-		val viewModelProviderFactory = CommonViewModelFactory((context as DashboardActivity).application, repository)
-		viewModel = ViewModelProvider(this, viewModelProviderFactory)[HomeViewModel::class.java]
-		viewModel.getPosts(page = 0, resource = "", visibility = Singleton.PUBLIC, community = 1, type = "")
-		viewModel.postModel.observe(viewLifecycleOwner) {
+		PostsManager.posts.observe(viewLifecycleOwner) {
 			stopLoading(true)
 
 			val data = it.data ?: return@observe
@@ -148,12 +146,12 @@ class CommunityTabFragment : BaseFragment(R.layout.fragment_community_tab) {
 		}
 
 
-		viewModel.liveError.observe(viewLifecycleOwner) {
+		PostsManager.error.observe(viewLifecycleOwner) {
 			Singleton.handleResponse(response = it, context as Activity, tag)
 			ProgressDialogUtil.dismissProgressDialog()
 		}
 
-		viewModel.commonResponse.observe(viewLifecycleOwner) {
+		PostsManager.commonResponse.observe(viewLifecycleOwner) {
 			handleCommonResponse(context as DashboardActivity, it)
 			ProgressDialogUtil.dismissProgressDialog()
 			if (it.status) {
@@ -177,20 +175,18 @@ class CommunityTabFragment : BaseFragment(R.layout.fragment_community_tab) {
 			}
 		}
 
-
-		viewModel.isLoading.observe(viewLifecycleOwner) {
-			Log.e("value==>", it.toString())
-			if (it) {
-				ProgressDialogUtil.showProgressDialog(context as DashboardActivity)
-			} else {
-				ProgressDialogUtil.dismissProgressDialog()
-			}
-		}
-
-		viewModel.noInternet.observe(viewLifecycleOwner) {
+		PostsManager.noInternet.observe(viewLifecycleOwner) {
 			Toast.makeText(context, " $it", Toast.LENGTH_SHORT).show()
 			ProgressDialogUtil.dismissProgressDialog()
 		}
+
+		PostsManager.getPosts(
+			page = 0,
+			resource = "",
+			visibility = Post.Visibility.PUBLIC,
+			community = 1,
+			type = ""
+		)
 	}
 
 
@@ -240,20 +236,28 @@ class CommunityTabFragment : BaseFragment(R.layout.fragment_community_tab) {
 
 	private fun refreshData() {
 		startLoading()
-		viewModel.getPosts(visibility = Singleton.PUBLIC, page = 0, community = 1)
+		PostsManager.getPosts(visibility = Post.Visibility.PUBLIC, page = 0, community = 1)
 	}
 
 	private fun handleLike(post: Post, like: String) {
-		viewModel.addLike(LikeBodyModel(metaName = "like", metaValue = like, byUserId = Utils.getData(context, Utils.UID), uniqueId = post.uniqueId))
+		PostsManager.addLike(
+			LikeBodyModel(
+				metaName = "like",
+				metaValue = like,
+				byUserId = Utils.getData(context, Utils.UID),
+				uniqueId = post.uniqueId
+			)
+		)
 	}
 
 	private fun handleDelete(post: Post) {
-		viewModel.deletePost(post.uniqueId) {
+		PostsManager.deletePost(post.uniqueId) {
 			refreshData()
 		}
 	}
 
-	private class PostsByDateRecyclerViewAdapter : BaseRecyclerViewAdapter<PostsByDate>(R.layout.layout_company_posts_item) {
+	private class PostsByDateRecyclerViewAdapter :
+		BaseRecyclerViewAdapter<PostsByDate>(R.layout.layout_company_posts_item) {
 		var onPreview: ((value: Post) -> Unit)? = null
 		var onLike: ((post: Post, value: String) -> Unit)? = null
 		var onDelete: ((value: Post) -> Unit)? = null
@@ -286,7 +290,8 @@ class CommunityTabFragment : BaseFragment(R.layout.fragment_community_tab) {
 		}
 	}
 
-	private class PostsRecyclerViewAdapter(val superPosition: Int) : BaseRecyclerViewAdapter<Post>(R.layout.layout_community_posts_item, fullHeight = true) {
+	private class PostsRecyclerViewAdapter(val superPosition: Int) :
+		BaseRecyclerViewAdapter<Post>(R.layout.layout_community_posts_item, fullHeight = true) {
 		var onPreview: ((value: Post) -> Unit)? = null
 		var onLike: ((post: Post, value: String) -> Unit)? = null
 		var onDelete: ((value: Post) -> Unit)? = null
@@ -342,7 +347,14 @@ class CommunityTabFragment : BaseFragment(R.layout.fragment_community_tab) {
 						WindowManager.LayoutParams.WRAP_CONTENT
 					)
 
-					popupWindow.setBackgroundDrawable(ColorDrawable(ContextCompat.getColor(context, android.R.color.darker_gray))) // Transparent color to remove default shadow
+					popupWindow.setBackgroundDrawable(
+						ColorDrawable(
+							ContextCompat.getColor(
+								context,
+								android.R.color.darker_gray
+							)
+						)
+					) // Transparent color to remove default shadow
 					popupWindow.elevation = 20f
 
 					popupWindow.isFocusable = true
@@ -429,7 +441,7 @@ class CommunityTabFragment : BaseFragment(R.layout.fragment_community_tab) {
 								user = ShareStoryUser(id = "", name = "")
 							)
 //                    viewModel.addComment(requestBody)
-							CompanyTabFragment.viewModel.addComment(requestBody)
+							PostsManager.addComment(requestBody)
 						}
 						.setNegativeButton("Cancel") { dialog, _ ->
 							dialog.dismiss() // Dismiss the dialog if canceled
@@ -539,13 +551,29 @@ class CommunityTabFragment : BaseFragment(R.layout.fragment_community_tab) {
 				val small = "${item.createdAgo ?: ""} @${item.organization?.name ?: ""}"
 				val total = bold + small
 				val spannableStringBuilder = SpannableStringBuilder(total)
-				spannableStringBuilder.setSpan(ForegroundColorSpan(ContextCompat.getColor(context, R.color.text_grey)), total.indexOf(small), total.indexOf(small) + small.length, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
-				spannableStringBuilder.setSpan(StyleSpan(Typeface.NORMAL), total.indexOf(small), total.indexOf(small) + small.length, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
+				spannableStringBuilder.setSpan(
+					ForegroundColorSpan(
+						ContextCompat.getColor(
+							context,
+							R.color.text_grey
+						)
+					),
+					total.indexOf(small),
+					total.indexOf(small) + small.length,
+					Spannable.SPAN_INCLUSIVE_INCLUSIVE
+				)
+				spannableStringBuilder.setSpan(
+					StyleSpan(Typeface.NORMAL),
+					total.indexOf(small),
+					total.indexOf(small) + small.length,
+					Spannable.SPAN_INCLUSIVE_INCLUSIVE
+				)
 				titleView.text = spannableStringBuilder
 
 				lnBonus.visibility = View.GONE
 
-				tvComment.text = HtmlCompat.fromHtml(item.html, HtmlCompat.FROM_HTML_MODE_LEGACY).trim()
+				tvComment.text =
+					HtmlCompat.fromHtml(item.html, HtmlCompat.FROM_HTML_MODE_LEGACY).trim()
 
 				if (item.replies.isNotEmpty()) {
 					commentCountView.text = buildString {
@@ -582,7 +610,8 @@ class CommunityTabFragment : BaseFragment(R.layout.fragment_community_tab) {
 						.into(holder.iv_image);*/
 
 				val commentsRecyclerView = findViewById<RecyclerView>(R.id.commentsRecyclerView)
-				val commentsRecyclerViewAdapter = PostCommentsRecyclerViewAdapter(position)   // fixed
+				val commentsRecyclerViewAdapter =
+					PostCommentsRecyclerViewAdapter(position)   // fixed
 				commentsRecyclerViewAdapter.onLike = { post, value -> onLike?.invoke(post, value) }
 				commentsRecyclerView.adapter = commentsRecyclerViewAdapter
 				commentsRecyclerViewAdapter.values = item.replies

@@ -1,12 +1,11 @@
 package org.lemonadestand.btb.mvvm.viewmodel
 
-import android.app.Application
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import org.lemonadestand.btb.App
@@ -20,9 +19,8 @@ import org.lemonadestand.btb.mvvm.repository.HomeRepository
 import retrofit2.Response
 
 class HomeViewModel(
-	app: Application,
 	private val homeRepository: HomeRepository
-) : AndroidViewModel(app) {
+) : ViewModel() {
 
 	val liveError: LiveData<Response<*>>
 		get() = homeRepository.error
@@ -73,7 +71,6 @@ class HomeViewModel(
 			homeRepository.addLike(likeModel)
 		} else {
 			noInternet.postValue("No Internet Connection")
-
 		}
 	}
 
@@ -119,7 +116,7 @@ class HomeViewModel(
 
 
 	private fun hasInternetConnection(): Boolean {
-		val connectivityManager = getApplication<App>().getSystemService(
+		val connectivityManager = App.instance.getSystemService(
 			Context.CONNECTIVITY_SERVICE
 		) as ConnectivityManager
 

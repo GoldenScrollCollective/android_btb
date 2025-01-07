@@ -22,9 +22,10 @@ import org.lemonadestand.btb.mvvm.viewmodel.UserViewModel
 @Suppress("UNCHECKED_CAST")
 class CommonViewModelFactory(val app: Application, private val repository: Any) :
 	ViewModelProvider.Factory {
+
 	override fun <T : ViewModel> create(modelClass: Class<T>): T {
 		if (modelClass.isAssignableFrom(HomeViewModel::class.java)) {
-			return HomeViewModel(app, repository as HomeRepository) as T
+			return HomeViewModel(repository as HomeRepository) as T
 		} else if (modelClass.isAssignableFrom(UserViewModel::class.java)) {
 			return UserViewModel(app, repository as UserRepository) as T
 		} else if (modelClass.isAssignableFrom(EventViewModel::class.java)) {
