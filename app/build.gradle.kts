@@ -16,8 +16,8 @@ android {
 		applicationId = "org.lemonadestand.btb"
 		minSdk = 28
 		targetSdk = 34
-		versionCode = 7
-		versionName = "1.7"
+		versionCode = 8
+		versionName = "1.8"
 
 		testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -26,7 +26,10 @@ android {
 	buildTypes {
 		release {
 			isMinifyEnabled = false
-			proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+			proguardFiles(
+				getDefaultProguardFile("proguard-android-optimize.txt"),
+				"proguard-rules.pro"
+			)
 		}
 	}
 

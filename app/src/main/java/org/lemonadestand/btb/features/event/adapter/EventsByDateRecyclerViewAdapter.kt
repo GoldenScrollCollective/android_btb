@@ -8,7 +8,8 @@ import org.lemonadestand.btb.constants.getDate
 import org.lemonadestand.btb.core.models.Event
 import org.lemonadestand.btb.core.models.EventsPerDate
 
-class EventsByDateRecyclerViewAdapter : BaseRecyclerViewAdapter<EventsPerDate>(R.layout.layout_events_by_date_item) {
+class EventsByDateRecyclerViewAdapter :
+	BaseRecyclerViewAdapter<EventsPerDate>(R.layout.layout_events_by_date_item) {
 	var onSelect: ((value: Event) -> Unit)? = null
 	var onDelete: ((value: Event) -> Unit)? = null
 
@@ -20,7 +21,7 @@ class EventsByDateRecyclerViewAdapter : BaseRecyclerViewAdapter<EventsPerDate>(R
 			dateView.text = getDate(item.date)
 
 			val eventsRecyclerView = findViewById<RecyclerView>(R.id.eventsRecyclerView)
-			eventsRecyclerView.setHasFixedSize(true)
+//			eventsRecyclerView.setHasFixedSize(true)
 			eventsRecyclerView.adapter = EventsRecyclerViewAdapter().apply {
 				onItemClick = { onSelect?.invoke(it) }
 				onDelete = {
