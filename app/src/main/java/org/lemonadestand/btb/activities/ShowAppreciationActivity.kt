@@ -31,7 +31,6 @@ import org.lemonadestand.btb.interfaces.OnItemClickListener
 import org.lemonadestand.btb.singleton.Singleton
 import org.lemonadestand.btb.utils.AWSUploadHelper
 import org.lemonadestand.btb.utils.Utils
-import java.text.SimpleDateFormat
 import java.util.Calendar
 
 
@@ -54,7 +53,6 @@ class ShowAppreciationActivity : BaseActivity(R.layout.activity_show_appreciatio
 	private var isGivingSelected = true
 	var data = arrayListOf<String>()
 	var currentUser: User? = null
-	var currentDate = ""
 	var selectedUser: UserListModel? = null
 
 	var maxValue = 0.0
@@ -86,7 +84,6 @@ class ShowAppreciationActivity : BaseActivity(R.layout.activity_show_appreciatio
 		mBinding = ActivityShowAppreciationBinding.inflate(layoutInflater)
 
 		setContentView(mBinding.root)
-		getData()
 		setBackgrounds()
 		setClickEvents()
 		setSpinner()
@@ -100,12 +97,11 @@ class ShowAppreciationActivity : BaseActivity(R.layout.activity_show_appreciatio
 		uploadButton.onUploaded = { uploadedFileUrl = it }
 	}
 
-	private fun getData() {
+	override fun update() {
+		super.update()
+
 		currentUser = Utils.getUser(this)
-		calendar = Calendar.getInstance()
-		val dateFormat1 = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-		val formattedDate1 = dateFormat1.format(calendar!!.time)
-		currentDate = formattedDate1
+
 		if (currentUser!!.give != null) {
 			maxValue = currentUser!!.give.toDouble()
 //            maxValue = 10.0
@@ -119,7 +115,6 @@ class ShowAppreciationActivity : BaseActivity(R.layout.activity_show_appreciatio
 				append(" Spending (\$${maxValueSpend}) ")
 			}
 		}
-
 	}
 
 	private fun setBackgrounds() {
@@ -365,10 +360,8 @@ class ShowAppreciationActivity : BaseActivity(R.layout.activity_show_appreciatio
 			resource = "user/${selectedUser!!.uniqueId}",
 			html = htmlMessage,
 			title = whyThank,
-			created = currentDate,
 			media = uploadedFileUrl?.lastPathComponent(),
 			parent_id = "",
-			modified = currentDate,
 			type = "comment",
 //                visibility = if (mBinding.switchIsPrivate.isChecked) "private" else "public",
 			visibility = "public",

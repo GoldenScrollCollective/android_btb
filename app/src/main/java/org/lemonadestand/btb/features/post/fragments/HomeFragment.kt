@@ -1,6 +1,5 @@
 package org.lemonadestand.btb.features.post.fragments
 
-import android.app.Activity
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -57,7 +56,8 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
 			if (currentFragment !is CompanyTabFragment) return@setOnClickListener
 
 			val companyTabFragment = (currentFragment as CompanyTabFragment)
-			val selectVisibilityView = SelectVisibilityView(requireContext(), filter = companyTabFragment.visibility)
+			val selectVisibilityView =
+				SelectVisibilityView(requireContext(), filter = companyTabFragment.visibility)
 			val popupWindow = PopupWindow(
 				selectVisibilityView,
 				WindowManager.LayoutParams.MATCH_PARENT,
@@ -110,13 +110,13 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
 			popupWindow.showAsDropDown(it, 100, 0, 0)
 			val tvShareStory = view.findViewById<TextView>(R.id.tv_share_story)
 			val tvShowAppreciation = view.findViewById<TextView>(R.id.tv_show_appreciation)
-			tvShareStory.setOnClickListener {
-				popupWindow.dismiss()
-				(context as Activity).launchActivity<ShareStoryActivity>()
-			}
 			tvShowAppreciation.setOnClickListener {
 				popupWindow.dismiss()
-				(context as Activity).launchActivity<ShowAppreciationActivity>()
+				requireActivity().launchActivity<ShowAppreciationActivity>()
+			}
+			tvShareStory.setOnClickListener {
+				popupWindow.dismiss()
+				requireActivity().launchActivity<ShareStoryActivity>()
 			}
 		}
 
