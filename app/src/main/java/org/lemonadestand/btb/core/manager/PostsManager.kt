@@ -185,14 +185,6 @@ object PostsManager {
 				ProgressDialogUtil.dismissProgressDialog()
 				return@launch
 			}
-
-			val body = response.body()
-			if (body?.data != null) {
-				val stories = arrayListOf<Post>()
-				stories.addAll(sharedPostsLiveData.value ?: arrayListOf())
-				stories.add(body.data)
-				sharedPostsLiveData.postValue(stories)
-			}
 		}
 
 	fun addComment(addCommentModel: AddCommentBody) = CoroutineScope(Dispatchers.IO).launch {
