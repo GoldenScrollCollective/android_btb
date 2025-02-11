@@ -1,5 +1,6 @@
 package org.lemonadestand.btb.core.models
 
+import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
 import org.lemonadestand.btb.core.BasePictureModel
@@ -102,3 +103,8 @@ data class User(
 			return java.lang.String.join("", names)
 		}
 }
+
+@Parcelize
+class Get2FACodeRequest(
+	@SerializedName("email") var email: String
+) : Parcelable

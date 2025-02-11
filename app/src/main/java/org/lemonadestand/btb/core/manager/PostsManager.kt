@@ -218,7 +218,7 @@ object PostsManager {
 		getPosts(page = 0, visibility = Post.Visibility.PUBLIC)
 	}
 
-	fun deletePost(uniqueID: String, callback: (() -> Unit)?) =
+	fun deletePost(uniqueID: String, code: String, callback: (() -> Unit)?) =
 		CoroutineScope(Dispatchers.IO).launch {
 			if (!hasInternetConnection()) {
 				noInternet.postValue("No Internet Connection")
@@ -228,6 +228,7 @@ object PostsManager {
 			isLoading.postValue(true)
 			val response = RetrofitInstance.api.deletePost(
 				uniqueId = uniqueID,
+				code = code
 			)
 			isLoading.postValue(false)
 

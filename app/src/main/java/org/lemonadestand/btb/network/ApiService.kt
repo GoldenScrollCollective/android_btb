@@ -144,7 +144,6 @@ interface ApiService {
 		authorization: String = authToken
 	): Response<BaseResponse>
 
-
 	@GET(Singleton.REST_FIELD)
 	suspend fun getInterestData(
 		@Query("resource") resource: String,
@@ -184,9 +183,16 @@ interface ApiService {
 		authorization: String = authToken
 	): Response<BaseResponse>
 
-	@DELETE(Singleton.REST_POST + "/" + "{post_id}")
+	@POST("/rest/user/code")
+	suspend fun get2FACode(
+		@Body requestBody: RequestBody,
+		@Header("Authorization") authorization: String = authToken
+	): Response<BaseResponse>
+
+	@DELETE(Singleton.REST_POST + "/{post_id}/{code}")
 	suspend fun deletePost(
 		@Path("post_id") uniqueId: String,
+		@Path("code") code: String,
 		@Header("Authorization")
 		authorization: String = authToken
 	): Response<BaseResponse>

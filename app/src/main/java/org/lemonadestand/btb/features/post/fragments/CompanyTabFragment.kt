@@ -38,6 +38,7 @@ import org.lemonadestand.btb.components.MediaPreviewView
 import org.lemonadestand.btb.components.ReactionsView
 import org.lemonadestand.btb.components.base.BaseFragment
 import org.lemonadestand.btb.components.base.BaseRecyclerViewAdapter
+import org.lemonadestand.btb.components.dialog.DeletePostDialogFragment
 import org.lemonadestand.btb.constants.ClickType
 import org.lemonadestand.btb.constants.ProgressDialogUtil
 import org.lemonadestand.btb.constants.getDate
@@ -271,10 +272,10 @@ class CompanyTabFragment : BaseFragment(R.layout.fragment_company_tab) {
 	}
 
 	private fun handleDelete(post: Post) {
-		clickType = ClickType.DELETE_POST
-		PostsManager.deletePost(post.uniqueId) {
+		val email = currentUser?.username ?: return
+		DeletePostDialogFragment(this, post.uniqueId, email, {
 			refreshData()
-		}
+		}).show()
 	}
 
 	private class PostsByDateRecyclerViewAdapter :
