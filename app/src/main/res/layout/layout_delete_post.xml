@@ -23,6 +23,7 @@
 		android:background="@color/transparent"
 		android:fontFamily="@font/urbanist_variablefont_wght"
 		android:hint="Please input 2FA code"
+		android:inputType="numberDecimal"
 		android:paddingHorizontal="@dimen/_4sdp"
 		android:paddingVertical="@dimen/_4sdp"
 		android:textColor="@color/black"
