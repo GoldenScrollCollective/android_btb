@@ -136,9 +136,9 @@
 						android:layout_width="match_parent"
 						android:layout_height="45sp"
 						android:background="#FDFCFB"
+						android:inputType="textPassword"
 						android:maxLines="1"
 						android:padding="10dp"
-						android:password="true"
 						android:textColor="@color/black"
 						android:textColorHint="@color/text_grey" />
 
