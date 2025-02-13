@@ -104,17 +104,6 @@ class HomeViewModel(
 		}
 	}
 
-	fun deletePost(uniqueId: String, callback: (() -> Unit)?) = viewModelScope.launch {
-		isLoading.postValue(true)
-		if (!hasInternetConnection()) {
-			noInternet.postValue("No Internet Connection")
-			return@launch
-		}
-
-		homeRepository.deletePost(uniqueId, callback)
-	}
-
-
 	private fun hasInternetConnection(): Boolean {
 		val connectivityManager = App.instance.getSystemService(
 			Context.CONNECTIVITY_SERVICE

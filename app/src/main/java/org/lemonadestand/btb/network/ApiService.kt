@@ -191,10 +191,9 @@ interface ApiService {
 
 	@DELETE(Singleton.REST_POST + "/{post_id}/{code}")
 	suspend fun deletePost(
-		@Path("post_id") uniqueId: String,
+		@Path("post_id") postId: String,
 		@Path("code") code: String,
-		@Header("Authorization")
-		authorization: String = authToken
+		@Header("Authorization") authorization: String = authToken
 	): Response<BaseResponse>
 
 	@DELETE(Singleton.REST_EVENT + "/" + "{event_id}")

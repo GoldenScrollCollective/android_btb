@@ -161,27 +161,4 @@ class HomeRepository {
 			}
 		}
 	}
-
-	suspend fun deletePost(uniqueID: String, callback: (() -> Unit)?) {
-
-		CoroutineScope(Dispatchers.IO).launch {
-			val response = RetrofitInstance.api.deletePost(
-				uniqueId = uniqueID,
-			)
-
-			if (!response.isSuccessful) {
-				errorLive.postValue(response)
-				ProgressDialogUtil.dismissProgressDialog()
-				CoroutineScope(Dispatchers.Main).launch { callback?.invoke() }
-				return@launch
-			}
-
-			commonResponseLive.postValue(response.body())
-			ProgressDialogUtil.dismissProgressDialog()
-
-			CoroutineScope(Dispatchers.Main).launch { callback?.invoke() }
-		}
-	}
-
-
 }

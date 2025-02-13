@@ -42,6 +42,7 @@ import org.lemonadestand.btb.components.MediaPreviewView
 import org.lemonadestand.btb.components.ReactionsView
 import org.lemonadestand.btb.components.base.BaseFragment
 import org.lemonadestand.btb.components.base.BaseRecyclerViewAdapter
+import org.lemonadestand.btb.components.dialog.DeletePostDialogFragment
 import org.lemonadestand.btb.constants.ClickType
 import org.lemonadestand.btb.constants.ProgressDialogUtil
 import org.lemonadestand.btb.constants.getDate
@@ -61,6 +62,7 @@ import org.lemonadestand.btb.features.common.models.body.ShareStoryUser
 import org.lemonadestand.btb.features.dashboard.activities.DashboardActivity
 import org.lemonadestand.btb.features.dashboard.fragments.MediaPreviewBottomSheetDialog
 import org.lemonadestand.btb.features.post.adapter.PostCommentsRecyclerViewAdapter
+import org.lemonadestand.btb.features.post.fragments.CompanyTabFragment.Companion.currentUser
 import org.lemonadestand.btb.singleton.Singleton
 import org.lemonadestand.btb.singleton.Singleton.launchActivity
 import org.lemonadestand.btb.utils.Utils
@@ -251,9 +253,10 @@ class CommunityTabFragment : BaseFragment(R.layout.fragment_community_tab) {
 	}
 
 	private fun handleDelete(post: Post) {
-		PostsManager.deletePost(post.uniqueId) {
+		val email = currentUser?.username ?: return
+		DeletePostDialogFragment(this, post.id, email, {
 			refreshData()
-		}
+		}).show()
 	}
 
 	private class PostsByDateRecyclerViewAdapter :
@@ -431,7 +434,7 @@ class CommunityTabFragment : BaseFragment(R.layout.fragment_community_tab) {
 
 							val requestBody = AddCommentBody(
 								uniq_id = "",
-								resource = "user/${CompanyTabFragment.currentUser!!.uniqueId}",
+								resource = "user/${currentUser!!.uniqueId}",
 								html = message,
 								created = "",
 								parent_id = item.uniqueId,
