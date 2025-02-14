@@ -30,7 +30,7 @@ var quill = new Quill('#editor', {
       container: '#toolbar'
     },
     mention: {
-      allowedChars: /^[A-Za-z\sÅÄÖåäö]*$/,
+//      allowedChars: /^[A-Za-z\sÅÄÖåäö]*$/,
       mentionDenotationChars: ['@'],
       source: async function (searchTerm, renderList, mentionChar) {
         if (mentionChar === '@') {
