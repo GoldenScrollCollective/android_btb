@@ -21,7 +21,9 @@ fun Date.ago(): String {
 
 	val diff = now - time
 	return when {
-		diff < MINUTE_MILLIS -> "moments ago"
+		diff < SECOND_MILLIS -> "now"
+		diff < 2 * SECOND_MILLIS -> "1 second ago"
+		diff < MINUTE_MILLIS -> "${diff / SECOND_MILLIS} seconds ago"
 		diff < 2 * MINUTE_MILLIS -> "1 minute ago"
 		diff < 60 * MINUTE_MILLIS -> "${diff / MINUTE_MILLIS} minutes ago"
 		diff < 2 * HOUR_MILLIS -> "1 hour ago"

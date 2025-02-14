@@ -42,7 +42,8 @@ class AddBonusActivity : AppCompatActivity(), OnItemClickListener {
 	private var htmlMessage = ""
 		set(value) {
 			field = value
-			if (this::mBinding.isInitialized) mBinding.txtMessage.text = HtmlCompat.fromHtml(value, HtmlCompat.FROM_HTML_MODE_LEGACY)
+			if (this::mBinding.isInitialized) mBinding.txtMessage.text =
+				HtmlCompat.fromHtml(value, HtmlCompat.FROM_HTML_MODE_LEGACY)
 		}
 	private var isGivingSelected = true
 	var data = arrayListOf<String>()
@@ -246,9 +247,7 @@ class AddBonusActivity : AppCompatActivity(), OnItemClickListener {
 				uniq_id = "",
 				resource = "user/${currentUser!!.uniqueId}",
 				html = htmlMessage,
-				created = "",
 				parent_id = "",
-				modified = "",
 				by_user_id = "",
 				visibility = if (mBinding.switchIsPrivate.isChecked) "private" else "public",
 				user = ShareStoryUser(id = "", name = "")

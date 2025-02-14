@@ -44,7 +44,7 @@ public class RestClient {
                 .connectTimeout(120, TimeUnit.SECONDS)
                 .build();
 
-        Gson gson = new GsonBuilder() .create();
+        Gson gson = new GsonBuilder().create();
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASEURL)
                 .client(client)
