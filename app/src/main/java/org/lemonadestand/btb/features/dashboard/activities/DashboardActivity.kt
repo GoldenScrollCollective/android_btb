@@ -163,7 +163,8 @@ class DashboardActivity : BaseActivity(R.layout.activity_dashboard) {
 		line2 = findViewById(R.id.line2)
 		line3 = findViewById(R.id.line3)
 		navController = findNavController(R.id.host_fragment)
-		val navHostFragment = supportFragmentManager.findFragmentById(R.id.host_fragment) as NavHostFragment
+		val navHostFragment =
+			supportFragmentManager.findFragmentById(R.id.host_fragment) as NavHostFragment
 		navController = navHostFragment.navController
 	}
 
@@ -200,6 +201,31 @@ class DashboardActivity : BaseActivity(R.layout.activity_dashboard) {
 
 		val navOrgNameView = findViewById<TextView>(R.id.navOrgName)
 		navOrgNameView.text = currentUser.organization?.name
+
+		currentUser.stats?.let {
+			val totalImpactView = findViewById<TextView>(R.id.totalImpactView)
+			totalImpactView.text = String.format("$%.0f", it.dollarImpact)
+
+			val pendingExpensesView = findViewById<TextView>(R.id.pendingExpensesView)
+			pendingExpensesView.text = "$0"
+
+			val livesBlessedView = findViewById<TextView>(R.id.livesBlessedView)
+			livesBlessedView.text = "${it.livesBlessed}"
+
+			val recognizedOthersView = findViewById<TextView>(R.id.recognizedOthersView)
+			recognizedOthersView.text = "${it.appreciation}"
+
+			val recognizedByOthersView = findViewById<TextView>(R.id.recognizedByOthersView)
+			recognizedByOthersView.text = "${it.recognized}"
+
+			val storiesSharedView = findViewById<TextView>(R.id.storiesSharedView)
+			storiesSharedView.text = "${it.stories}"
+		}
+
+		currentUser.fintechCard?.let {
+			val debitCardBalanceView = findViewById<TextView>(R.id.debitCardBalanceView)
+			debitCardBalanceView.text = String.format("$%.0f", it.btbCardBalance)
+		}
 
 		val navGiveView = findViewById<TextView>(R.id.navGiveView)
 		navGiveView.text = "$${currentUser.give}"

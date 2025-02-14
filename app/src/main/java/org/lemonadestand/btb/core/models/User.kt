@@ -8,6 +8,12 @@ import java.util.Locale
 import kotlin.math.min
 
 @Parcelize
+data class Card(
+	@SerializedName("btb_card_id") val btbCardId: String?,
+	@SerializedName("btb_card_balance") val btbCardBalance: Float?
+) : Parcelable
+
+@Parcelize
 data class User(
 	@SerializedName("id")
 	override var id: String = "",
@@ -89,6 +95,12 @@ data class User(
 
 	@SerializedName("token")
 	var token: Token? = null,
+
+	@SerializedName("stats")
+	var stats: Stat? = null,
+
+	@SerializedName("fintech_card")
+	val fintechCard: Card? = null
 ) : BasePictureModel(id, name, picture) {
 
 
