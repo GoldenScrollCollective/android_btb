@@ -27,7 +27,7 @@
 				android:layout_height="@dimen/_24sdp"
 				android:layout_centerVertical="true"
 				android:backgroundTint="@color/light_grey_ios"
-				app:cardCornerRadius="@dimen/_4sdp">
+				app:cardCornerRadius="@dimen/_24sdp">
 
 				<ImageView
 					android:id="@+id/userSortName"
