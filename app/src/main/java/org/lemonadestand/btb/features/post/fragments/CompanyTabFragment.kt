@@ -273,7 +273,7 @@ class CompanyTabFragment : BaseFragment(R.layout.fragment_company_tab) {
 
 	private fun handleDelete(post: Post) {
 		val email = currentUser?.username ?: return
-		DeletePostDialogFragment(this, post.id, email, {
+		DeletePostDialogFragment(this, post.uniqueId, email, {
 			refreshData()
 		}).show()
 	}
