@@ -67,6 +67,10 @@ class ScheduledEventsFragment : BaseFragment(R.layout.fragment_scheduled_events)
 		shimmerLayout = rootView.findViewById(R.id.shimmerLayout)
 
 		setUpViewModel()
+	}
+
+	override fun update() {
+		super.update()
 
 		refreshData()
 	}
@@ -87,7 +91,6 @@ class ScheduledEventsFragment : BaseFragment(R.layout.fragment_scheduled_events)
 
 	@SuppressLint("NotifyDataSetChanged")
 	private fun setUpViewModel() {
-		startLoading()
 		val repository = EventRepository()
 		val viewModelProviderFactory =
 			CommonViewModelFactory((context as DashboardActivity).application, repository)
@@ -95,12 +98,14 @@ class ScheduledEventsFragment : BaseFragment(R.layout.fragment_scheduled_events)
 
 		viewModel.scheduledEventsResponse.observe(viewLifecycleOwner) {
 			if (it.data.isNullOrEmpty()) {
-				(eventsRecyclerView.adapter as EventsByDateRecyclerViewAdapter).values = arrayListOf()
+				(eventsRecyclerView.adapter as EventsByDateRecyclerViewAdapter).values =
+					arrayListOf()
 				stopLoading(false)
 				return@observe
 			}
 
-			(eventsRecyclerView.adapter as EventsByDateRecyclerViewAdapter).values = EventsPerDate.groupEvents(it.data)
+			(eventsRecyclerView.adapter as EventsByDateRecyclerViewAdapter).values =
+				EventsPerDate.groupEvents(it.data)
 			stopLoading(true)
 		}
 
@@ -133,6 +138,7 @@ class ScheduledEventsFragment : BaseFragment(R.layout.fragment_scheduled_events)
 	private fun startLoading() {
 		eventsRecyclerView.hide()
 		noDataView.hide()
+
 		shimmerLayout.apply {
 			alpha = 0f
 			visibility = View.VISIBLE
@@ -145,9 +151,6 @@ class ScheduledEventsFragment : BaseFragment(R.layout.fragment_scheduled_events)
 	}
 
 	private fun stopLoading(isDataAvailable: Boolean) {
-		eventsRecyclerView.hide()
-
-
 		val view = if (isDataAvailable) eventsRecyclerView else noDataView
 		view.apply {
 			alpha = 0f
@@ -160,7 +163,7 @@ class ScheduledEventsFragment : BaseFragment(R.layout.fragment_scheduled_events)
 
 		shimmerLayout.animate()
 			.alpha(0f)
-			.setDuration(650)
+			.setDuration(shortAnimationDuration.toLong())
 			.setListener(object : AnimatorListenerAdapter() {
 				override fun onAnimationEnd(animation: Animator) {
 					shimmerLayout.hide()

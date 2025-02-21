@@ -4,90 +4,94 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
+import android.widget.RelativeLayout
 import android.widget.Toast
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.facebook.shimmer.ShimmerFrameLayout
+import org.lemonadestand.btb.R
+import org.lemonadestand.btb.components.base.BaseFragment
 import org.lemonadestand.btb.constants.ProgressDialogUtil
 import org.lemonadestand.btb.constants.handleCommonResponse
+import org.lemonadestand.btb.core.models.Event
 import org.lemonadestand.btb.core.models.EventsPerDate
 import org.lemonadestand.btb.core.repositories.EventRepository
 import org.lemonadestand.btb.core.viewModels.EventViewModel
-import org.lemonadestand.btb.databinding.FragmentCompletedEventsBinding
 import org.lemonadestand.btb.extensions.hide
 import org.lemonadestand.btb.features.common.models.UserListModel
 import org.lemonadestand.btb.features.common.models.body.ScheduleBody
 import org.lemonadestand.btb.features.dashboard.activities.DashboardActivity
-import org.lemonadestand.btb.features.event.activities.EditRecordActivity
 import org.lemonadestand.btb.features.event.adapter.EventsByDateRecyclerViewAdapter
 import org.lemonadestand.btb.mvvm.factory.CommonViewModelFactory
 import org.lemonadestand.btb.singleton.Singleton
-import org.lemonadestand.btb.singleton.Singleton.launchActivity
 import org.lemonadestand.btb.singleton.Sort
 import org.lemonadestand.btb.utils.Utils
 
 
-class CompletedEventsFragment : Fragment() {
+class CompletedEventsFragment : BaseFragment(R.layout.fragment_completed_events) {
+	private lateinit var eventsRecyclerView: RecyclerView
+	private lateinit var noDataView: RelativeLayout
+	private lateinit var shimmerLayout: ShimmerFrameLayout
 
-	lateinit var mBinding: FragmentCompletedEventsBinding
 	private val resource: UserListModel?
 		get() = Utils.getResource(context)
-
 
 	private lateinit var viewModel: EventViewModel
 	private var shortAnimationDuration: Int = 0
 
 	private var tag = "CompletedEventsFragment"
 
-	override fun onCreateView(
-		inflater: LayoutInflater, container: ViewGroup?,
-		savedInstanceState: Bundle?
-	): View {
-		mBinding = FragmentCompletedEventsBinding.inflate(
-			LayoutInflater.from(inflater.context),
-			container,
-			false
-		)
+	var onSelect: ((value: Event?) -> Unit)? = null
+
+	override fun init() {
+		super.init()
+
 		shortAnimationDuration = resources.getInteger(android.R.integer.config_shortAnimTime)
 
-		setUpPublicAdapter()
+		val swipeRefreshLayout = rootView.findViewById<SwipeRefreshLayout>(R.id.swipeRefreshLayout)
+		swipeRefreshLayout.setOnRefreshListener {
+			refreshData()
+			swipeRefreshLayout.isRefreshing = false
+		}
+
+		eventsRecyclerView = rootView.findViewById(R.id.eventsRecyclerView)
+		eventsRecyclerView.adapter = EventsByDateRecyclerViewAdapter().apply {
+			onSelect = { this@CompletedEventsFragment.onSelect?.invoke(it) }
+			onDelete = { viewModel.deleteScheduledEvent(it.uniqueId) }
+		}
+
+		noDataView = rootView.findViewById(R.id.noDataView)
+		shimmerLayout = rootView.findViewById(R.id.shimmerLayout)
+
 		setUpViewModel()
-		setSwipeRefresh()
-
-		refreshData()
-
-		return mBinding.root
 	}
 
-	private fun setUpPublicAdapter() {
-		mBinding.eventsRecyclerView.adapter = EventsByDateRecyclerViewAdapter().apply {
-			onSelect = {
-				requireActivity().launchActivity<EditRecordActivity> {
-					putExtra("event_data", it)
-				}
-			}
-			onDelete = { viewModel.deleteCompletedEvent(it.uniqueId) }
-		}
+	override fun update() {
+		super.update()
+
+		refreshData()
 	}
 
 	@SuppressLint("NotifyDataSetChanged")
 	private fun setUpViewModel() {
 		val repository = EventRepository()
-		val viewModelProviderFactory = CommonViewModelFactory((context as DashboardActivity).application, repository)
+		val viewModelProviderFactory =
+			CommonViewModelFactory((context as DashboardActivity).application, repository)
 		viewModel = ViewModelProvider(this, viewModelProviderFactory)[EventViewModel::class.java]
 
 		viewModel.completedEventsResponse.observe(viewLifecycleOwner) {
 			if (it.data.isNullOrEmpty()) {
-				(mBinding.eventsRecyclerView.adapter as EventsByDateRecyclerViewAdapter).values = arrayListOf()
+				(eventsRecyclerView.adapter as EventsByDateRecyclerViewAdapter).values =
+					arrayListOf()
 				stopLoading(false)
 				return@observe
 			}
 
-			(mBinding.eventsRecyclerView.adapter as EventsByDateRecyclerViewAdapter).values = EventsPerDate.groupEvents(it.data)
+			(eventsRecyclerView.adapter as EventsByDateRecyclerViewAdapter).values =
+				EventsPerDate.groupEvents(it.data)
 			stopLoading(true)
 		}
 
@@ -116,13 +120,6 @@ class CompletedEventsFragment : Fragment() {
 		}
 	}
 
-	private fun setSwipeRefresh() {
-		mBinding.swipeRefreshLayout.setOnRefreshListener {
-			refreshData()
-			mBinding.swipeRefreshLayout.isRefreshing = false
-		}
-	}
-
 	fun refreshData() {
 		startLoading()
 		viewModel.getCompletedEvents(
@@ -138,9 +135,10 @@ class CompletedEventsFragment : Fragment() {
 	}
 
 	private fun startLoading() {
-		mBinding.eventsRecyclerView.hide()
-		mBinding.noDataView.root.hide()
-		mBinding.shimmerLayout.apply {
+		eventsRecyclerView.hide()
+		noDataView.hide()
+
+		shimmerLayout.apply {
 			alpha = 0f
 			visibility = View.VISIBLE
 			animate()
@@ -148,11 +146,11 @@ class CompletedEventsFragment : Fragment() {
 				.setDuration(0)
 				.setListener(null)
 		}
-		mBinding.shimmerLayout.startShimmer()
+		shimmerLayout.startShimmer()
 	}
 
 	private fun stopLoading(isDataAvailable: Boolean) {
-		val view = if (isDataAvailable) mBinding.eventsRecyclerView else mBinding.noDataView.root
+		val view = if (isDataAvailable) eventsRecyclerView else noDataView
 		view.apply {
 			alpha = 0f
 			visibility = View.VISIBLE
@@ -163,12 +161,12 @@ class CompletedEventsFragment : Fragment() {
 				.setListener(null)
 		}
 
-		mBinding.shimmerLayout.animate()
+		shimmerLayout.animate()
 			.alpha(0f)
-			.setDuration(650)
+			.setDuration(shortAnimationDuration.toLong())
 			.setListener(object : AnimatorListenerAdapter() {
 				override fun onAnimationEnd(animation: Animator) {
-					mBinding.shimmerLayout.hide()
+					shimmerLayout.hide()
 				}
 			})
 	}

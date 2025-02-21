@@ -32,9 +32,10 @@ class EventsFragment : BaseFragment(R.layout.fragment_events) {
 		}
 	private var selectedUser: UserListModel? = Utils.getResource(context)
 		set(value) {
+			val refresh = field?.id != value?.id
 			field = value
 			Utils.setResource(context, value)
-			handleSelectedUser()
+			handleSelectedUser(refresh)
 		}
 
 	override fun onCreateView(
@@ -46,7 +47,7 @@ class EventsFragment : BaseFragment(R.layout.fragment_events) {
 			container,
 			false
 		)
-		handleSelectedUser()
+		handleSelectedUser(false)
 
 		mBinding.tabView.selection = tabIndex
 		mBinding.tabView.onSelect = {
@@ -64,10 +65,17 @@ class EventsFragment : BaseFragment(R.layout.fragment_events) {
 				putString("title", "Show Event For :")
 				putBoolean("is_event", true)
 			}
-			teamAndContactsFragment.show(requireActivity().supportFragmentManager, teamAndContactsFragment.tag)
+			teamAndContactsFragment.show(
+				requireActivity().supportFragmentManager,
+				teamAndContactsFragment.tag
+			)
 		}
 
-		mBinding.btnFloatingEvent.setOnSingleClickListener { navController.navigate(EventsFragmentDirections.toDetail()) }
+		mBinding.btnFloatingEvent.setOnSingleClickListener {
+			navController.navigate(
+				EventsFragmentDirections.toDetail()
+			)
+		}
 
 		return mBinding.root
 	}
@@ -108,6 +116,9 @@ class EventsFragment : BaseFragment(R.layout.fragment_events) {
 					arguments = Bundle().apply {
 						putParcelable("user", Utils.getResource(context))
 					}
+					onSelect = {
+						navController.navigate(EventsFragmentDirections.toDetail(it))
+					}
 					setFragment(this)
 				}
 				mBinding.btnFloatingEvent.visibility = View.VISIBLE
@@ -115,7 +126,7 @@ class EventsFragment : BaseFragment(R.layout.fragment_events) {
 		}
 	}
 
-	private fun handleSelectedUser() {
+	private fun handleSelectedUser(refresh: Boolean) {
 		if (selectedUser?.picture != null) {
 			Glide.with(requireContext()).load(selectedUser?.picture).into(mBinding.ivImage)
 		} else {
@@ -123,9 +134,11 @@ class EventsFragment : BaseFragment(R.layout.fragment_events) {
 			Glide.with(requireContext()).load(imageI).into(mBinding.ivImage)
 		}
 
-		if (currentFragment is ScheduledEventsFragment) (currentFragment as ScheduledEventsFragment).refreshData()
-		if (currentFragment is PastEventFragment) (currentFragment as PastEventFragment).refreshData()
-		if (currentFragment is CompletedEventsFragment) (currentFragment as CompletedEventsFragment).refreshData()
+		if (refresh) {
+			if (currentFragment is ScheduledEventsFragment) (currentFragment as ScheduledEventsFragment).refreshData()
+			if (currentFragment is PastEventFragment) (currentFragment as PastEventFragment).refreshData()
+			if (currentFragment is CompletedEventsFragment) (currentFragment as CompletedEventsFragment).refreshData()
+		}
 	}
 
 	private fun setFragment(fragment: Fragment?) {
