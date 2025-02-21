@@ -1,8 +1,5 @@
 package org.lemonadestand.btb.core.manager
 
-import android.content.Context
-import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
@@ -11,7 +8,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
-import org.lemonadestand.btb.App
 import org.lemonadestand.btb.constants.ProgressDialogUtil
 import org.lemonadestand.btb.core.BaseResponse
 import org.lemonadestand.btb.core.models.Post
@@ -24,7 +20,7 @@ import org.lemonadestand.btb.features.common.models.body.ShareStoryBody
 import org.lemonadestand.btb.network.RetrofitInstance
 import retrofit2.Response
 
-object PostsManager {
+object PostsManager : BaseManager() {
 	private val postResponseLiveData = MutableLiveData<PostResponseModel>()
 	val posts: LiveData<PostResponseModel>
 		get() = postResponseLiveData
@@ -33,33 +29,6 @@ object PostsManager {
 	val sharedPosts: LiveData<ArrayList<Post>>
 		get() = sharedPostsLiveData
 
-	private val commonResponseLiveData = MutableLiveData<BaseResponse>()
-	val commonResponse: LiveData<BaseResponse>
-		get() = commonResponseLiveData
-
-	private val errorLiveData = MutableLiveData<Response<*>>()
-	val error: LiveData<Response<*>>
-		get() = errorLiveData
-
-	val noInternet = MutableLiveData<String>()
-	val isLoading = MutableLiveData(false)
-
-	private fun hasInternetConnection(): Boolean {
-		val connectivityManager = App.instance.getSystemService(
-			Context.CONNECTIVITY_SERVICE
-		) as ConnectivityManager
-
-		val activeNetwork = connectivityManager.activeNetwork ?: return false
-		val capabilities = connectivityManager.getNetworkCapabilities(activeNetwork) ?: return false
-
-		return when {
-			capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
-			capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
-			capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
-			else -> false
-		}
-	}
-
 	fun getPosts(
 		page: Int,
 		resource: String = "",
@@ -67,7 +36,7 @@ object PostsManager {
 		community: Int = 0,
 		type: String? = null
 	) = CoroutineScope(Dispatchers.IO).launch {
-		if (!hasInternetConnection()) {
+		if (!checkInternetConnection()) {
 			noInternet.postValue("No Internet Connection")
 			return@launch
 		}
@@ -91,7 +60,7 @@ object PostsManager {
 	}
 
 	fun addLike(likeModel: LikeBodyModel) = CoroutineScope(Dispatchers.IO).launch {
-		if (!hasInternetConnection()) {
+		if (!checkInternetConnection()) {
 			noInternet.postValue("No Internet Connection")
 			return@launch
 		}
@@ -128,7 +97,7 @@ object PostsManager {
 		callback: ((response: Response<*>) -> Unit)?
 	) =
 		CoroutineScope(Dispatchers.IO).launch {
-			if (!hasInternetConnection()) {
+			if (!checkInternetConnection()) {
 				noInternet.postValue("No Internet Connection")
 				return@launch
 			}
@@ -166,7 +135,7 @@ object PostsManager {
 		callback: ((response: Response<*>) -> Unit)?
 	) =
 		CoroutineScope(Dispatchers.IO).launch {
-			if (!hasInternetConnection()) {
+			if (!checkInternetConnection()) {
 				noInternet.postValue("No Internet Connection")
 				return@launch
 			}
@@ -188,7 +157,7 @@ object PostsManager {
 		}
 
 	fun addComment(addCommentModel: AddCommentBody) = CoroutineScope(Dispatchers.IO).launch {
-		if (!hasInternetConnection()) {
+		if (!checkInternetConnection()) {
 			noInternet.postValue("No Internet Connection")
 			return@launch
 		}
@@ -220,7 +189,7 @@ object PostsManager {
 
 	fun deletePost(id: String, code: String, callback: (() -> Unit)?) =
 		CoroutineScope(Dispatchers.IO).launch {
-			if (!hasInternetConnection()) {
+			if (!checkInternetConnection()) {
 				noInternet.postValue("No Internet Connection")
 				return@launch
 			}

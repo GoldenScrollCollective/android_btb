@@ -196,9 +196,10 @@ interface ApiService {
 		@Header("Authorization") authorization: String = authToken
 	): Response<BaseResponse>
 
-	@DELETE(Singleton.REST_EVENT + "/" + "{event_id}")
+	@DELETE(Singleton.REST_EVENT + "/{event_id}/{code}")
 	suspend fun deleteEvent(
 		@Path("event_id") uniqueId: String,
+		@Path("code") code: String,
 		@Header("Authorization")
 		authorization: String = authToken
 	): Response<BaseResponse>

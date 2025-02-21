@@ -85,21 +85,6 @@ class EventRepository : BaseRepository<EventsResponse>() {
 		}
 	}
 
-	suspend fun deleteEvent(uniqueID: String) {
-		CoroutineScope(Dispatchers.IO).launch {
-			val response = RetrofitInstance.api.deleteEvent(
-				uniqueId = uniqueID,
-			)
-			if (response.isSuccessful) {
-				commonResponse.postValue(response.body())
-				ProgressDialogUtil.dismissProgressDialog()
-			} else {
-				error.postValue(response)
-				ProgressDialogUtil.dismissProgressDialog()
-			}
-		}
-	}
-
 	suspend fun addReminder(reminderBody: ReminderRequestBody) {
 
 		CoroutineScope(Dispatchers.IO).launch {

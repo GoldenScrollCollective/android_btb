@@ -4,100 +4,96 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
+import android.widget.RelativeLayout
 import android.widget.Toast
-import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.facebook.shimmer.ShimmerFrameLayout
+import org.lemonadestand.btb.R
+import org.lemonadestand.btb.components.base.BaseFragment
+import org.lemonadestand.btb.components.dialog.DeleteEventDialogFragment
 import org.lemonadestand.btb.constants.ProgressDialogUtil
 import org.lemonadestand.btb.constants.handleCommonResponse
+import org.lemonadestand.btb.core.manager.EventsManager
 import org.lemonadestand.btb.core.models.Event
 import org.lemonadestand.btb.core.models.EventsPerDate
-import org.lemonadestand.btb.core.repositories.EventRepository
-import org.lemonadestand.btb.core.viewModels.EventViewModel
-import org.lemonadestand.btb.databinding.FragmentPastEventBinding
 import org.lemonadestand.btb.extensions.hide
 import org.lemonadestand.btb.features.common.models.UserListModel
 import org.lemonadestand.btb.features.common.models.body.PastEventBody
 import org.lemonadestand.btb.features.dashboard.activities.DashboardActivity
 import org.lemonadestand.btb.features.event.adapter.EventsByDateRecyclerViewAdapter
-import org.lemonadestand.btb.mvvm.factory.CommonViewModelFactory
 import org.lemonadestand.btb.singleton.Singleton
 import org.lemonadestand.btb.singleton.Sort
 import org.lemonadestand.btb.utils.Utils
 
 
-class PastEventFragment : Fragment() {
+class PastEventFragment : BaseFragment(R.layout.fragment_past_event) {
+	private var shortAnimationDuration: Int = 0
 
-	lateinit var mBinding: FragmentPastEventBinding
+	private lateinit var eventsRecyclerView: RecyclerView
+	private lateinit var noDataView: RelativeLayout
+	private lateinit var shimmerLayout: ShimmerFrameLayout
+
 	private val resource: UserListModel?
 		get() = Utils.getResource(context)
 
-	private lateinit var viewModel: EventViewModel
-	private var shortAnimationDuration: Int = 0
-
-	private var tag = "PastEventFragment"
-
 	var onSelect: ((value: Event) -> Unit)? = null
 
-	override fun onCreateView(
-		inflater: LayoutInflater, container: ViewGroup?,
-		savedInstanceState: Bundle?
-	): View {
-		mBinding = FragmentPastEventBinding.inflate(
-			LayoutInflater.from(inflater.context),
-			container,
-			false
-		)
+	override fun init() {
+		super.init()
+
 		shortAnimationDuration = resources.getInteger(android.R.integer.config_shortAnimTime)
 
-		setUpPublicAdapter()
+		val swipeRefreshLayout = rootView.findViewById<SwipeRefreshLayout>(R.id.swipeRefreshLayout)
+		swipeRefreshLayout.setOnRefreshListener {
+			refreshData()
+			swipeRefreshLayout.isRefreshing = false
+		}
+
+		eventsRecyclerView = rootView.findViewById(R.id.eventsRecyclerView)
+		eventsRecyclerView.adapter = EventsByDateRecyclerViewAdapter().apply {
+			onSelect = { this@PastEventFragment.onSelect?.invoke(it) }
+			onDelete = { handleDelete(it) }
+		}
+
+		noDataView = rootView.findViewById(R.id.noDataView)
+		shimmerLayout = rootView.findViewById(R.id.shimmerLayout)
+
 		setUpViewModel()
-		setSwipeRefresh()
-
-		refreshData()
-
-		return mBinding.root
 	}
 
-	private fun setUpPublicAdapter() {
-		mBinding.eventsRecyclerView.adapter = EventsByDateRecyclerViewAdapter().apply {
-			onSelect = { this@PastEventFragment.onSelect?.invoke(it) }
-			onDelete = { viewModel.deletePastEvent(it.uniqueId) }
-		}
+	override fun update() {
+		super.update()
+
+		refreshData()
 	}
 
 	@SuppressLint("NotifyDataSetChanged")
 	private fun setUpViewModel() {
-		val repository = EventRepository()
-		val viewModelProviderFactory = CommonViewModelFactory((context as DashboardActivity).application, repository)
-		viewModel = ViewModelProvider(this, viewModelProviderFactory)[EventViewModel::class.java]
-
-		viewModel.pastEventsResponse.observe(viewLifecycleOwner) {
-			if (it.data.isNullOrEmpty()) {
-				(mBinding.eventsRecyclerView.adapter as EventsByDateRecyclerViewAdapter).values = arrayListOf()
+		EventsManager.events.observe(viewLifecycleOwner) {
+			if (it.isNullOrEmpty()) {
+				(eventsRecyclerView.adapter as EventsByDateRecyclerViewAdapter).values = arrayListOf()
 				stopLoading(false)
 				return@observe
 			}
 
-			(mBinding.eventsRecyclerView.adapter as EventsByDateRecyclerViewAdapter).values = EventsPerDate.groupEvents(it.data)
+			(eventsRecyclerView.adapter as EventsByDateRecyclerViewAdapter).values = EventsPerDate.groupEvents(it)
 			stopLoading(true)
 		}
 
-		viewModel.error.observe(viewLifecycleOwner) {
-			Singleton.handleResponse(response = it, context as Activity, tag)
+		EventsManager.error.observe(viewLifecycleOwner) {
+			Singleton.handleResponse(response = it, context as Activity, TAG)
 			ProgressDialogUtil.dismissProgressDialog()
 		}
 
-		viewModel.commonResponse.observe(viewLifecycleOwner) {
+		EventsManager.commonResponse.observe(viewLifecycleOwner) {
 			handleCommonResponse(context as DashboardActivity, it)
 			ProgressDialogUtil.dismissProgressDialog()
 		}
 
-		viewModel.isLoading.observe(viewLifecycleOwner) {
+		EventsManager.isLoading.observe(viewLifecycleOwner) {
 			Log.e("value==>", it.toString())
 			if (it) {
 				ProgressDialogUtil.showProgressDialog(context as DashboardActivity)
@@ -106,16 +102,17 @@ class PastEventFragment : Fragment() {
 			}
 		}
 
-		viewModel.noInternet.observe(viewLifecycleOwner) {
+		EventsManager.noInternet.observe(viewLifecycleOwner) {
 			Toast.makeText(context, " $it", Toast.LENGTH_SHORT).show()
 			ProgressDialogUtil.dismissProgressDialog()
 		}
 	}
 
 	private fun startLoading() {
-		mBinding.eventsRecyclerView.hide()
-		mBinding.noDataView.root.hide()
-		mBinding.shimmerLayout.apply {
+		eventsRecyclerView.hide()
+		noDataView.hide()
+
+		shimmerLayout.apply {
 			alpha = 0f
 			visibility = View.VISIBLE
 			animate()
@@ -123,19 +120,12 @@ class PastEventFragment : Fragment() {
 				.setDuration(0)
 				.setListener(null)
 		}
-		mBinding.shimmerLayout.startShimmer()
-	}
-
-	private fun setSwipeRefresh() {
-		mBinding.swipeRefreshLayout.setOnRefreshListener {
-			refreshData()
-			mBinding.swipeRefreshLayout.isRefreshing = false
-		}
+		shimmerLayout.startShimmer()
 	}
 
 	fun refreshData() {
 		startLoading()
-		viewModel.getPastEvents(
+		EventsManager.getPastEvents(
 			PastEventBody(
 				limit = Singleton.API_LIST_LIMIT,
 				page = "0",
@@ -149,7 +139,7 @@ class PastEventFragment : Fragment() {
 	}
 
 	private fun stopLoading(isDataAvailable: Boolean) {
-		val view = if (isDataAvailable) mBinding.eventsRecyclerView else mBinding.noDataView.root
+		val view = if (isDataAvailable) eventsRecyclerView else noDataView
 		view.apply {
 			alpha = 0f
 			visibility = View.VISIBLE
@@ -160,13 +150,20 @@ class PastEventFragment : Fragment() {
 				.setListener(null)
 		}
 
-		mBinding.shimmerLayout.animate()
+		shimmerLayout.animate()
 			.alpha(0f)
 			.setDuration(650)
 			.setListener(object : AnimatorListenerAdapter() {
 				override fun onAnimationEnd(animation: Animator) {
-					mBinding.shimmerLayout.hide()
+					shimmerLayout.hide()
 				}
 			})
+	}
+
+	private fun handleDelete(event: Event) {
+		val currentUser = Utils.getUser(requireActivity()) ?: return
+		val email = currentUser.username ?: return
+
+		DeleteEventDialogFragment(this, event.uniqueId, email).show()
 	}
 }
