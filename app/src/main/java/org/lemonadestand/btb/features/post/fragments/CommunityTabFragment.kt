@@ -32,6 +32,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import com.bumptech.glide.Glide
 import com.github.chantsune.swipetoaction.views.SimpleSwipeLayout
 import com.google.gson.Gson
@@ -78,6 +79,9 @@ class CommunityTabFragment : BaseFragment(R.layout.fragment_community_tab) {
 	var clickType = ClickType.COMMON
 	var clickedPosition = 0
 	var clickedSuperPosition = 0
+	private var page = 1
+	private var isLoading = false
+
 	override fun onCreateView(
 		inflater: LayoutInflater, container: ViewGroup?,
 		savedInstanceState: Bundle?
@@ -100,7 +104,7 @@ class CommunityTabFragment : BaseFragment(R.layout.fragment_community_tab) {
 	override fun update() {
 		super.update()
 
-		startLoading()
+		reloadPosts()
 	}
 
 	private fun setUpPublicAdapter() {
@@ -116,38 +120,27 @@ class CommunityTabFragment : BaseFragment(R.layout.fragment_community_tab) {
 			handleDelete(post)
 		}
 		mBinding.rvPublic.adapter = postsByDateRecyclerViewAdapter
+		mBinding.rvPublic.addOnScrollListener(object : OnScrollListener() {
+			override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+				super.onScrolled(recyclerView, dx, dy)
 
+				if (isLoading || mBinding.rvPublic.layoutManager !is LinearLayoutManager) {
+					return
+				}
+
+				val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+				val visibleItemCount = layoutManager.childCount
+				val totalItemCount = layoutManager.itemCount
+				val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
+				if (totalItemCount <= (firstVisibleItemPosition + visibleItemCount)) {
+					loadMorePosts()
+				}
+			}
+		})
 	}
 
 	@SuppressLint("NotifyDataSetChanged")
 	private fun setUpViewModel() {
-		PostsManager.posts.observe(viewLifecycleOwner) {
-			stopLoading(true)
-
-			val data = it ?: return@observe
-
-			if (data.isNotEmpty()) {
-				postDateList.clear()
-
-				val dateList: ArrayList<String> = ArrayList()
-
-				for (i in data.indices) {
-					if (!dateList.contains(getDate(data[i].created!!))) {
-						dateList.add(getDate(data[i].created!!))
-						postDateList.add(
-							PostsByDate(
-								date = data[i].created,
-								posts = data
-							)
-						)
-					}
-				}
-
-				postsByDateRecyclerViewAdapter.values = postDateList
-			}
-		}
-
-
 		PostsManager.error.observe(viewLifecycleOwner) {
 			Singleton.handleResponse(response = it, context as Activity, tag)
 			ProgressDialogUtil.dismissProgressDialog()
@@ -191,6 +184,44 @@ class CommunityTabFragment : BaseFragment(R.layout.fragment_community_tab) {
 		)
 	}
 
+	private fun handlePosts() {
+		val posts = PostsManager.posts.value ?: return
+
+		val isDataAvailable = posts.isNotEmpty()
+		if (isDataAvailable) {
+			postDateList.clear()
+
+			val dateList: ArrayList<String> = ArrayList()
+
+			for (i in posts.indices) {
+				if (!dateList.contains(getDate(posts[i].created!!))) {
+					dateList.add(getDate(posts[i].created!!))
+					postDateList.add(
+						PostsByDate(
+							date = posts[i].created,
+							posts = posts
+						)
+					)
+				}
+			}
+
+			postsByDateRecyclerViewAdapter.values = postDateList
+		}
+
+		if (page <= 1) {
+			val view = if (isDataAvailable) mBinding.rvPublic else mBinding.noDataView.root
+			view.apply {
+				alpha = 0f
+				visibility = View.VISIBLE
+
+				animate()
+					.alpha(1f)
+					.setDuration(shortAnimationDuration.toLong())
+					.setListener(null)
+			}
+		}
+	}
+
 
 	private fun startLoading() {
 		mBinding.shimmerLayout.startShimmer()
@@ -207,18 +238,7 @@ class CommunityTabFragment : BaseFragment(R.layout.fragment_community_tab) {
 		mBinding.shimmerLayout.startShimmer()
 	}
 
-	private fun stopLoading(isDataAvailable: Boolean) {
-		val view = if (isDataAvailable) mBinding.rvPublic else mBinding.noDataView.root
-		view.apply {
-			alpha = 0f
-			visibility = View.VISIBLE
-
-			animate()
-				.alpha(1f)
-				.setDuration(shortAnimationDuration.toLong())
-				.setListener(null)
-		}
-
+	private fun stopLoading() {
 		mBinding.shimmerLayout.animate()
 			.alpha(0f)
 			.setDuration(650)
@@ -231,14 +251,46 @@ class CommunityTabFragment : BaseFragment(R.layout.fragment_community_tab) {
 
 	private fun setSwipeRefresh() {
 		mBinding.swipeRefreshLayout.setOnRefreshListener {
-			refreshData()
+			reloadPosts()
 			mBinding.swipeRefreshLayout.isRefreshing = false
 		}
+
+		mBinding.rvPublic.addOnScrollListener(object : OnScrollListener() {
+			override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+				super.onScrollStateChanged(recyclerView, newState)
+				// Disable SwipeRefreshLayout's ability to intercept touch events during scrolling
+				mBinding.swipeRefreshLayout.isEnabled = newState == RecyclerView.SCROLL_STATE_IDLE
+			}
+		})
 	}
 
-	private fun refreshData() {
-		startLoading()
-		PostsManager.getPosts(visibility = Post.Visibility.PUBLIC, page = 0, community = 1)
+	private fun loadPosts(showLoading: Boolean) {
+		if (showLoading) {
+			startLoading()
+		}
+		isLoading = true
+		PostsManager.getPosts(
+			page = page,
+			resource = "",
+			visibility = Post.Visibility.PUBLIC,
+			community = 1,
+			callback = {
+				isLoading = false
+				if (showLoading) {
+					stopLoading()
+				}
+				handlePosts()
+			})
+	}
+
+	private fun loadMorePosts() {
+		page += 1
+		loadPosts(false)
+	}
+
+	private fun reloadPosts() {
+		page = 1
+		loadPosts(true)
 	}
 
 	private fun handleLike(post: Post, like: String) {
@@ -255,7 +307,7 @@ class CommunityTabFragment : BaseFragment(R.layout.fragment_community_tab) {
 	private fun handleDelete(post: Post) {
 		val email = currentUser?.username ?: return
 		DeletePostDialogFragment(this, post.uniqueId, email, {
-			refreshData()
+			reloadPosts()
 		}).show()
 	}
 

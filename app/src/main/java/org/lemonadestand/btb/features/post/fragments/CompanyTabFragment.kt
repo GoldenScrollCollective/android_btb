@@ -260,7 +260,6 @@ class CompanyTabFragment : BaseFragment(R.layout.fragment_company_tab) {
 			mBinding.swipeRefreshLayout.isRefreshing = false
 		}
 
-
 		mBinding.rvPublic.addOnScrollListener(object : OnScrollListener() {
 			override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
 				super.onScrollStateChanged(recyclerView, newState)
@@ -294,7 +293,7 @@ class CompanyTabFragment : BaseFragment(R.layout.fragment_company_tab) {
 		loadPosts(false)
 	}
 
-	fun reloadPosts() {
+	private fun reloadPosts() {
 		page = 1
 		loadPosts(true)
 	}
