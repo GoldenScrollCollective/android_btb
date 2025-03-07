@@ -23,6 +23,8 @@ data class Post(
 	val body: DatumBody,
 	val visibility: String,
 	val media: String?,
+	val bonus: String?,
+	val debit: String?,
 	override val created: Date?,
 	val modified: String,
 	val depth: String,

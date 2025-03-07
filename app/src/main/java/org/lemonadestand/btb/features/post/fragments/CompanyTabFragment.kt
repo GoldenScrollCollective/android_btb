@@ -689,6 +689,22 @@ class CompanyTabFragment : BaseFragment(R.layout.fragment_company_tab) {
 
 				}
 
+				val bonusView = findViewById<LinearLayout>(R.id.bonusView)
+				val bonusImageView = findViewById<ImageView>(R.id.bonusImageView)
+				val bonusTextView = findViewById<TextView>(R.id.bonusTextView)
+				Log.d(TAG, "item.bonus: ${item.bonus}")
+				if (item.bonus.isNullOrEmpty() || item.bonus == "0") {
+					bonusView.visibility = View.GONE
+				} else {
+					bonusView.visibility = View.VISIBLE
+					if (item.debit == "spend") {
+						bonusImageView.setImageResource(R.drawable.ic_money_love)
+					} else {
+						bonusImageView.setImageResource(R.drawable.ic_money)
+					}
+					bonusTextView.text = item.bonus
+				}
+
 				val commentsRecyclerView = findViewById<RecyclerView>(R.id.commentsRecyclerView)
 				val commentsRecyclerViewAdapter =
 					PostCommentsRecyclerViewAdapter(position)   // fixed
