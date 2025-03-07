@@ -160,12 +160,6 @@ class CompanyTabFragment : BaseFragment(R.layout.fragment_company_tab) {
 				ProgressDialogUtil.dismissProgressDialog()
 			}
 		}
-		PostsManager.posts.observe(viewLifecycleOwner) {
-			handlePosts()
-		}
-		PostsManager.sharedPosts.observe(viewLifecycleOwner) {
-			handlePosts()
-		}
 		PostsManager.error.observe(viewLifecycleOwner) {
 			Singleton.handleResponse(response = it, context as Activity, tag)
 			ProgressDialogUtil.dismissProgressDialog()
@@ -276,8 +270,8 @@ class CompanyTabFragment : BaseFragment(R.layout.fragment_company_tab) {
 		})
 	}
 
-	private fun loadPosts(loading: Boolean) {
-		if (loading) {
+	private fun loadPosts(showLoading: Boolean) {
+		if (showLoading) {
 			startLoading()
 		}
 		isLoading = true
@@ -288,9 +282,10 @@ class CompanyTabFragment : BaseFragment(R.layout.fragment_company_tab) {
 			community = 0,
 			callback = {
 				isLoading = false
-				if (loading) {
+				if (showLoading) {
 					stopLoading()
 				}
+				handlePosts()
 			})
 	}
 
