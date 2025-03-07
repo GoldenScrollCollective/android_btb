@@ -8,5 +8,5 @@ import org.lemonadestand.btb.core.models.Post
 data class PostResponseModel(
 	val status: Boolean,
 	val message: String,
-	val data: List<Post>? = listOf()
+	val data: ArrayList<Post>? = arrayListOf()
 ) : Parcelable

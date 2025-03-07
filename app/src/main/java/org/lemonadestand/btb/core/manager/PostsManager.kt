@@ -1,6 +1,5 @@
 package org.lemonadestand.btb.core.manager
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
@@ -11,7 +10,6 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import org.lemonadestand.btb.constants.ProgressDialogUtil
 import org.lemonadestand.btb.core.BaseResponse
 import org.lemonadestand.btb.core.models.Post
-import org.lemonadestand.btb.core.response.PostResponseModel
 import org.lemonadestand.btb.features.common.models.body.AddCommentBody
 import org.lemonadestand.btb.features.common.models.body.AppreciationRequestBody
 import org.lemonadestand.btb.features.common.models.body.LikeBodyModel
@@ -21,23 +19,18 @@ import org.lemonadestand.btb.network.RetrofitInstance
 import retrofit2.Response
 
 object PostsManager : BaseManager() {
-	private val postResponseLiveData = MutableLiveData<PostResponseModel>()
-	val posts: LiveData<PostResponseModel>
-		get() = postResponseLiveData
-
-	private val sharedPostsLiveData = MutableLiveData<ArrayList<Post>>(arrayListOf())
-	val sharedPosts: LiveData<ArrayList<Post>>
-		get() = sharedPostsLiveData
+	val posts = MutableLiveData<ArrayList<Post>>()
+	val sharedPosts = MutableLiveData<ArrayList<Post>>()
 
 	fun getPosts(
 		page: Int,
 		resource: String = "",
 		visibility: Post.Visibility,
 		community: Int = 0,
-		type: String? = null
+		type: String? = null,
+		callback: (() -> Unit)? = null
 	) = CoroutineScope(Dispatchers.IO).launch {
 		if (!checkInternetConnection()) {
-			noInternet.postValue("No Internet Connection")
 			return@launch
 		}
 
@@ -50,13 +43,22 @@ object PostsManager : BaseManager() {
 		)
 
 		if (!response.isSuccessful) {
-			errorLiveData.postValue(response)
-			ProgressDialogUtil.dismissProgressDialog()
+			error.postValue(response)
+			CoroutineScope(Dispatchers.Main).launch { callback?.invoke() }
 			return@launch
 		}
 
-		postResponseLiveData.postValue(response.body())
-		ProgressDialogUtil.dismissProgressDialog()
+		val data = response.body()?.data ?: arrayListOf()
+		if (page <= 1) {
+			posts.postValue(data)
+		} else {
+			val allPosts = arrayListOf<Post>()
+			allPosts.addAll(posts.value ?: arrayListOf())
+			allPosts.addAll(data)
+			posts.postValue(allPosts)
+		}
+
+		CoroutineScope(Dispatchers.Main).launch { callback?.invoke() }
 	}
 
 	fun addLike(likeModel: LikeBodyModel) = CoroutineScope(Dispatchers.IO).launch {
@@ -81,7 +83,7 @@ object PostsManager : BaseManager() {
 		)
 		isLoading.postValue(false)
 		if (!response.isSuccessful) {
-			errorLiveData.postValue(response)
+			error.postValue(response)
 			ProgressDialogUtil.dismissProgressDialog()
 			return@launch
 		}
@@ -114,7 +116,7 @@ object PostsManager : BaseManager() {
 			CoroutineScope(Dispatchers.Main).launch { callback?.invoke(response) }
 
 			if (!response.isSuccessful) {
-				errorLiveData.postValue(response)
+				error.postValue(response)
 				ProgressDialogUtil.dismissProgressDialog()
 				return@launch
 			}
@@ -122,13 +124,13 @@ object PostsManager : BaseManager() {
 			val body = response.body()
 			if (body?.data != null) {
 				val stories = arrayListOf<Post>()
-				stories.addAll(sharedPostsLiveData.value ?: arrayListOf())
+				stories.addAll(sharedPosts.value ?: arrayListOf())
 				stories.add(body.data)
-				sharedPostsLiveData.postValue(stories)
+				sharedPosts.postValue(stories)
 			}
 		}
 
-	fun resetSharedStories() = sharedPostsLiveData.postValue(arrayListOf())
+	fun resetSharedStories() = sharedPosts.postValue(arrayListOf())
 
 	fun addAppreciation(
 		appreciationRequestBody: AppreciationRequestBody,
@@ -150,7 +152,7 @@ object PostsManager : BaseManager() {
 			CoroutineScope(Dispatchers.Main).launch { callback?.invoke(response) }
 
 			if (!response.isSuccessful) {
-				errorLiveData.postValue(response)
+				error.postValue(response)
 				ProgressDialogUtil.dismissProgressDialog()
 				return@launch
 			}
@@ -176,7 +178,7 @@ object PostsManager : BaseManager() {
 
 		isLoading.postValue(false)
 		if (!response.isSuccessful) {
-			errorLiveData.postValue(response)
+			error.postValue(response)
 			ProgressDialogUtil.dismissProgressDialog()
 			return@launch
 		}
@@ -202,7 +204,7 @@ object PostsManager : BaseManager() {
 			isLoading.postValue(false)
 
 			if (!response.isSuccessful) {
-				errorLiveData.postValue(response)
+				error.postValue(response)
 				ProgressDialogUtil.dismissProgressDialog()
 				CoroutineScope(Dispatchers.Main).launch { callback?.invoke() }
 				return@launch

@@ -27,6 +27,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import com.bumptech.glide.Glide
 import com.github.chantsune.swipetoaction.views.SimpleSwipeLayout
 import com.github.chantsune.swipetoaction.views.SwipeLayout
@@ -70,11 +71,13 @@ class CompanyTabFragment : BaseFragment(R.layout.fragment_company_tab) {
 	private var clickType = ClickType.COMMON
 	private var clickedPosition = 0
 	private var clickedSuperPosition = 0
+	private var page = 1
+	private var isLoading = false
 
 	var visibility: Post.Visibility = Post.Visibility.PUBLIC
 		set(value) {
 			field = value
-			refreshData()
+			reloadPosts()
 		}
 
 	companion object {
@@ -107,8 +110,8 @@ class CompanyTabFragment : BaseFragment(R.layout.fragment_company_tab) {
 
 	override fun update() {
 		super.update()
-		startLoading()
-		PostsManager.getPosts(visibility = Post.Visibility.PUBLIC, page = 0)
+
+		reloadPosts()
 	}
 
 	private fun setUpPublicAdapter() {
@@ -124,10 +127,39 @@ class CompanyTabFragment : BaseFragment(R.layout.fragment_company_tab) {
 			handleDelete(post)
 		}
 		mBinding.rvPublic.adapter = postsByDateRecyclerViewAdapter
+		mBinding.rvPublic.addOnScrollListener(object : OnScrollListener() {
+			override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+				super.onScrolled(recyclerView, dx, dy)
+
+				if (isLoading || mBinding.rvPublic.layoutManager !is LinearLayoutManager) {
+					return
+				}
+
+				val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+				val visibleItemCount = layoutManager.childCount
+				val totalItemCount = layoutManager.itemCount
+				val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
+				if (totalItemCount <= (firstVisibleItemPosition + visibleItemCount)) {
+					loadMorePosts()
+				}
+			}
+		})
 	}
 
 	@SuppressLint("NotifyDataSetChanged")
 	private fun setUpViewModel() {
+		PostsManager.noInternet.observe(viewLifecycleOwner) {
+			Toast.makeText(context, " $it", Toast.LENGTH_SHORT).show()
+			ProgressDialogUtil.dismissProgressDialog()
+		}
+		PostsManager.isLoading.observe(viewLifecycleOwner) {
+			Log.e("value==>", it.toString())
+			if (it) {
+				ProgressDialogUtil.showProgressDialog(context as DashboardActivity)
+			} else {
+				ProgressDialogUtil.dismissProgressDialog()
+			}
+		}
 		PostsManager.posts.observe(viewLifecycleOwner) {
 			handlePosts()
 		}
@@ -160,26 +192,15 @@ class CompanyTabFragment : BaseFragment(R.layout.fragment_company_tab) {
 				}
 			}
 		}
-		PostsManager.noInternet.observe(viewLifecycleOwner) {
-			Toast.makeText(context, " $it", Toast.LENGTH_SHORT).show()
-			ProgressDialogUtil.dismissProgressDialog()
-		}
-		PostsManager.isLoading.observe(viewLifecycleOwner) {
-			Log.e("value==>", it.toString())
-			if (it) {
-				ProgressDialogUtil.showProgressDialog(context as DashboardActivity)
-			} else {
-				ProgressDialogUtil.dismissProgressDialog()
-			}
-		}
 	}
 
 	private fun handlePosts() {
 		val posts = arrayListOf<Post>()
 		posts.addAll(PostsManager.sharedPosts.value ?: arrayListOf())
-		posts.addAll(PostsManager.posts.value?.data ?: arrayListOf())
+		posts.addAll(PostsManager.posts.value ?: arrayListOf())
 
-		if (posts.isNotEmpty()) {
+		val isDataAvailable = posts.isNotEmpty()
+		if (isDataAvailable) {
 			postDateList.clear()
 
 			val dateList: ArrayList<String> = ArrayList()
@@ -198,7 +219,18 @@ class CompanyTabFragment : BaseFragment(R.layout.fragment_company_tab) {
 			postsByDateRecyclerViewAdapter.values = postDateList
 		}
 
-		stopLoading(posts.isNotEmpty())
+		if (page <= 1) {
+			val view = if (isDataAvailable) mBinding.rvPublic else mBinding.noDataView.root
+			view.apply {
+				alpha = 0f
+				visibility = View.VISIBLE
+
+				animate()
+					.alpha(1f)
+					.setDuration(shortAnimationDuration.toLong())
+					.setListener(null)
+			}
+		}
 	}
 
 	private fun startLoading() {
@@ -216,18 +248,7 @@ class CompanyTabFragment : BaseFragment(R.layout.fragment_company_tab) {
 		mBinding.shimmerLayout.startShimmer()
 	}
 
-	private fun stopLoading(isDataAvailable: Boolean) {
-		val view = if (isDataAvailable) mBinding.rvPublic else mBinding.noDataView.root
-		view.apply {
-			alpha = 0f
-			visibility = View.VISIBLE
-
-			animate()
-				.alpha(1f)
-				.setDuration(shortAnimationDuration.toLong())
-				.setListener(null)
-		}
-
+	private fun stopLoading() {
 		mBinding.shimmerLayout.animate()
 			.alpha(0f)
 			.setDuration(650)
@@ -240,13 +261,13 @@ class CompanyTabFragment : BaseFragment(R.layout.fragment_company_tab) {
 
 	private fun setSwipeRefresh() {
 		mBinding.swipeRefreshLayout.setOnRefreshListener {
-			refreshData()
+			reloadPosts()
 			PostsManager.resetSharedStories()
 			mBinding.swipeRefreshLayout.isRefreshing = false
 		}
 
 
-		mBinding.rvPublic.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+		mBinding.rvPublic.addOnScrollListener(object : OnScrollListener() {
 			override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
 				super.onScrollStateChanged(recyclerView, newState)
 				// Disable SwipeRefreshLayout's ability to intercept touch events during scrolling
@@ -255,9 +276,32 @@ class CompanyTabFragment : BaseFragment(R.layout.fragment_company_tab) {
 		})
 	}
 
-	fun refreshData() {
-		startLoading()
-		PostsManager.getPosts(page = 0, resource = "", visibility = visibility, community = 0)
+	private fun loadPosts(loading: Boolean) {
+		if (loading) {
+			startLoading()
+		}
+		isLoading = true
+		PostsManager.getPosts(
+			page = page,
+			resource = "",
+			visibility = visibility,
+			community = 0,
+			callback = {
+				isLoading = false
+				if (loading) {
+					stopLoading()
+				}
+			})
+	}
+
+	private fun loadMorePosts() {
+		page += 1
+		loadPosts(false)
+	}
+
+	fun reloadPosts() {
+		page = 1
+		loadPosts(true)
 	}
 
 	private fun handleLike(post: Post, like: String) {
@@ -274,7 +318,7 @@ class CompanyTabFragment : BaseFragment(R.layout.fragment_company_tab) {
 	private fun handleDelete(post: Post) {
 		val email = currentUser?.username ?: return
 		DeletePostDialogFragment(this, post.uniqueId, email, {
-			refreshData()
+			reloadPosts()
 		}).show()
 	}
 

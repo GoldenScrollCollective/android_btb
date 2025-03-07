@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
-	xmlns:app="http://schemas.android.com/apk/res-auto"
 	tools:context=".features.post.fragments.CompanyTabFragment">
 
 	<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -20,11 +20,11 @@
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-				tools:listitem="@layout/layout_company_posts_item"/>
+				tools:listitem="@layout/layout_company_posts_item" />
 
 			<include
 				android:id="@+id/noDataView"
-				layout="@layout/item_no_post"/>
+				layout="@layout/item_no_post" />
 
 			<com.facebook.shimmer.ShimmerFrameLayout
 				android:id="@+id/shimmerLayout"
@@ -36,8 +36,8 @@
 				app:shimmer_shape="linear">
 
 				<include
-					android:visibility="visible"
-					layout="@layout/shimmer_layout_post"/>
+					layout="@layout/shimmer_layout_post"
+					android:visibility="visible" />
 
 			</com.facebook.shimmer.ShimmerFrameLayout>
 

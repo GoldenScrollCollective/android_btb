@@ -3,7 +3,6 @@ package org.lemonadestand.btb.core.manager
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
-import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import org.lemonadestand.btb.App
@@ -18,9 +17,7 @@ open class BaseManager {
 	val commonResponse: LiveData<BaseResponse>
 		get() = commonResponseLiveData
 
-	protected val errorLiveData = MutableLiveData<Response<*>>()
-	val error: LiveData<Response<*>>
-		get() = errorLiveData
+	val error = MutableLiveData<Response<*>>()
 
 	private fun hasInternetConnection(): Boolean {
 		val connectivityManager = App.instance.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -39,7 +36,7 @@ open class BaseManager {
 	protected fun checkInternetConnection(): Boolean {
 		val result = hasInternetConnection()
 		if (!result) {
-			Toast.makeText(App.instance, "No Internet Connection", Toast.LENGTH_SHORT).show()
+			noInternet.postValue("No Internet Connection")
 		}
 		return result
 	}

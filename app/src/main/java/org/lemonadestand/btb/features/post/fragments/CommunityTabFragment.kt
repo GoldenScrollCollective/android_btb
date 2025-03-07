@@ -124,7 +124,7 @@ class CommunityTabFragment : BaseFragment(R.layout.fragment_community_tab) {
 		PostsManager.posts.observe(viewLifecycleOwner) {
 			stopLoading(true)
 
-			val data = it.data ?: return@observe
+			val data = it ?: return@observe
 
 			if (data.isNotEmpty()) {
 				postDateList.clear()
@@ -137,7 +137,7 @@ class CommunityTabFragment : BaseFragment(R.layout.fragment_community_tab) {
 						postDateList.add(
 							PostsByDate(
 								date = data[i].created,
-								posts = data as ArrayList<Post>
+								posts = data
 							)
 						)
 					}

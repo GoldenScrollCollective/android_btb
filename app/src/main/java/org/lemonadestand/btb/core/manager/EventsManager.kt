@@ -35,7 +35,7 @@ object EventsManager : BaseManager() {
 		)
 
 		if (!response.isSuccessful) {
-			errorLiveData.postValue(response)
+			error.postValue(response)
 			return@launch
 		}
 
@@ -58,7 +58,7 @@ object EventsManager : BaseManager() {
 		)
 
 		if (!response.isSuccessful) {
-			errorLiveData.postValue(response)
+			error.postValue(response)
 			return@launch
 		}
 
@@ -80,7 +80,7 @@ object EventsManager : BaseManager() {
 		)
 
 		if (!response.isSuccessful) {
-			errorLiveData.postValue(response)
+			error.postValue(response)
 			return@launch
 		}
 
@@ -97,7 +97,7 @@ object EventsManager : BaseManager() {
 		isLoading.postValue(false)
 
 		if (!response.isSuccessful) {
-			errorLiveData.postValue(response)
+			error.postValue(response)
 			return@launch
 		}
 
@@ -123,7 +123,7 @@ object EventsManager : BaseManager() {
 		isLoading.postValue(false)
 
 		if (!response.isSuccessful) {
-			errorLiveData.postValue(response)
+			error.postValue(response)
 			return@launch
 		}
 
@@ -147,7 +147,7 @@ object EventsManager : BaseManager() {
 		isLoading.postValue(false)
 
 		if (!response.isSuccessful) {
-			errorLiveData.postValue(response)
+			error.postValue(response)
 			return@launch
 		}
 
@@ -173,7 +173,7 @@ object EventsManager : BaseManager() {
 		isLoading.postValue(false)
 
 		if (!response.isSuccessful) {
-			errorLiveData.postValue(response)
+			error.postValue(response)
 			return@launch
 		}
 
@@ -198,7 +198,7 @@ object EventsManager : BaseManager() {
 		isLoading.postValue(false)
 
 		if (!response.isSuccessful) {
-			errorLiveData.postValue(response)
+			error.postValue(response)
 			return@launch
 		}
 
