@@ -88,9 +88,6 @@ class EventsFragment : BaseFragment(R.layout.fragment_events) {
 					onSelect = {
 						navController.navigate(EventsFragmentDirections.toDetail(it))
 					}
-					arguments = Bundle().apply {
-						putParcelable("user", Utils.getResource(context))
-					}
 					setFragment(this)
 				}
 				mBinding.btnFloatingEvent.visibility = View.VISIBLE
