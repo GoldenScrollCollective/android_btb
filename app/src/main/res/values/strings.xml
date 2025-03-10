@@ -1,44 +1,44 @@
 <resources>
-    <string name="app_name">BTB</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="test_user">techzhang1992@gmail.com</string>
-    <string name="test_password">welcome1</string>
-    <string name="reset_password">RESET PASSWORD</string>
-    <string name="log_in">LOG IN</string>
-    <string name="nothing_can_be_found">Nothing can be found.</string>
-    <string name="posts">Posts</string>
-    <string name="share_a_story">Share a story</string>
-    <string name="show_appreciation">Show Appreciation</string>
-    <string name="loading">Loading...</string>
-    <string name="cancel">Cancel</string>
-    <string name="select_a_user">Select a user</string>
-    <string name="select_a_contact">Select a Contact</string>
-    <string name="select_option">Select Option</string>
-    <string name="no_record_found">No Record Found.</string>
-    <string name="write_your_message_here">Write your message here.</string>
-    <string name="event">Event</string>
-    <string name="set_description">Set Description...</string>
-    <string name="set_title">Set Title</string>
-    <string name="done">Done</string>
-    <string name="set_notification">SET NOTIFICATION</string>
-    <string name="set_value">Set Value...</string>
-    <string name="set_title_new">Set Title...</string>
-    <string name="title_activity_edit_reminder">EditReminderActivity</string>
-    <!-- Strings used for fragments for navigation -->
-    <string name="first_fragment_label">First Fragment</string>
-    <string name="second_fragment_label">Second Fragment</string>
-    <string name="next">Next</string>
-    <string name="previous">Previous</string>
+	<string name="app_name">BTB</string>
+	<!-- TODO: Remove or change this placeholder text -->
+	<string name="hello_blank_fragment">Hello blank fragment</string>
+	<string name="test_user">techzhang1992@gmail.com</string>
+	<string name="test_password">welcome1</string>
+	<string name="reset_password">RESET PASSWORD</string>
+	<string name="log_in">LOG IN</string>
+	<string name="nothing_can_be_found">Nothing can be found.</string>
+	<string name="posts">Posts</string>
+	<string name="share_a_story">Share a story</string>
+	<string name="show_appreciation">Show Appreciation</string>
+	<string name="loading">Loading...</string>
+	<string name="cancel">Cancel</string>
+	<string name="select_a_user">Select a user</string>
+	<string name="select_a_contact">Select a Contact</string>
+	<string name="select_option">Select Option</string>
+	<string name="no_record_found">No Record Found.</string>
+	<string name="write_your_message_here">Write your message here...</string>
+	<string name="event">Event</string>
+	<string name="set_description">Set Description...</string>
+	<string name="set_title">Set Title</string>
+	<string name="done">Done</string>
+	<string name="set_notification">SET NOTIFICATION</string>
+	<string name="set_value">Set Value...</string>
+	<string name="set_title_new">Set Title...</string>
+	<string name="title_activity_edit_reminder">EditReminderActivity</string>
+	<!-- Strings used for fragments for navigation -->
+	<string name="first_fragment_label">First Fragment</string>
+	<string name="second_fragment_label">Second Fragment</string>
+	<string name="next">Next</string>
+	<string name="previous">Previous</string>
 
-    <string name="nav_open">Open</string>
-    <string name="nav_close">Close</string>
+	<string name="nav_open">Open</string>
+	<string name="nav_close">Close</string>
 
-    <string name="teams">Teams</string>
-    <string name="companies">Companies</string>
-    <string name="contacts">Contacts</string>
+	<string name="teams">Teams</string>
+	<string name="companies">Companies</string>
+	<string name="contacts">Contacts</string>
 
-    <string name="lorem_ipsum">
+	<string name="lorem_ipsum">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in scelerisque sem. Mauris
         volutpat, dolor id interdum ullamcorper, risus dolor egestas lectus, sit amet mattis purus
         dui nec risus. Maecenas non sodales nisi, vel dictum dolor. Class aptent taciti sociosqu ad

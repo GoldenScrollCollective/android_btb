@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.widget.RelativeLayout
 import androidx.appcompat.widget.AppCompatTextView
 import org.lemonadestand.btb.R
-import org.lemonadestand.btb.databinding.LayoutNavHeaderBinding
 import org.lemonadestand.btb.extensions.setOnSingleClickListener
 
 class NavHeaderView @JvmOverloads constructor(
@@ -14,7 +13,7 @@ class NavHeaderView @JvmOverloads constructor(
 	attrs: AttributeSet? = null,
 	defStyle: Int = 0,
 	defStyleRes: Int = 0
-): RelativeLayout(context, attrs, defStyle, defStyleRes) {
+) : RelativeLayout(context, attrs, defStyle, defStyleRes) {
 	companion object {
 		val TAG: String = NavHeaderView::class.java.simpleName
 	}
@@ -46,8 +45,10 @@ class NavHeaderView @JvmOverloads constructor(
 
 			btnLeft = findViewById(R.id.btnLeft)
 
+			val rightAction = attributes.getString(R.styleable.NavHeaderView_rightAction)
 			btnRight = findViewById(R.id.btnRight)
-			btnRight.visibility = GONE
+			btnRight.text = if (rightAction.isNullOrEmpty()) "" else rightAction
+			btnRight.visibility = if (rightAction.isNullOrEmpty()) GONE else VISIBLE
 
 			attributes.recycle()
 		}

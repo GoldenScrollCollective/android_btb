@@ -579,7 +579,7 @@ class CommunityTabFragment : BaseFragment(R.layout.fragment_community_tab) {
 
 				}
 
-				val lnBonus = findViewById<LinearLayout>(R.id.ln_bonus)
+				val lnBonus = findViewById<LinearLayout>(R.id.btnAddBonus)
 				lnBonus.setOnClickListener {
 					val json = Gson().toJson(item)
 					(context as Activity).launchActivity<AddBonusActivity> {

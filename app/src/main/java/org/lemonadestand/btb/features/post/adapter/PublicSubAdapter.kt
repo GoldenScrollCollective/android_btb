@@ -524,7 +524,7 @@ class PublicSubAdapter(
 			txtCommentCount = itemView.findViewById(R.id.txt_comment)
 			commentsRecyclerView = itemView.findViewById(R.id.commentsRecyclerView)
 
-			lnBonus = itemView.findViewById(R.id.ln_bonus)
+			lnBonus = itemView.findViewById(R.id.btnAddBonus)
 			imageLikeMain = itemView.findViewById(R.id.image_like_main)
 		}
 	}

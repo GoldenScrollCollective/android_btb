@@ -14,33 +14,38 @@ data class PostsByDate(
 @Parcelize
 data class Post(
 	override val id: String,
-	@SerializedName("uniq_id") val uniqueId: String,
-	val type: String? = null,
-	val parentID: String? = null,
-	val byUserID: String,
-	val resource: String,
-	val title: String? = null,
-	val body: DatumBody,
-	val visibility: String,
-	val media: String?,
-	val bonus: String?,
-	val debit: String?,
+	@SerializedName("uniq_id") var uniqueId: String,
+	var type: String? = null,
+	@SerializedName("parent_id") var parentId: String? = null,
+	@SerializedName("by_user_id") var byUserId: String? = null,
+	var resource: String? = null,
+	var title: String? = null,
+	var body: DatumBody,
+	var visibility: String,
+	var media: String?,
+	var bonus: String?,
+	var debit: String?,
 	override val created: Date?,
-	val modified: String,
-	val depth: String,
-	val meta: DatumMeta,
-	val replies: ArrayList<Post>,
-	val html: String,
+	var modified: String,
+	var depth: String,
+	var meta: DatumMeta,
+	var replies: ArrayList<Post>,
+	var html: String,
 	@SerializedName("by_user") val byUser: User,
-	val user: User,
-	val users: ArrayList<User> = arrayListOf(),
-	val organization: Resource? = null
+	var user: User,
+	var users: ArrayList<User> = arrayListOf(),
+	var organization: Resource? = null
 ) : BaseModel(id, created) {
 	enum class Visibility(val value: String) {
 		PUBLIC("public"),
 		RESOURCE("resource"),
 		MINE("mine"),
 		ORGANIZATION("organization")
+	}
+
+	enum class Debit(val value: String) {
+		GIVE("give"),
+		SPEND("spend"),
 	}
 }
 
@@ -74,7 +79,7 @@ data class Mark(
 data class DatumMeta(
 	val bonus: List<Bonus>? = null,
 	val debit: List<Bonus>? = null,
-	val like: ArrayList<Bonus>? = null,
+	val like: ArrayList<Bonus> = arrayListOf(),
 ) : Parcelable
 
 @Parcelize

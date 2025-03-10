@@ -2,27 +2,23 @@ package org.lemonadestand.btb.activities
 
 import android.os.Bundle
 import android.util.Log
-import android.view.View
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
+import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.text.HtmlCompat
-import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
 import org.lemonadestand.btb.R
-import org.lemonadestand.btb.constants.ClickType
+import org.lemonadestand.btb.components.BonusStepper
+import org.lemonadestand.btb.components.NavHeaderView
+import org.lemonadestand.btb.components.base.BaseActivity
+import org.lemonadestand.btb.components.radio.RadioButton
+import org.lemonadestand.btb.components.radio.RadioGroup
 import org.lemonadestand.btb.constants.ProgressDialogUtil
 import org.lemonadestand.btb.constants.handleCommonResponse
+import org.lemonadestand.btb.core.models.Post
 import org.lemonadestand.btb.core.models.User
-import org.lemonadestand.btb.databinding.ActivityAddBonusBinding
-import org.lemonadestand.btb.features.common.fragments.UserListFragment
 import org.lemonadestand.btb.features.common.fragments.WriteMessageFragment
-import org.lemonadestand.btb.features.common.models.UserListModel
-import org.lemonadestand.btb.features.common.models.body.AppreciationRequestBody
 import org.lemonadestand.btb.features.common.models.body.ShareStoryBody
-import org.lemonadestand.btb.features.common.models.body.ShareStoryUser
-import org.lemonadestand.btb.interfaces.OnItemClickListener
 import org.lemonadestand.btb.mvvm.factory.CommonViewModelFactory
 import org.lemonadestand.btb.mvvm.repository.HomeRepository
 import org.lemonadestand.btb.mvvm.viewmodel.HomeViewModel
@@ -32,107 +28,114 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 
 
-class AddBonusActivity : AppCompatActivity(), OnItemClickListener {
-	private lateinit var mBinding: ActivityAddBonusBinding
-	private var bottomSheetFragment: UserListFragment? = null
+class AddBonusActivity : BaseActivity(R.layout.activity_add_bonus) {
+	private lateinit var messageView: TextView
+	private lateinit var amountView: TextView
+	private lateinit var totalAmountView: TextView
 
-	private var whyThank: String = ""
-	private var amount = 0
+	private lateinit var btnGiving: RadioButton
+	private lateinit var btnSpending: RadioButton
+
+	private lateinit var bonusStepper: BonusStepper
+
+	private var debit = Post.Debit.GIVE
+		set(value) {
+			field = value
+			handleDebit()
+		}
+	private var amountGive = 0
+		set(value) {
+			field = value
+			if (this::amountView.isInitialized && this.debit == Post.Debit.GIVE) amountView.text = "\$${value}"
+		}
 	private var amountSpend = 0
+		set(value) {
+			field = value
+			if (this::amountView.isInitialized && this.debit == Post.Debit.SPEND) amountView.text = "\$${value}"
+		}
 	private var htmlMessage = ""
 		set(value) {
 			field = value
-			if (this::mBinding.isInitialized) mBinding.txtMessage.text =
-				HtmlCompat.fromHtml(value, HtmlCompat.FROM_HTML_MODE_LEGACY)
+			if (this::messageView.isInitialized) messageView.text = HtmlCompat.fromHtml(value, HtmlCompat.FROM_HTML_MODE_LEGACY)
 		}
-	private var isGivingSelected = true
 	var data = arrayListOf<String>()
 	var currentUser: User? = null
 	var currentDate = ""
-	var selectedUser: UserListModel? = null
 
-	var maxValue = 0.0
-	var maxValueSpend = 0.0
-	lateinit var appreciationRequestBody: AppreciationRequestBody
 	lateinit var viewModel: HomeViewModel
 	var calendar: Calendar? = null
 
-	var debit = "give"
+	private var post: Post? = null
 
-	override fun onCreate(savedInstanceState: Bundle?) {
-		super.onCreate(savedInstanceState)
-		mBinding = ActivityAddBonusBinding.inflate(layoutInflater)
-		setContentView(mBinding.root)
+	override fun init() {
+		super.init()
+
+		messageView = findViewById(R.id.messageView)
+		amountView = findViewById(R.id.amountView)
+		totalAmountView = findViewById(R.id.totalAmountView)
+
+		btnGiving = findViewById(R.id.btnGiving)
+		btnSpending = findViewById(R.id.btnSpending)
+
+		bonusStepper = findViewById(R.id.bonusStepper)
+		bonusStepper.onChange = { value ->
+			if (debit == Post.Debit.GIVE) {
+				amountGive = value.toInt()
+				totalAmountView.text = buildString {
+					append("\$${amountGive * post!!.users.size}")
+				}
+			} else {
+				amountSpend = value.toInt()
+				totalAmountView.text = buildString {
+					append("\$${amountSpend * post!!.users.size}")
+				}
+			}
+		}
+
+		post = intent.getParcelableExtra("post")
+
+		val navHeaderView = findViewById<NavHeaderView>(R.id.navHeaderView)
+		navHeaderView.onLeftPressed = { onBackPressedDispatcher.onBackPressed() }
+		navHeaderView.onRightPressed = { handleSave() }
+
+		val debitRadioGroup = findViewById<RadioGroup>(R.id.debitRadioGroup)
+		debitRadioGroup.onSelect = {
+			debit = if (it == 0) {
+				Post.Debit.GIVE
+			} else {
+				Post.Debit.SPEND
+			}
+		}
+
 		getData()
-		setBackgrounds()
 		setClickEvents()
-		setSpinner()
 		setUpViewModel()
 	}
 
+	override fun update() {
+		super.update()
+
+		handleDebit()
+	}
+
 	private fun getData() {
-		currentUser = Utils.getUser(this)
+		currentUser = Utils.getUser(this) ?: return
 		calendar = Calendar.getInstance()
 		val dateFormat1 = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
 		val formattedDate1 = dateFormat1.format(calendar!!.time)
 		currentDate = formattedDate1
 
-		if (currentUser!!.give != null) {
-			maxValue = currentUser!!.give.toDouble()
-			mBinding.btnGiving.text = buildString {
-				append(" Giving (\$${maxValue}) ")
-			}
+		btnGiving.text = buildString {
+			append("Giving (\$${currentUser!!.give.toDouble()})")
 		}
-		maxValueSpend = currentUser!!.spend.toDouble()
-		mBinding.btnSpending.text = buildString {
-			append(" Spending (\$${maxValueSpend}) ")
-		}
-	}
-
-	private fun setBackgrounds() {
-		mBinding.btnGiving.setBackgroundResource(R.drawable.back_for_all)
-	}
-
-	private fun setSpinner() {
-		data = arrayListOf(
-			"Just Because",
-			"Good Work",
-			"Caring",
-			"Hard Work",
-			"Kindness",
-			"Follow Through",
-			"Going Extra Mile",
-			"Smart Thinking",
-			"Positive Attitude",
-			"Helping Hands",
-			"Generosity"
-		)
-
-		//mBinding.spinner.adapter = ArrayAdapter(this,R.layout.row_dropdown_item, android.R.layout.simple_list_item_1, data)
-		mBinding.spinner.adapter =
-			ArrayAdapter(this, R.layout.row_dropdown_item, R.id.tv_item_name, data)
-
-		mBinding.spinner.onItemSelectedListener = object :
-			AdapterView.OnItemSelectedListener {
-			override fun onItemSelected(
-				parent: AdapterView<*>?,
-				view: View,
-				position: Int,
-				id: Long
-			) {
-				whyThank = data[position]
-				mBinding.thanksReason.text = whyThank
-				Log.e("spinner=>", whyThank)
-			}
-
-			override fun onNothingSelected(parent: AdapterView<*>?) {}
+		btnSpending.text = buildString {
+			append("Spending (\$${currentUser!!.spend.toDouble()})")
 		}
 	}
 
 	private fun setClickEvents() {
-		mBinding.icBack.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
-
-		mBinding.btnMessage.setOnClickListener {
+		val btnMessage = findViewById<LinearLayout>(R.id.btnMessage)
+		btnMessage.setOnClickListener {
 			WriteMessageFragment().apply {
 				arguments = Bundle().apply { putString("message", htmlMessage) }
 				onDone = {
@@ -141,151 +144,6 @@ class AddBonusActivity : AppCompatActivity(), OnItemClickListener {
 				show(supportFragmentManager, tag)
 			}
 		}
-
-		mBinding.selectUser.setOnClickListener {
-			showBottomSheet()
-		}
-
-		mBinding.cnThanks.setOnClickListener {
-			mBinding.spinner.performClick()
-		}
-
-		mBinding.btnIncrease.setOnClickListener {
-
-			if (debit == "give") {
-				if (amount == maxValue.toInt()) {
-					return@setOnClickListener
-				}
-				amount += 1
-				mBinding.amount.text = buildString {
-					append("$")
-					append(amount)
-				}
-			} else {
-				if (amountSpend == maxValueSpend.toInt()) {
-					return@setOnClickListener
-				}
-				amountSpend += 1
-				mBinding.amount.text = buildString {
-					append("$")
-					append(amountSpend)
-				}
-			}
-
-		}
-		mBinding.btnDecrease.setOnClickListener {
-			if (debit == "give") {
-				if (amount > 0) {
-					amount -= 1
-				}
-
-				mBinding.amount.text = buildString {
-					append("$")
-					append(amount)
-				}
-			} else {
-				if (amountSpend > 0) {
-					amountSpend -= 1
-				}
-				mBinding.amount.text = buildString {
-					append("$")
-					append(amountSpend)
-				}
-			}
-
-		}
-
-		mBinding.btnGiving.setOnClickListener {
-			debit = "give"
-			mBinding.amount.text = buildString {
-				append("\$${amount}")
-			}
-			updateGivingButtonUi(true)
-		}
-		mBinding.btnSpending.setOnClickListener {
-
-			debit = "spend"
-			mBinding.amount.text = buildString {
-				append("\$${amountSpend}")
-			}
-			updateGivingButtonUi(false)
-		}
-
-		mBinding.btnSave.setOnClickListener {
-
-
-//            if (selectedUser == null) {
-//                Toast.makeText(
-//                    this,
-//                    "Please select what would you like to thank!",
-//                    Toast.LENGTH_SHORT
-//                ).show()
-//                return@setOnClickListener
-//            }
-
-//            appReciationBody = AppReciationBody(
-//                uniq_id = "",
-//                resource = "user/${selectedUser!!.uniq_id}",
-//                html = htmlMessage,
-//                title = whyThank,
-//                created = currentDate,
-//                parent_id = "",
-//                by_user_id = "user/${currentUser!!.uniqId}",
-//                modified = currentDate,
-//                type = "comment",
-//                visibility = if (mBinding.switchIsPrivate.isChecked) "private" else "public",
-//                user = ShareStoryUser(
-//                    id = "user/${selectedUser!!.uniq_id}",
-//                    name = currentUser!!.name,
-//                    picture = currentUser!!.picture
-//                ),
-//                meta = AppReciationMeta(bonus = "$amount", debit = debit)
-//            )
-//            viewModel.addAppreciation(appReciationBody)
-
-			val requestBody = ShareStoryBody(
-				uniq_id = "",
-				resource = "user/${currentUser!!.uniqueId}",
-				html = htmlMessage,
-				parent_id = "",
-				by_user_id = "",
-				visibility = if (mBinding.switchIsPrivate.isChecked) "private" else "public",
-				user = ShareStoryUser(id = "", name = "")
-			)
-			viewModel.shareStory(requestBody)
-		}
-	}
-
-	private fun updateGivingButtonUi(isGiving: Boolean) {
-		isGivingSelected = isGiving
-		if (isGiving) {
-			mBinding.btnGiving.setBackgroundResource(R.drawable.back_for_all)
-			mBinding.btnSpending.setBackgroundResource(0)
-		} else {
-			mBinding.btnGiving.setBackgroundResource(0)
-			mBinding.btnSpending.setBackgroundResource(R.drawable.back_for_all)
-		}
-	}
-
-
-	private fun showBottomSheet() {
-		if (bottomSheetFragment == null) {
-			val fragmentManager: FragmentManager = supportFragmentManager
-			bottomSheetFragment = UserListFragment()
-			bottomSheetFragment?.setCallback(this)
-			bottomSheetFragment?.show(fragmentManager, bottomSheetFragment!!.tag)
-
-		} else {
-			bottomSheetFragment!!.show(supportFragmentManager, bottomSheetFragment!!.tag)
-		}
-
-	}
-
-	override fun onItemClicked(`object`: Any?, index: Int, type: ClickType, superIndex: Int) {
-		bottomSheetFragment?.dismiss()
-		val userModel = `object` as UserListModel
-		selectedUser = userModel
-		mBinding.tvUserName.text = userModel.name
 	}
 
 	private fun setUpViewModel() {
@@ -321,5 +179,38 @@ class AddBonusActivity : AppCompatActivity(), OnItemClickListener {
 			Toast.makeText(this, " $it", Toast.LENGTH_SHORT).show()
 			ProgressDialogUtil.dismissProgressDialog()
 		}
+	}
+
+	private fun handleDebit() {
+		post ?: return
+
+		if (debit == Post.Debit.GIVE) {
+			bonusStepper.min = 0.0
+			bonusStepper.max = currentUser!!.give.toDouble() / post!!.users.size
+			amountView.text = "\$${amountGive}"
+		} else {
+			bonusStepper.min = 0.0
+			bonusStepper.max = currentUser!!.spend.toDouble() / post!!.users.size
+			amountView.text = "\$${amountSpend}"
+		}
+	}
+
+	private fun handleSave() {
+		if (htmlMessage.isEmpty() || htmlMessage == "<p><br></p>") {
+			Toast.makeText(this, "Please leave a message", Toast.LENGTH_LONG).show()
+			return
+		}
+
+		val requestBody = ShareStoryBody(
+			by_user_id = "user/${currentUser!!.uniqueId}",
+			parent_id = post?.uniqueId,
+			resource = if (post?.type == "comment") post?.user?.id else "",
+			bonus = if (debit == Post.Debit.GIVE) "$amountGive" else "$amountSpend",
+			debit = debit.value,
+			type = post?.type,
+			html = htmlMessage,
+			users = post?.users?.map { x -> x.id }?.let { ArrayList(it) }
+		)
+		viewModel.shareStory(requestBody)
 	}
 }

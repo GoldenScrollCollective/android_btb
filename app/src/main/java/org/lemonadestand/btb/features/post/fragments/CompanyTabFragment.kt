@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.GradientDrawable
@@ -31,7 +32,6 @@ import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import com.bumptech.glide.Glide
 import com.github.chantsune.swipetoaction.views.SimpleSwipeLayout
 import com.github.chantsune.swipetoaction.views.SwipeLayout
-import com.google.gson.Gson
 import org.lemonadestand.btb.R
 import org.lemonadestand.btb.activities.AddBonusActivity
 import org.lemonadestand.btb.components.LikeMenuView
@@ -58,7 +58,6 @@ import org.lemonadestand.btb.features.dashboard.activities.DashboardActivity
 import org.lemonadestand.btb.features.dashboard.fragments.MediaPreviewBottomSheetDialog
 import org.lemonadestand.btb.features.post.adapter.PostCommentsRecyclerViewAdapter
 import org.lemonadestand.btb.singleton.Singleton
-import org.lemonadestand.btb.singleton.Singleton.launchActivity
 import org.lemonadestand.btb.utils.Utils
 
 
@@ -573,12 +572,17 @@ class CompanyTabFragment : BaseFragment(R.layout.fragment_company_tab) {
 				val swipeLayout = findViewById<SimpleSwipeLayout>(R.id.swipe_layout)
 				val txtShared = findViewById<TextView>(R.id.txt_shared)
 
-				val lnBonus = findViewById<LinearLayout>(R.id.ln_bonus)
-				lnBonus.setOnClickListener {
-					val json = Gson().toJson(item)
-					(context as Activity).launchActivity<AddBonusActivity> {
-						putExtra("reply_data", json)
-					}
+				val btnAddBonus = findViewById<LinearLayout>(R.id.btnAddBonus)
+				btnAddBonus.setOnClickListener {
+					val post = item.copy(
+						resource = "user/${currentUser!!.uniqueId}",
+						type = "reply",
+						parentId = item.uniqueId
+					)
+
+					val intent = Intent(context as Activity, AddBonusActivity::class.java)
+					intent.putExtra("post", post)
+					context.startActivity(intent)
 				}
 
 				val tvComment = findViewById<TextView>(R.id.tv_comment)
@@ -625,7 +629,7 @@ class CompanyTabFragment : BaseFragment(R.layout.fragment_company_tab) {
 						append("")
 					}
 
-					lnBonus.visibility = View.GONE
+					btnAddBonus.visibility = View.GONE
 				}
 
 				tvComment.text =
@@ -652,7 +656,7 @@ class CompanyTabFragment : BaseFragment(R.layout.fragment_company_tab) {
 //                append(")")
 					}
 
-					if (item.meta.like.size != 0) {
+					if (item.meta.like?.size != 0) {
 						imageLikeMain.setImageResource(R.drawable.ic_like_up)
 					}
 				}

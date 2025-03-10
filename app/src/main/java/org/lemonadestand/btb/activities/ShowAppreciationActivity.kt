@@ -211,7 +211,7 @@ class ShowAppreciationActivity : BaseActivity(R.layout.activity_show_appreciatio
 					return@setOnClickListener
 				}
 				bonusAmount += 1
-				mBinding.amount.text = buildString {
+				mBinding.amountView.text = buildString {
 					append("$")
 					append(bonusAmount)
 				}
@@ -220,7 +220,7 @@ class ShowAppreciationActivity : BaseActivity(R.layout.activity_show_appreciatio
 					return@setOnClickListener
 				}
 				amountSpend += 1
-				mBinding.amount.text = buildString {
+				mBinding.amountView.text = buildString {
 					append("$")
 					append(amountSpend)
 				}
@@ -234,7 +234,7 @@ class ShowAppreciationActivity : BaseActivity(R.layout.activity_show_appreciatio
 					bonusAmount -= 1
 				}
 
-				mBinding.amount.text = buildString {
+				mBinding.amountView.text = buildString {
 					append("$")
 					append(bonusAmount)
 				}
@@ -242,7 +242,7 @@ class ShowAppreciationActivity : BaseActivity(R.layout.activity_show_appreciatio
 				if (amountSpend > 0) {
 					amountSpend -= 1
 				}
-				mBinding.amount.text = buildString {
+				mBinding.amountView.text = buildString {
 					append("$")
 					append(amountSpend)
 				}
@@ -252,7 +252,7 @@ class ShowAppreciationActivity : BaseActivity(R.layout.activity_show_appreciatio
 
 		mBinding.btnGiving.setOnClickListener {
 			debit = "give"
-			mBinding.amount.text = buildString {
+			mBinding.amountView.text = buildString {
 				append("\$${bonusAmount}")
 			}
 			updateGivingButtonUi(true)
@@ -262,7 +262,7 @@ class ShowAppreciationActivity : BaseActivity(R.layout.activity_show_appreciatio
 		mBinding.btnSpending.setOnClickListener {
 
 			debit = "spend"
-			mBinding.amount.text = buildString {
+			mBinding.amountView.text = buildString {
 				append("\$${amountSpend}")
 			}
 			updateGivingButtonUi(false)
