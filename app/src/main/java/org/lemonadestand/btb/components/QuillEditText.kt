@@ -69,6 +69,7 @@ class QuillEditText @JvmOverloads constructor(
 
 				evaluateJavascript("setQuillContent('$value')", null)
 				evaluateJavascript("setQuillUsers('${Storage.rawToken}')", null)
+				evaluateJavascript("quill,focus();", null)
 			}
 
 			override fun onReceivedError(view: WebView?, request: WebResourceRequest?, error: WebResourceError?) {

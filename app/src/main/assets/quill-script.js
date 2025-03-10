@@ -30,7 +30,7 @@ var quill = new Quill('#editor', {
       container: '#toolbar'
     },
     mention: {
-//      allowedChars: /^[A-Za-z\sÅÄÖåäö]*$/,
+      //      allowedChars: /^[A-Za-z\sÅÄÖåäö]*$/,
       mentionDenotationChars: ['@'],
       source: async function (searchTerm, renderList, mentionChar) {
         if (mentionChar === '@') {
@@ -144,3 +144,8 @@ function insertLink() {
 window.alert = (params) => {
   console.info(params);
 };
+
+window.addEventListener('load', () => {
+  const qlEditor = document.querySelector('.ql-editor');
+  qlEditor.focus();
+});
