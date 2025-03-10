@@ -156,13 +156,13 @@ class CommunityTabFragment : BaseFragment(R.layout.fragment_community_tab) {
 
 				}
 				if (clickType == ClickType.LIKE_POST) {
-					if (postDateList[clickedSuperPosition].posts[clickedPosition].meta.like?.size == 0) {
-						postDateList[clickedSuperPosition].posts[clickedPosition].meta.like?.add(
+					if (postDateList[clickedSuperPosition].posts[clickedPosition].meta.like.size == 0) {
+						postDateList[clickedSuperPosition].posts[clickedPosition].meta.like.add(
 							Bonus(by_user = User(), value = "")
 						)
 						Log.e(
 							"sizeLikes=>",
-							postDateList[clickedSuperPosition].posts[clickedPosition].meta.like?.size.toString()
+							postDateList[clickedSuperPosition].posts[clickedPosition].meta.like.size.toString()
 						)
 						postsByDateRecyclerViewAdapter.values = postDateList
 					}
@@ -646,9 +646,6 @@ class CommunityTabFragment : BaseFragment(R.layout.fragment_community_tab) {
 				if (!item.meta.like.isNullOrEmpty()) {
 					likeCountView.text = buildString {
 						append("Like")
-//                append("(")
-//                append(data.meta.like.size)
-//                append(")")
 					}
 
 					if (item.meta.like.size != 0) {
@@ -656,17 +653,8 @@ class CommunityTabFragment : BaseFragment(R.layout.fragment_community_tab) {
 					}
 				}
 
-
-				/* holder.tv_title.setText(data.getName());
-				holder.tv_desc.setText(data.getDesc());
-
-				Glide.with(context)
-						.load(data.getImage())
-						.into(holder.iv_image);*/
-
 				val commentsRecyclerView = findViewById<RecyclerView>(R.id.commentsRecyclerView)
-				val commentsRecyclerViewAdapter =
-					PostCommentsRecyclerViewAdapter(position)   // fixed
+				val commentsRecyclerViewAdapter = PostCommentsRecyclerViewAdapter()   // fixed
 				commentsRecyclerViewAdapter.onLike = { post, value -> onLike?.invoke(post, value) }
 				commentsRecyclerView.adapter = commentsRecyclerViewAdapter
 				commentsRecyclerViewAdapter.values = item.replies

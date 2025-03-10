@@ -475,8 +475,7 @@ class PublicSubAdapter(
 
 		}
 
-		val commentsRecyclerViewAdapter = PostCommentsRecyclerViewAdapter(position)   // fixed
-//        onItemClick?.let { commentsRecyclerViewAdapter.setPostItemClick(it) }
+		val commentsRecyclerViewAdapter = PostCommentsRecyclerViewAdapter()   // fixed
 		holder.commentsRecyclerView.adapter = commentsRecyclerViewAdapter
 		commentsRecyclerViewAdapter.values = post.replies
 	}

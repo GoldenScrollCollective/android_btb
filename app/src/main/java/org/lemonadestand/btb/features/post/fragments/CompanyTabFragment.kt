@@ -172,13 +172,13 @@ class CompanyTabFragment : BaseFragment(R.layout.fragment_company_tab) {
 					postsByDateRecyclerViewAdapter.notifyDataSetChanged()
 				}
 				if (clickType == ClickType.LIKE_POST) {
-					if (postDateList[clickedSuperPosition].posts[clickedPosition].meta.like?.size == 0) {
-						postDateList[clickedSuperPosition].posts[clickedPosition].meta.like?.add(
+					if (postDateList[clickedSuperPosition].posts[clickedPosition].meta.like.size == 0) {
+						postDateList[clickedSuperPosition].posts[clickedPosition].meta.like.add(
 							Bonus(by_user = User(), value = "")
 						)
 						Log.e(
 							"sizeLikes=>",
-							postDateList[clickedSuperPosition].posts[clickedPosition].meta.like?.size.toString()
+							postDateList[clickedSuperPosition].posts[clickedPosition].meta.like.size.toString()
 						)
 						postsByDateRecyclerViewAdapter.values = postDateList
 					}
@@ -335,7 +335,7 @@ class CompanyTabFragment : BaseFragment(R.layout.fragment_company_tab) {
 						tempPostList.add(item.posts[i])
 					}
 				}
-				val adapter = PostsRecyclerViewAdapter(position)
+				val adapter = PostsRecyclerViewAdapter()
 				adapter.onPreview = { post -> onPreview?.invoke(post) }
 				adapter.onLike = { post, value -> onLike?.invoke(post, value) }
 				adapter.onDelete = { post -> onDelete?.invoke(post) }
@@ -349,7 +349,7 @@ class CompanyTabFragment : BaseFragment(R.layout.fragment_company_tab) {
 		}
 	}
 
-	private class PostsRecyclerViewAdapter(val superPosition: Int) :
+	private class PostsRecyclerViewAdapter :
 		BaseRecyclerViewAdapter<Post>(R.layout.row_public_sub, fullHeight = true) {
 		var onPreview: ((value: Post) -> Unit)? = null
 		var onLike: ((post: Post, value: String) -> Unit)? = null
@@ -656,7 +656,7 @@ class CompanyTabFragment : BaseFragment(R.layout.fragment_company_tab) {
 //                append(")")
 					}
 
-					if (item.meta.like?.size != 0) {
+					if (item.meta.like.size != 0) {
 						imageLikeMain.setImageResource(R.drawable.ic_like_up)
 					}
 				}
@@ -696,7 +696,6 @@ class CompanyTabFragment : BaseFragment(R.layout.fragment_company_tab) {
 				val bonusView = findViewById<LinearLayout>(R.id.bonusView)
 				val bonusImageView = findViewById<ImageView>(R.id.bonusImageView)
 				val bonusTextView = findViewById<TextView>(R.id.bonusTextView)
-				Log.d(TAG, "item.bonus: ${item.bonus}")
 				if (item.bonus.isNullOrEmpty() || item.bonus == "0") {
 					bonusView.visibility = View.GONE
 				} else {
@@ -710,8 +709,7 @@ class CompanyTabFragment : BaseFragment(R.layout.fragment_company_tab) {
 				}
 
 				val commentsRecyclerView = findViewById<RecyclerView>(R.id.commentsRecyclerView)
-				val commentsRecyclerViewAdapter =
-					PostCommentsRecyclerViewAdapter(position)   // fixed
+				val commentsRecyclerViewAdapter = PostCommentsRecyclerViewAdapter()   // fixed
 				commentsRecyclerViewAdapter.onLike = { post, value -> onLike?.invoke(post, value) }
 				commentsRecyclerView.adapter = commentsRecyclerViewAdapter
 				commentsRecyclerViewAdapter.values = item.replies

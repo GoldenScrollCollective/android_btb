@@ -6,6 +6,7 @@ import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.GradientDrawable
 import android.util.TypedValue
 import android.view.Gravity
+import android.view.View
 import android.view.WindowManager
 import android.widget.EditText
 import android.widget.ImageView
@@ -29,9 +30,7 @@ import org.lemonadestand.btb.features.common.models.body.ShareStoryUser
 import org.lemonadestand.btb.features.post.fragments.CompanyTabFragment
 
 
-class PostCommentsRecyclerViewAdapter(
-	private var superPosition: Int
-) : BaseRecyclerViewAdapter<Post>(R.layout.layout_post_comment_list_item, true) {
+class PostCommentsRecyclerViewAdapter : BaseRecyclerViewAdapter<Post>(R.layout.layout_post_comment_list_item, true) {
 	var onLike: ((post: Post, value: String) -> Unit)? = null
 	var onDelete: ((value: Post) -> Unit)? = null
 
@@ -143,57 +142,28 @@ class PostCommentsRecyclerViewAdapter(
 						dialog.dismiss() // Dismiss the dialog if canceled
 					}
 					.show() // Show the dialog
-
-
-//                if (item.replies.isEmpty()) {
-//                    val json = Gson().toJson(item)
-//                    (context as Activity).launchActivity<ReplyCommentActivity> {
-//                        putExtra("reply_data", json)
-//                    }
-//                    return@setOnSingleClickListener
-//                }
-
-//                val popupMenu = PopupMenu(context, btnReply)
-//                popupMenu.menuInflater.inflate(R.menu.comment_menu, popupMenu.menu)
-//                popupMenu.show()
-//                popupMenu.setOnMenuItemClickListener { menuItem ->
-//                    when (menuItem.itemId) {
-//                        R.id.add_comment -> {
-//                            val json = Gson().toJson(item)
-//                            (context as Activity).launchActivity<ReplyCommentActivity> {
-//                                putExtra("reply_data", json)
-//                            }
-//                            true
-//                        }
-//
-//                        R.id.view_comment -> {
-//
-//                            if (item.replies.isNotEmpty()) {
-//                                val json = Gson().toJson(item.replies)
-//                                val intent = Intent(context, AddBonusActivity::class.java)
-//                                intent.putExtra("list", json)
-//                                context.startActivity(intent)
-//                            } else {
-//                                val json = Gson().toJson(item)
-//                                (context as Activity).launchActivity<ReplyCommentActivity> {
-//                                    putExtra("reply_data", json)
-//                                }
-//                            }
-//
-//
-//                            true
-//                        }
-//
-//                        else -> false
-//                    }
-//                }
 			}
 
 			val reactionsView = findViewById<CommentReactionsView>(R.id.reactionsView)
 			reactionsView.post = item
 
+			val bonusView = findViewById<LinearLayout>(R.id.bonusView)
+			val bonusImageView = findViewById<ImageView>(R.id.bonusImageView)
+			val bonusTextView = findViewById<TextView>(R.id.bonusTextView)
+			if (item.bonus.isNullOrEmpty() || item.bonus == "0") {
+				bonusView.visibility = View.GONE
+			} else {
+				bonusView.visibility = View.VISIBLE
+				if (item.debit == "spend") {
+					bonusImageView.setImageResource(R.drawable.ic_money_love)
+				} else {
+					bonusImageView.setImageResource(R.drawable.ic_money)
+				}
+				bonusTextView.text = item.bonus
+			}
+
 			val repliesRecyclerView = findViewById<RecyclerView>(R.id.repliesRecyclerView)
-			val repliesRecyclerViewAdapter = PostCommentsRecyclerViewAdapter(position)
+			val repliesRecyclerViewAdapter = PostCommentsRecyclerViewAdapter()
 			repliesRecyclerViewAdapter.onLike = { post, value -> onLike?.invoke(post, value) }
 			repliesRecyclerView.adapter = repliesRecyclerViewAdapter
 			repliesRecyclerViewAdapter.values = item.replies
