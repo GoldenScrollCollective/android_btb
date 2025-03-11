@@ -2,8 +2,10 @@ package org.lemonadestand.btb.features.post.adapter
 
 import android.app.AlertDialog
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.GradientDrawable
+import android.text.Spannable
+import android.text.SpannableStringBuilder
+import android.text.style.AbsoluteSizeSpan
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.View
@@ -14,6 +16,8 @@ import android.widget.LinearLayout
 import android.widget.PopupWindow
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
+import androidx.core.graphics.drawable.toDrawable
 import androidx.core.text.HtmlCompat
 import androidx.recyclerview.widget.RecyclerView
 import org.lemonadestand.btb.R
@@ -22,6 +26,7 @@ import org.lemonadestand.btb.components.LikeMenuView
 import org.lemonadestand.btb.components.base.BaseRecyclerViewAdapter
 import org.lemonadestand.btb.core.manager.PostsManager
 import org.lemonadestand.btb.core.models.Post
+import org.lemonadestand.btb.extensions.CustomTypefaceSpan
 import org.lemonadestand.btb.extensions.setImageUrl
 import org.lemonadestand.btb.extensions.setOnSingleClickListener
 import org.lemonadestand.btb.features.common.models.body.AddCommentBody
@@ -40,14 +45,26 @@ class PostCommentsRecyclerViewAdapter : BaseRecyclerViewAdapter<Post>(R.layout.l
 			val avatarView = findViewById<ImageView>(R.id.avatarView)
 			avatarView.setImageUrl(item.user.pictureUrl)
 
+			val mediumFont = ResourcesCompat.getFont(context, R.font.urbanist_medium)
+			val boldFont = ResourcesCompat.getFont(context, R.font.urbanist_bold)
+
 			val userNameView = findViewById<TextView>(R.id.userNameView)
-			userNameView.text = item.user.name
+			item.byUser?.let { resource ->
+				val name = "${resource.name} · "
+				val ago = item.createdAgo ?: ""
+				val username = "$name$ago"
+				userNameView.text = SpannableStringBuilder(username).apply {
+					setSpan(AbsoluteSizeSpan(16, true), 0, name.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+					setSpan(CustomTypefaceSpan(boldFont), 0, name.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+
+					setSpan(AbsoluteSizeSpan(12, true), name.length, username.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+					setSpan(CustomTypefaceSpan(mediumFont), name.length, username.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+				}
+			}
 
 			val commentView = findViewById<TextView>(R.id.commentView)
-			commentView.text = HtmlCompat.fromHtml(item.html, HtmlCompat.FROM_HTML_MODE_COMPACT)
-
-			val agoView = findViewById<TextView>(R.id.agoView)
-			agoView.text = item.createdAgo
+			val html = item.html.replace("</p><p>", "<br>").replace("<p>", "").replace("</p>", "")
+			commentView.text = HtmlCompat.fromHtml(html, HtmlCompat.FROM_HTML_MODE_COMPACT)
 
 			val btnLike = findViewById<TextView>(R.id.btnLike)
 			btnLike.setOnSingleClickListener {
@@ -64,7 +81,7 @@ class PostCommentsRecyclerViewAdapter : BaseRecyclerViewAdapter<Post>(R.layout.l
 				}
 
 				popupWindow.isFocusable = true
-				popupWindow.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+				popupWindow.setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
 				popupWindow.showAsDropDown(it, 0, 0, 0)
 			}
 

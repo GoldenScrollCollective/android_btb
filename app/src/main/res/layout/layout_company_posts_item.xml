@@ -5,6 +5,7 @@
 	android:id="@+id/swipe_layout"
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
+	android:paddingBottom="40sp"
 	app:layout_swipeCanFullSwipeLeftToRight="false"
 	app:layout_swipeCanFullSwipeRightToLeft="true"
 	app:layout_swipeIconSize="40dp"
@@ -281,10 +282,8 @@
 			android:id="@+id/commentsRecyclerView"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:layout_marginStart="24sp"
+			android:layout_marginStart="13sp"
 			android:layout_marginEnd="8sp"
-			android:layout_marginBottom="40sp"
-			android:orientation="vertical"
 			app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
 			tools:listitem="@layout/layout_post_comment_list_item" />
 
