@@ -126,10 +126,10 @@ class AddBonusActivity : BaseActivity(R.layout.activity_add_bonus) {
 		currentDate = formattedDate1
 
 		btnGiving.text = buildString {
-			append("Giving (\$${currentUser!!.give.toDouble()})")
+			append("Giving (\$${currentUser!!.give.toInt()})")
 		}
 		btnSpending.text = buildString {
-			append("Spending (\$${currentUser!!.spend.toDouble()})")
+			append("Spending (\$${currentUser!!.spend.toInt()})")
 		}
 	}
 
