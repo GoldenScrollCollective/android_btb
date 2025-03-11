@@ -35,7 +35,8 @@ data class Post(
 	var user: User,
 	var users: ArrayList<User> = arrayListOf(),
 	var organization: Resource? = null,
-	var anonymous: String? = null
+	var anonymous: String? = null,
+	var transaction: Transaction? = null
 ) : BaseModel(id, created) {
 	enum class Visibility(val value: String) {
 		PUBLIC("public"),

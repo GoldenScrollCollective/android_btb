@@ -331,7 +331,7 @@ class CommunityTabFragment : BaseFragment(R.layout.fragment_community_tab) {
 						tempPostList.add(item.posts[i])
 					}
 				}
-				val adapter = PostsRecyclerViewAdapter(position)
+				val adapter = PostsRecyclerViewAdapter()
 				adapter.onPreview = { post -> onPreview?.invoke(post) }
 				adapter.onLike = { post, value -> onLike?.invoke(post, value) }
 				adapter.onDelete = { post -> onDelete?.invoke(post) }
@@ -345,8 +345,7 @@ class CommunityTabFragment : BaseFragment(R.layout.fragment_community_tab) {
 		}
 	}
 
-	private class PostsRecyclerViewAdapter(val superPosition: Int) :
-		BaseRecyclerViewAdapter<Post>(R.layout.layout_community_posts_item, fullHeight = true) {
+	private class PostsRecyclerViewAdapter : BaseRecyclerViewAdapter<Post>(R.layout.layout_community_posts_item, fullHeight = true) {
 		var onPreview: ((value: Post) -> Unit)? = null
 		var onLike: ((post: Post, value: String) -> Unit)? = null
 		var onDelete: ((value: Post) -> Unit)? = null
@@ -651,6 +650,15 @@ class CommunityTabFragment : BaseFragment(R.layout.fragment_community_tab) {
 					if (item.meta.like.size != 0) {
 						imageLikeMain.setImageResource(R.drawable.ic_like_up)
 					}
+				}
+
+				val transactionContainer = findViewById<LinearLayout>(R.id.transactionContainer)
+				val transactionView = findViewById<TextView>(R.id.transactionView)
+				if (item.transaction == null) {
+					transactionContainer.visibility = View.GONE
+				} else {
+					transactionContainer.visibility = View.VISIBLE
+					transactionView.text = item.transaction?.merchant?.name
 				}
 
 				val commentsRecyclerView = findViewById<RecyclerView>(R.id.commentsRecyclerView)
