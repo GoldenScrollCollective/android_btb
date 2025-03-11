@@ -67,6 +67,13 @@
 				android:textColor="@color/black"
 				android:textSize="14sp" />
 
+			<RelativeLayout
+				android:layout_width="@dimen/_1sdp"
+				android:layout_height="match_parent"
+				android:layout_marginHorizontal="@dimen/_1sdp"
+				android:layout_marginVertical="@dimen/_6sdp"
+				android:background="@color/light_grey_ios" />
+
 			<org.lemonadestand.btb.components.radio.RadioButton
 				android:layout_width="0dp"
 				android:layout_height="match_parent"
@@ -77,6 +84,13 @@
 				android:text="Past"
 				android:textColor="@color/black"
 				android:textSize="14sp" />
+
+			<RelativeLayout
+				android:layout_width="@dimen/_1sdp"
+				android:layout_height="match_parent"
+				android:layout_marginHorizontal="@dimen/_1sdp"
+				android:layout_marginVertical="@dimen/_6sdp"
+				android:background="@color/light_grey_ios" />
 
 			<org.lemonadestand.btb.components.radio.RadioButton
 				android:layout_width="0dp"
