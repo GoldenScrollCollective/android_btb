@@ -20,7 +20,7 @@
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-				tools:listitem="@layout/layout_company_posts_item" />
+				tools:listitem="@layout/layout_company_posts_by_date_item" />
 
 			<include
 				android:id="@+id/noDataView"

@@ -31,10 +31,11 @@ data class Post(
 	var meta: DatumMeta,
 	var replies: ArrayList<Post>,
 	var html: String,
-	@SerializedName("by_user") val byUser: User,
+	@SerializedName("by_user") val byUser: User? = null,
 	var user: User,
 	var users: ArrayList<User> = arrayListOf(),
-	var organization: Resource? = null
+	var organization: Resource? = null,
+	var anonymous: String? = null
 ) : BaseModel(id, created) {
 	enum class Visibility(val value: String) {
 		PUBLIC("public"),

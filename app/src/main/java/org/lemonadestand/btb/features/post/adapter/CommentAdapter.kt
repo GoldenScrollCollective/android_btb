@@ -20,7 +20,7 @@ class CommentAdapter(private val list: ArrayList<CommentsByDate>, var context: C
 	): ViewHolder {
 		val layoutInflater = LayoutInflater.from(parent.context)
 		val listItem =
-			layoutInflater.inflate(R.layout.layout_company_posts_item, parent, false)
+			layoutInflater.inflate(R.layout.layout_company_posts_by_date_item, parent, false)
 		return ViewHolder(listItem)
 	}
 

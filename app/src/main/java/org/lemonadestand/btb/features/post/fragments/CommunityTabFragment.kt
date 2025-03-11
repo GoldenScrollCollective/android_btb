@@ -312,7 +312,7 @@ class CommunityTabFragment : BaseFragment(R.layout.fragment_community_tab) {
 	}
 
 	private class PostsByDateRecyclerViewAdapter :
-		BaseRecyclerViewAdapter<PostsByDate>(R.layout.layout_company_posts_item) {
+		BaseRecyclerViewAdapter<PostsByDate>(R.layout.layout_company_posts_by_date_item) {
 		var onPreview: ((value: Post) -> Unit)? = null
 		var onLike: ((post: Post, value: String) -> Unit)? = null
 		var onDelete: ((value: Post) -> Unit)? = null

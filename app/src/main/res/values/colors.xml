@@ -19,7 +19,7 @@
 	<color name="bottom_navigation_color">#F3F3F3</color>
 	<color name="green">#17A117</color>
 	<color name="light_green">#4B9F34</color>
-	<color name="dark_text">#555555</color>
+	<color name="dark_text">#555</color>
 	<color name="dark_text_50">#6B6B6B</color>
 	<color name="dark_text_40">#696969</color>
 	<color name="dark_gray_ios">#434343</color>

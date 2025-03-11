@@ -16,14 +16,13 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import org.lemonadestand.btb.R
 import org.lemonadestand.btb.components.CommentReactionsView
 import org.lemonadestand.btb.components.LikeMenuView
 import org.lemonadestand.btb.components.base.BaseRecyclerViewAdapter
-import org.lemonadestand.btb.constants.getImageUrlFromName
 import org.lemonadestand.btb.core.manager.PostsManager
 import org.lemonadestand.btb.core.models.Post
+import org.lemonadestand.btb.extensions.setImageUrl
 import org.lemonadestand.btb.extensions.setOnSingleClickListener
 import org.lemonadestand.btb.features.common.models.body.AddCommentBody
 import org.lemonadestand.btb.features.common.models.body.ShareStoryUser
@@ -39,14 +38,7 @@ class PostCommentsRecyclerViewAdapter : BaseRecyclerViewAdapter<Post>(R.layout.l
 
 		with(holder.itemView) {
 			val avatarView = findViewById<ImageView>(R.id.avatarView)
-			if (item.byUser.picture != null) {
-				Glide.with(context).load(item.user.picture).into(avatarView)
-			} else {
-				item.byUser.name.let {
-					Glide.with(context).load(it.trim().lowercase().getImageUrlFromName())
-						.into(avatarView)
-				}
-			}
+			avatarView.setImageUrl(item.user.pictureUrl)
 
 			val userNameView = findViewById<TextView>(R.id.userNameView)
 			userNameView.text = item.user.name

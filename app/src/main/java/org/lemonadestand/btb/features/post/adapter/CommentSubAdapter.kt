@@ -7,7 +7,6 @@ import android.content.Intent
 import android.content.res.Resources
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,14 +19,13 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.core.text.HtmlCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.github.chantsune.swipetoaction.views.SimpleSwipeLayout
 import com.google.gson.Gson
 import org.lemonadestand.btb.R
 import org.lemonadestand.btb.activities.AddBonusActivity
 import org.lemonadestand.btb.activities.ReplyCommentActivity
-import org.lemonadestand.btb.constants.getImageUrlFromName
 import org.lemonadestand.btb.core.models.Post
+import org.lemonadestand.btb.extensions.setImageUrl
 import org.lemonadestand.btb.singleton.Singleton.launchActivity
 
 
@@ -46,25 +44,9 @@ class CommentSubAdapter(private val list: ArrayList<Post>, var context: Context)
 	override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 		val data = list[position]
 
+		holder.userImage.setImageUrl(data.byUser?.pictureUrl)
 
-
-		if (data.byUser.picture != null) {
-			// show image
-			Glide.with(context).load(data.byUser.picture).into(holder.userImage)
-		} else {
-
-			Log.e("url=>", data.byUser.name.trim().lowercase().getImageUrlFromName())
-			Glide.with(context).load(data.byUser.name.trim().lowercase().getImageUrlFromName())
-				.into(holder.userImage)
-		}
-
-
-		holder.tvTitle.text = data.byUser.name
-
-
-
-
-
+		holder.tvTitle.text = data.byUser?.name ?: ""
 
 		holder.tvComment.text = HtmlCompat.fromHtml(data.html, HtmlCompat.FROM_HTML_MODE_LEGACY)
 

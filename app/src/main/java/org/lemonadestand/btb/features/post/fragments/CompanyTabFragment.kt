@@ -7,9 +7,11 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
+import android.text.Spannable
+import android.text.SpannableStringBuilder
+import android.text.style.AbsoluteSizeSpan
 import android.util.Log
 import android.util.TypedValue
 import android.view.Gravity
@@ -25,6 +27,8 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
+import androidx.core.graphics.drawable.toDrawable
 import androidx.core.text.HtmlCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -50,6 +54,7 @@ import org.lemonadestand.btb.core.models.Post
 import org.lemonadestand.btb.core.models.PostsByDate
 import org.lemonadestand.btb.core.models.User
 import org.lemonadestand.btb.databinding.FragmentCompanyTabBinding
+import org.lemonadestand.btb.extensions.CustomTypefaceSpan
 import org.lemonadestand.btb.extensions.hide
 import org.lemonadestand.btb.features.common.models.body.AddCommentBody
 import org.lemonadestand.btb.features.common.models.body.LikeBodyModel
@@ -316,7 +321,7 @@ class CompanyTabFragment : BaseFragment(R.layout.fragment_company_tab) {
 	}
 
 	private class PostsByDateRecyclerViewAdapter :
-		BaseRecyclerViewAdapter<PostsByDate>(R.layout.layout_company_posts_item) {
+		BaseRecyclerViewAdapter<PostsByDate>(R.layout.layout_company_posts_by_date_item) {
 		var onPreview: ((value: Post) -> Unit)? = null
 		var onLike: ((post: Post, value: String) -> Unit)? = null
 		var onDelete: ((value: Post) -> Unit)? = null
@@ -349,8 +354,7 @@ class CompanyTabFragment : BaseFragment(R.layout.fragment_company_tab) {
 		}
 	}
 
-	private class PostsRecyclerViewAdapter :
-		BaseRecyclerViewAdapter<Post>(R.layout.row_public_sub, fullHeight = true) {
+	private class PostsRecyclerViewAdapter : BaseRecyclerViewAdapter<Post>(R.layout.layout_company_posts_item, fullHeight = true) {
 		var onPreview: ((value: Post) -> Unit)? = null
 		var onLike: ((post: Post, value: String) -> Unit)? = null
 		var onDelete: ((value: Post) -> Unit)? = null
@@ -363,14 +367,45 @@ class CompanyTabFragment : BaseFragment(R.layout.fragment_company_tab) {
 
 				val byUserImageContainer = findViewById<CardView>(R.id.cd_sub_name)
 				val byUserImageView = findViewById<ImageView>(R.id.by_user_image)
-				if (item.byUser.picture != null) {
-					Glide.with(context).load(item.byUser.pictureUrl).into(byUserImageView)
+				if (!item.type.isNullOrEmpty()) {
+					Glide.with(context).load(item.byUser?.pictureUrl).into(byUserImageView)
 				} else {
-					byUserImageContainer.visibility = View.INVISIBLE
+					byUserImageContainer.visibility = View.GONE
 				}
 
-				val tvTitle = findViewById<TextView>(R.id.tv_title)
-				tvTitle.setOnClickListener {
+				val mediumFont = ResourcesCompat.getFont(context, R.font.urbanist_medium)
+				val boldFont = ResourcesCompat.getFont(context, R.font.urbanist_bold)
+				val blackFont = ResourcesCompat.getFont(context, R.font.urbanist_black)
+
+				val titleView = findViewById<TextView>(R.id.titleView)
+				if (item.type.isNullOrBlank()) {
+					item.byUser?.let { resource ->
+						val title = if (item.anonymous == "1") "Story shared anonymously" else "${resource.name} shared this story"
+						val dot = " · "
+						val timestamp = item.createdAgo ?: ""
+						titleView.text = SpannableStringBuilder("$title$dot$timestamp").apply {
+							setSpan(AbsoluteSizeSpan(16, true), 0, title.length + dot.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+							setSpan(CustomTypefaceSpan(boldFont), 0, title.length + dot.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+
+							setSpan(AbsoluteSizeSpan(12, true), title.length + dot.length, title.length + dot.length + timestamp.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+							setSpan(CustomTypefaceSpan(mediumFont), title.length + dot.length, title.length + dot.length + timestamp.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+						}
+					}
+
+				} else {
+					val username = item.user.name
+					val plus = if (item.users.size > 1) " +1" else ""
+					val txtFor = " for "
+					val title = "$username$plus$txtFor${item.title}"
+					titleView.text = SpannableStringBuilder(title).apply {
+						setSpan(AbsoluteSizeSpan(16, true), 0, title.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+
+						setSpan(CustomTypefaceSpan(boldFont), 0, username.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+						setSpan(CustomTypefaceSpan(blackFont), username.length, username.length + plus.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+						setSpan(CustomTypefaceSpan(boldFont), username.length + plus.length + txtFor.length, title.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+					}
+				}
+				titleView.setOnClickListener {
 					val cardView = CardView(context)
 					cardView.setPadding(5, 5, 5, 5)
 
@@ -415,23 +450,41 @@ class CompanyTabFragment : BaseFragment(R.layout.fragment_company_tab) {
 					)
 
 					popupWindow.setBackgroundDrawable(
-						ColorDrawable(
-							ContextCompat.getColor(
-								context,
-								android.R.color.darker_gray
-							)
-						)
+						ContextCompat.getColor(
+							context,
+							android.R.color.darker_gray
+						).toDrawable()
 					) // Transparent color to remove default shadow
 					popupWindow.elevation = 20f
 
 					popupWindow.isFocusable = true
-					popupWindow.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+					popupWindow.setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
 
 					popupWindow.showAsDropDown(it, 100, 0, 0)
 				}
 
-				val tvDesc = findViewById<TextView>(R.id.tv_desc)
-				val txtEventName = findViewById<TextView>(R.id.txt_event_name)
+				val descriptionView = findViewById<TextView>(R.id.descriptionView)
+				if (!item.type.isNullOrBlank()) {
+					item.byUser?.let { byUser ->
+						val txtBy = "by "
+						val username = byUser.name
+						val ago = " · ${item.createdAgo ?: ""}"
+						val title = "$txtBy$username$ago"
+						descriptionView.text = SpannableStringBuilder("$txtBy$username$ago").apply {
+							setSpan(AbsoluteSizeSpan(14, true), 0, txtBy.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+							setSpan(CustomTypefaceSpan(mediumFont), 0, txtBy.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+
+							setSpan(AbsoluteSizeSpan(14, true), txtBy.length, txtBy.length + username.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+							setSpan(CustomTypefaceSpan(boldFont), txtBy.length, txtBy.length + username.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+
+							setSpan(AbsoluteSizeSpan(12, true), txtBy.length + username.length, title.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+							setSpan(CustomTypefaceSpan(mediumFont), txtBy.length + username.length, title.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+						}
+					}
+				} else {
+					descriptionView.visibility = View.GONE
+				}
+
 				val lnLike = findViewById<LinearLayout>(R.id.ln_like)
 				lnLike.setOnClickListener {
 
@@ -447,7 +500,7 @@ class CompanyTabFragment : BaseFragment(R.layout.fragment_company_tab) {
 					}
 
 					popupWindow.isFocusable = true
-					popupWindow.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+					popupWindow.setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
 					popupWindow.showAsDropDown(it, 100, 0, 0)
 				}
 
@@ -570,9 +623,9 @@ class CompanyTabFragment : BaseFragment(R.layout.fragment_company_tab) {
 				}
 
 				val swipeLayout = findViewById<SimpleSwipeLayout>(R.id.swipe_layout)
-				val txtShared = findViewById<TextView>(R.id.txt_shared)
 
 				val btnAddBonus = findViewById<LinearLayout>(R.id.btnAddBonus)
+				btnAddBonus.visibility = if (item.type != null) View.VISIBLE else View.GONE
 				btnAddBonus.setOnClickListener {
 					val post = item.copy(
 						resource = "user/${currentUser!!.uniqueId}",
@@ -599,38 +652,6 @@ class CompanyTabFragment : BaseFragment(R.layout.fragment_company_tab) {
 				val txtCommentCount = findViewById<TextView>(R.id.txt_comment)
 				val txtLikeCount = findViewById<TextView>(R.id.txt_like)
 				val imageLikeMain = findViewById<ImageView>(R.id.image_like_main)
-
-				if (item.type != null) {
-					if (item.users.size > 1) {
-						tvTitle.text =
-							item.user.name + " +" + (item.users.size - 1)            //Add Uses
-					} else {
-						tvTitle.text = item.user.name
-					}
-					txtEventName.text = item.title
-					txtShared.text = buildString {
-						append("for")
-					}
-					tvDesc.text = buildString {
-						append("by ")
-						append(item.byUser.name)
-						append(" · ")
-						append(item.createdAgo)
-					}
-				} else {
-					//Post
-					tvTitle.text = item.user.name
-					txtEventName.text = ""
-					txtShared.text = buildString {
-						append("shared this story · ")
-						append(item.createdAgo)
-					}
-					tvDesc.text = buildString {
-						append("")
-					}
-
-					btnAddBonus.visibility = View.GONE
-				}
 
 				tvComment.text =
 					HtmlCompat.fromHtml(item.html, HtmlCompat.FROM_HTML_MODE_LEGACY).trim()

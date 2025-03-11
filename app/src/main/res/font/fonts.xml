@@ -19,4 +19,9 @@
         android:fontStyle="normal"
         android:fontWeight="700"
         android:font="@font/urbanist_bold" />
+
+    <font
+        android:fontStyle="normal"
+        android:fontWeight="900"
+        android:font="@font/urbanist_black" />
 </font-family>
