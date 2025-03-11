@@ -1,46 +1,46 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.JavaFinal" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+<resources>
+	<!-- Base application theme. -->
+	<style name="Base.Theme.JavaFinal" parent="Theme.Material3.DayNight.NoActionBar">
+		<!-- Customize your light theme here. -->
+		<!-- <item name="colorPrimary">@color/my_light_primary</item> -->
 
-        <item name="android:statusBarColor">@color/white</item>
-        <item name="android:windowLightStatusBar">true</item>
-    </style>
+		<item name="android:statusBarColor">@color/white</item>
+		<item name="android:windowLightStatusBar">true</item>
+	</style>
 
-    <style name="Theme.JavaFinal" parent="Base.Theme.JavaFinal" />
+	<style name="Theme.JavaFinal" parent="Base.Theme.JavaFinal" />
 
-    <style name="Theme.MyTheme" parent="Theme.AppCompat.Light">
-        <!-- colorPrimary is used for the default action bar background -->
-        <item name="colorPrimary">@color/black</item>
+	<style name="Theme.MyTheme" parent="Theme.AppCompat.Light">
+		<!-- colorPrimary is used for the default action bar background -->
+		<item name="colorPrimary">@color/black</item>
 
-        <!-- colorPrimaryDark is used for the status bar -->
-        <item name="colorPrimaryDark">@color/black</item>
+		<!-- colorPrimaryDark is used for the status bar -->
+		<item name="colorPrimaryDark">@color/black</item>
 
-        <!-- colorAccent is used as the default value for colorControlActivated,
-             which is used to tint widgets -->
-        <item name="colorAccent">@color/btbOrange</item>
+		<!-- colorAccent is used as the default value for colorControlActivated,
+			 which is used to tint widgets -->
+		<item name="colorAccent">@color/btbOrange</item>
 
-        <!-- You can also set colorControlNormal, colorControlActivated
-             colorControlHighlight, and colorSwitchThumbNormal. -->
+		<!-- You can also set colorControlNormal, colorControlActivated
+			 colorControlHighlight, and colorSwitchThumbNormal. -->
 
-    </style>
+	</style>
 
 
-    <style name="BottomNavigationTabText" parent="Widget.Design.BottomNavigationView">
-        <item name="android:textSize">12sp</item>
-        <item name="android:textColor">@drawable/text_selector</item>
-    </style>
+	<style name="BottomNavTabTextInactive" parent="Widget.Design.BottomNavigationView">
+		<item name="android:textSize">12sp</item>
+		<item name="android:textColor">@drawable/text_selector</item>
+	</style>
 
-    <style name="DialogAnimation">
-        <!--<item name="android:windowFullscreen">true</item>-->
-        <item name="android:windowEnterAnimation">@android:anim/fade_in</item>
-        <item name="android:windowExitAnimation">@android:anim/fade_out</item>
-        <item name="android:windowBackground">@null</item>
-        <item name="android:windowCloseOnTouchOutside">true</item>
-        <item name="android:windowIsTranslucent">true</item>
-        <item name="android:windowNoTitle">false</item>
-    </style>
+	<style name="DialogAnimation">
+		<!--<item name="android:windowFullscreen">true</item>-->
+		<item name="android:windowEnterAnimation">@android:anim/fade_in</item>
+		<item name="android:windowExitAnimation">@android:anim/fade_out</item>
+		<item name="android:windowBackground">@null</item>
+		<item name="android:windowCloseOnTouchOutside">true</item>
+		<item name="android:windowIsTranslucent">true</item>
+		<item name="android:windowNoTitle">false</item>
+	</style>
 
 
 </resources>

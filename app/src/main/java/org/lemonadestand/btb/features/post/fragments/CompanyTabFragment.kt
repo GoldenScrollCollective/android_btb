@@ -451,8 +451,8 @@ class CompanyTabFragment : BaseFragment(R.layout.fragment_company_tab) {
 					popupWindow.showAsDropDown(it, 100, 0, 0)
 				}
 
-				val lnComment = findViewById<LinearLayout>(R.id.ln_comment)
-				lnComment.setOnClickListener {
+				val btnComment = findViewById<LinearLayout>(R.id.btnComment)
+				btnComment.setOnClickListener {
 					// add to set alert dialog's styls
 					val title = TextView(context) //custom title
 					title.text = "Add Comment"
@@ -494,7 +494,7 @@ class CompanyTabFragment : BaseFragment(R.layout.fragment_company_tab) {
 					AlertDialog.Builder(context)
 						.setCustomTitle(title)
 						.setView(layout) // Set the EditText as view in the dialog
-						.setPositiveButton("OK") { _, _ ->
+						.setPositiveButton("Post") { _, _ ->
 							val message = input.text.toString() // Get the input message
 //                    // Handle the confirmation with the input message
 

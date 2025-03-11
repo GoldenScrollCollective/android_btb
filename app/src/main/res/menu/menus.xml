@@ -2,18 +2,18 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
 	<item
-		android:id="@+id/homeFragment"
-		android:icon="@drawable/nav_heart_unselected"
-		android:title="Home" />
-
-	<item
 		android:id="@+id/eventFragment"
 		android:icon="@drawable/events"
 		android:title="Events" />
 
 	<item
+		android:id="@+id/homeFragment"
+		android:icon="@drawable/nav_heart_unselected"
+		android:title="Dashboard" />
+
+	<item
 		android:id="@+id/interestFragment"
-		android:icon="@drawable/nav_interest_unselected"
-		android:title="Interests"/>
+		android:icon="@drawable/nav_expense"
+		android:title="Expenses" />
 
 </menu>

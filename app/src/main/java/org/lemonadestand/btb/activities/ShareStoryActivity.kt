@@ -96,8 +96,7 @@ class ShareStoryActivity : BaseActivity(R.layout.activity_share_story) {
 			media = uploadedFileUrl?.lastPathComponent(),
 			parent_id = "",
 			by_user_id = "",
-//			visibility = if (mBinding.switchIsPrivate.isChecked) "private" else "public",
-			visibility = "public",
+			visibility = if (mBinding.switchIsPrivate.isChecked) "private" else "public",
 			user = ShareStoryUser(id = "", name = ""),
 			anonymous = if (mBinding.shareAnonymouslySwitch.isChecked) "1" else "0"
 		)

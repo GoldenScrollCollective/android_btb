@@ -1,0 +1,5 @@
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:color="@color/bottom_nav_active" android:state_checked="true" />
+    <!-- Set default color when not selected -->
+    <item android:color="@color/light_grey_ios" />
+</selector>

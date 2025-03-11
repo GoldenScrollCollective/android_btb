@@ -24,4 +24,6 @@
 	<color name="dark_text_40">#696969</color>
 	<color name="dark_gray_ios">#434343</color>
 
+	<color name="bottom_nav_active">#0a4e78</color>
+
 </resources>
