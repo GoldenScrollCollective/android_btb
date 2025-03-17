@@ -24,7 +24,11 @@ class EventsRecyclerViewAdapter : BaseRecyclerViewAdapter<Event>(R.layout.layout
 			Glide.with(context).load(item.resource?.pictureUrl).into(avatarView)
 
 			val nameView = findViewById<TextView>(R.id.nameView)
-			nameView.text = item.resource?.name
+			if (item.parent != null) {
+				nameView.text = "${item.resource?.name} @ ${item.parent.name}"
+			} else {
+				nameView.text = item.resource?.name
+			}
 
 			val descriptionView = findViewById<TextView>(R.id.descriptionView)
 			descriptionView.text = item.title
